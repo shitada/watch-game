@@ -74,4 +74,46 @@ describe('Clock3D', () => {
     const face = clock.getClockFaceMesh();
     expect(face).toBeDefined();
   });
+
+  it('should set hour angle to 3 oclock', () => {
+    const clock = new Clock3D();
+    // 3 o'clock: angle = 0 (pointing right)
+    clock.setHourAngle(0);
+    expect(clock.getTime().hours).toBe(3);
+  });
+
+  it('should set hour angle to 12 oclock', () => {
+    const clock = new Clock3D();
+    clock.setTime({ hours: 5, minutes: 15 });
+    // 12 o'clock: angle = PI/2 (pointing up)
+    clock.setHourAngle(Math.PI / 2);
+    expect(clock.getTime().hours).toBe(12);
+    // Minutes should be preserved
+    expect(clock.getTime().minutes).toBe(15);
+  });
+
+  it('should set hour angle to 6 oclock', () => {
+    const clock = new Clock3D();
+    // 6 o'clock: angle = -PI/2 (pointing down)
+    clock.setHourAngle(-Math.PI / 2);
+    expect(clock.getTime().hours).toBe(6);
+  });
+
+  it('should return hand tip positions', () => {
+    const clock = new Clock3D();
+    clock.setTime({ hours: 12, minutes: 0 });
+    const hourTip = clock.getHandTipPosition('hour');
+    const minuteTip = clock.getHandTipPosition('minute');
+    // Both hands point up (12 o'clock), minute hand is longer
+    expect(minuteTip.y).toBeGreaterThan(hourTip.y);
+  });
+
+  it('should highlight and clear hand', () => {
+    const clock = new Clock3D();
+    // Should not throw
+    clock.highlightHand('minute');
+    clock.clearHighlight();
+    clock.highlightHand('hour');
+    clock.clearHighlight();
+  });
 });

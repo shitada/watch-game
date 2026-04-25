@@ -4,6 +4,8 @@ import { GameSettings } from '@/game/config/GameSettings';
 
 const S = GameSettings;
 
+export type HandType = 'hour' | 'minute';
+
 export class Clock3D {
   readonly group = new THREE.Group();
   private hourHand!: THREE.Mesh;
@@ -12,6 +14,8 @@ export class Clock3D {
   private currentTime: ClockTime = { hours: 12, minutes: 0 };
   private showSeconds = false;
   private secondAngle = 0;
+  private originalHourColor = S.COLORS.hourHand;
+  private originalMinuteColor = S.COLORS.minuteHand;
 
   constructor() {
     this.buildClockFace();
@@ -233,6 +237,42 @@ export class Clock3D {
       hours: this.currentTime.hours,
       minutes: snapped % 60,
     });
+  }
+
+  /** Set hour hand angle directly from pointer angle (radians, 0=right, CCW positive) */
+  setHourAngle(angle: number): void {
+    let normalized = -angle + Math.PI / 2;
+    while (normalized < 0) normalized += Math.PI * 2;
+    while (normalized >= Math.PI * 2) normalized -= Math.PI * 2;
+    const hours = Math.round((normalized / (Math.PI * 2)) * 12) % 12 || 12;
+    this.setTime({ hours, minutes: this.currentTime.minutes });
+  }
+
+  /** Get the tip position of the specified hand in world coordinates */
+  getHandTipPosition(hand: HandType): THREE.Vector3 {
+    const mesh = hand === 'hour' ? this.hourHand : this.minuteHand;
+    const length = hand === 'hour' ? S.HOUR_HAND_LENGTH : S.MINUTE_HAND_LENGTH;
+    // Hand is oriented along +Y in local space
+    const localTip = new THREE.Vector3(0, length, 0);
+    return mesh.localToWorld(localTip);
+  }
+
+  /** Highlight the specified hand by brightening its color */
+  highlightHand(hand: HandType): void {
+    this.clearHighlight();
+    const mesh = hand === 'hour' ? this.hourHand : this.minuteHand;
+    const mat = mesh.material as THREE.MeshStandardMaterial;
+    mat.emissive.set(0x444444);
+    mat.emissiveIntensity = 0.6;
+  }
+
+  /** Clear any hand highlight */
+  clearHighlight(): void {
+    for (const mesh of [this.hourHand, this.minuteHand]) {
+      const mat = mesh.material as THREE.MeshStandardMaterial;
+      mat.emissive.set(0x000000);
+      mat.emissiveIntensity = 0;
+    }
   }
 
   getClockFaceMesh(): THREE.Object3D | undefined {

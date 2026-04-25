@@ -1,5 +1,5 @@
 import * as THREE from 'three';
-import { Clock3D } from '@/game/entities/Clock3D';
+import { Clock3D, HandType } from '@/game/entities/Clock3D';
 
 export class ClockController {
   private clock: Clock3D;
@@ -10,6 +10,12 @@ export class ClockController {
   private enabled = false;
   private snapStep = 1;
   private onChangeCallback: (() => void) | null = null;
+
+  // Hand selection
+  private selectedHand: HandType | null = null;
+  private prevAngle: number | null = null;
+  private static readonly HAND_SELECT_THRESHOLD = 1.2; // world units
+  private static readonly MAX_ANGLE_DELTA = Math.PI / 3; // ~60° max per event
 
   private boundPointerDown: (e: PointerEvent) => void;
   private boundPointerMove: (e: PointerEvent) => void;
@@ -42,6 +48,9 @@ export class ClockController {
       canvas.removeEventListener('pointerup', this.boundPointerUp);
       canvas.removeEventListener('pointercancel', this.boundPointerUp);
       this.dragging = false;
+      this.selectedHand = null;
+      this.prevAngle = null;
+      this.clock.clearHighlight();
     }
     this.enabled = enabled;
   }
@@ -79,32 +88,95 @@ export class ClockController {
     return hits.length > 0;
   }
 
-  private getAngleFromPointer(ndc: THREE.Vector2): number {
+  private getWorldPoint(ndc: THREE.Vector2): THREE.Vector3 {
     this.raycaster.setFromCamera(ndc, this.camera);
-    const plane = new THREE.Plane(new THREE.Vector3(0, 0, 1), 0);
+    const clockZ = this.clock.group.getWorldPosition(new THREE.Vector3()).z;
+    const plane = new THREE.Plane(new THREE.Vector3(0, 0, 1), -clockZ);
     const point = new THREE.Vector3();
     this.raycaster.ray.intersectPlane(plane, point);
+    return point;
+  }
 
+  private getAngleFromPointer(ndc: THREE.Vector2): number {
+    const point = this.getWorldPoint(ndc);
     const clockPos = this.clock.group.getWorldPosition(new THREE.Vector3());
     return Math.atan2(point.y - clockPos.y, point.x - clockPos.x);
+  }
+
+  /** Select the hand closest to the touch point */
+  private selectHand(ndc: THREE.Vector2): HandType | null {
+    const worldPoint = this.getWorldPoint(ndc);
+
+    const hourTip = this.clock.getHandTipPosition('hour');
+    const minuteTip = this.clock.getHandTipPosition('minute');
+
+    const distHour = worldPoint.distanceTo(hourTip);
+    const distMinute = worldPoint.distanceTo(minuteTip);
+
+    // Also check distance to the midpoint of each hand for better hit area
+    const clockCenter = this.clock.group.getWorldPosition(new THREE.Vector3());
+    const hourMid = new THREE.Vector3().lerpVectors(clockCenter, hourTip, 0.5);
+    const minuteMid = new THREE.Vector3().lerpVectors(clockCenter, minuteTip, 0.5);
+
+    const distHourMid = worldPoint.distanceTo(hourMid);
+    const distMinuteMid = worldPoint.distanceTo(minuteMid);
+
+    const bestHour = Math.min(distHour, distHourMid);
+    const bestMinute = Math.min(distMinute, distMinuteMid);
+
+    const threshold = ClockController.HAND_SELECT_THRESHOLD;
+    if (bestHour < threshold || bestMinute < threshold) {
+      return bestMinute <= bestHour ? 'minute' : 'hour';
+    }
+    return null;
+  }
+
+  /** Compute smallest signed angle difference, clamped to max delta */
+  private clampedAngleDelta(newAngle: number, prevAngle: number): number | null {
+    let delta = newAngle - prevAngle;
+    // Normalize to [-π, π]
+    while (delta > Math.PI) delta -= Math.PI * 2;
+    while (delta < -Math.PI) delta += Math.PI * 2;
+
+    if (Math.abs(delta) > ClockController.MAX_ANGLE_DELTA) {
+      return null; // Reject large jumps
+    }
+    return delta;
   }
 
   private onPointerDown(e: PointerEvent): void {
     if (!this.enabled) return;
     const ndc = this.getNDC(e);
-    if (this.hitTestClock(ndc)) {
+    if (!this.hitTestClock(ndc)) return;
+
+    const hand = this.selectHand(ndc);
+    if (hand) {
+      this.selectedHand = hand;
       this.dragging = true;
+      this.prevAngle = this.getAngleFromPointer(ndc);
+      this.clock.highlightHand(hand);
       this.renderer.domElement.setPointerCapture(e.pointerId);
     }
   }
 
   private onPointerMove(e: PointerEvent): void {
-    if (!this.dragging) return;
+    if (!this.dragging || !this.selectedHand || this.prevAngle === null) return;
+
     const ndc = this.getNDC(e);
     const angle = this.getAngleFromPointer(ndc);
-    this.clock.setMinuteAngle(angle);
-    if (this.snapStep > 1) {
-      this.clock.snapMinutes(this.snapStep);
+
+    const delta = this.clampedAngleDelta(angle, this.prevAngle);
+    if (delta === null) return; // Skip jump
+
+    this.prevAngle = angle;
+
+    if (this.selectedHand === 'minute') {
+      this.clock.setMinuteAngle(angle);
+      if (this.snapStep > 1) {
+        this.clock.snapMinutes(this.snapStep);
+      }
+    } else {
+      this.clock.setHourAngle(angle);
     }
     this.onChangeCallback?.();
   }
@@ -112,9 +184,13 @@ export class ClockController {
   private onPointerUp(): void {
     if (!this.dragging) return;
     this.dragging = false;
-    if (this.snapStep > 1) {
+    this.prevAngle = null;
+
+    if (this.selectedHand === 'minute' && this.snapStep > 1) {
       this.clock.snapMinutes(this.snapStep);
     }
     this.onChangeCallback?.();
+    this.selectedHand = null;
+    this.clock.clearHighlight();
   }
 }

@@ -81,7 +81,7 @@ export class SetTimePlayScene implements Scene {
 
     // Add clock
     this.scene.add(this.clock3D.group);
-    this.clock3D.group.position.set(0, 0.3, 0);
+    this.clock3D.group.position.set(0, -0.5, 0);
     this.clock3D.setShowSeconds(false);
 
     // Setup controller
@@ -226,11 +226,11 @@ export class SetTimePlayScene implements Scene {
     if (isCorrect) {
       this.correctCount++;
       this.sfx.play('correct');
-      this.correctEffect.trigger(this.scene, new THREE.Vector3(0, 0.3, 1));
+      this.correctEffect.trigger(this.scene, new THREE.Vector3(0, -0.5, 1));
       this.showNotification('⭕ せいかい！', '#2ECC71');
     } else {
       this.sfx.play('incorrect');
-      this.incorrectEffect.trigger(this.scene, new THREE.Vector3(0, 0.3, 1));
+      this.incorrectEffect.trigger(this.scene, new THREE.Vector3(0, -0.5, 1));
       // Show correct answer
       this.clock3D.setTime(target);
       this.showNotification(

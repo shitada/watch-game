@@ -12,7 +12,7 @@ export class TimeDisplay {
       flex-direction: column;
       align-items: center;
       gap: 8px;
-      padding: 16px;
+      padding: 4px 16px;
       pointer-events: none;
     `;
 

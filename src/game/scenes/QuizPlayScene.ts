@@ -11,6 +11,7 @@ import { IncorrectEffect } from '@/game/effects/IncorrectEffect';
 import { HUD } from '@/ui/HUD';
 import { ChoiceButtons } from '@/ui/ChoiceButtons';
 import { HomeButton } from '@/ui/HomeButton';
+import { Notification } from '@/ui/Notification';
 
 export class QuizPlayScene implements Scene {
   private scene = new THREE.Scene();
@@ -22,6 +23,7 @@ export class QuizPlayScene implements Scene {
   private hud = new HUD();
   private choiceButtons = new ChoiceButtons();
   private homeButton = new HomeButton();
+  private notification = new Notification();
   private overlay: HTMLDivElement | null = null;
 
   private sceneManager: SceneManager;
@@ -113,6 +115,7 @@ export class QuizPlayScene implements Scene {
     this.hud.unmount();
     this.choiceButtons.unmount();
     this.homeButton.unmount();
+    this.notification.unmount();
     this.overlay?.remove();
     this.overlay = null;
   }
@@ -149,6 +152,7 @@ export class QuizPlayScene implements Scene {
     const uiOverlay = document.getElementById('ui-overlay')!;
     uiOverlay.appendChild(overlay);
     this.overlay = overlay;
+    this.notification.mount(overlay);
 
     // Home button
     const hud = document.getElementById('hud')!;
@@ -206,12 +210,12 @@ export class QuizPlayScene implements Scene {
 
     // Show hint for incorrect
     if (!isCorrect) {
-      this.showNotification(
+      this.notification.show(
         `こたえは ${formatTime(q)} だよ！`,
         '#E74C3C',
       );
     } else {
-      this.showNotification('⭕ せいかい！', '#2ECC71');
+      this.notification.show('⭕ せいかい！', '#2ECC71');
     }
 
     this.pendingTimers.push(setTimeout(() => {
@@ -229,42 +233,5 @@ export class QuizPlayScene implements Scene {
         this.showQuestion();
       }
     }, 1500));
-  }
-
-  private showNotification(text: string, color: string): void {
-    const notif = document.createElement('div');
-    notif.textContent = text;
-    notif.style.cssText = `
-      position: absolute;
-      top: 40%;
-      left: 50%;
-      transform: translateX(-50%);
-      font-family: 'Zen Maru Gothic', sans-serif;
-      font-size: clamp(24px, 5vw, 40px);
-      font-weight: 900;
-      color: ${color};
-      background: rgba(255,255,255,0.95);
-      padding: 16px 32px;
-      border-radius: 20px;
-      border: 3px solid ${color};
-      pointer-events: none;
-      animation: notifPop 0.3s ease-out;
-      z-index: 50;
-    `;
-
-    if (!document.getElementById('notif-anim')) {
-      const style = document.createElement('style');
-      style.id = 'notif-anim';
-      style.textContent = `
-        @keyframes notifPop {
-          0% { transform: translateX(-50%) scale(0.5); opacity: 0; }
-          100% { transform: translateX(-50%) scale(1); opacity: 1; }
-        }
-      `;
-      document.head.appendChild(style);
-    }
-
-    this.overlay?.appendChild(notif);
-    this.pendingTimers.push(setTimeout(() => notif.remove(), 1200));
   }
 }

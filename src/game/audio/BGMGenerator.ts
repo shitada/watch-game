@@ -58,9 +58,16 @@ export class BGMGenerator {
     this.timers = [];
   }
 
+  pause(): void {
+    this.playing = false;
+    for (const t of this.timers) clearTimeout(t);
+    this.timers = [];
+  }
+
   resume(): void {
     if (this.currentMode && !this.playing) {
-      this.start(this.currentMode);
+      this.playing = true;
+      this.scheduleLoop(this.currentMode);
     }
   }
 

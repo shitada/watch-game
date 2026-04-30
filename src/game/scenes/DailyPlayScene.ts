@@ -188,6 +188,9 @@ export class DailyPlayScene implements Scene {
     this.confirmBtn.addEventListener('pointerup', () => {
       if (this.confirmBtn) this.confirmBtn.style.transform = 'scale(1)';
     });
+    this.confirmBtn.addEventListener('pointerleave', () => {
+      if (this.confirmBtn) this.confirmBtn.style.transform = 'scale(1)';
+    });
     this.confirmBtn.addEventListener('click', () => {
       this.handleConfirm();
     });

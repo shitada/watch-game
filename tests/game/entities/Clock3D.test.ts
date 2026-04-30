@@ -108,6 +108,42 @@ describe('Clock3D', () => {
     expect(minuteTip.y).toBeGreaterThan(hourTip.y);
   });
 
+  it('should increment hours when snapMinutes rounds to 60 (step=30, min=45)', () => {
+    const clock = new Clock3D();
+    clock.setTime({ hours: 3, minutes: 45 });
+    clock.snapMinutes(30);
+    const time = clock.getTime();
+    expect(time.hours).toBe(4);
+    expect(time.minutes).toBe(0);
+  });
+
+  it('should increment hours when snapMinutes rounds to 60 (step=5, min=58)', () => {
+    const clock = new Clock3D();
+    clock.setTime({ hours: 7, minutes: 58 });
+    clock.snapMinutes(5);
+    const time = clock.getTime();
+    expect(time.hours).toBe(8);
+    expect(time.minutes).toBe(0);
+  });
+
+  it('should wrap hours from 12 to 1 when snapMinutes rounds to 60', () => {
+    const clock = new Clock3D();
+    clock.setTime({ hours: 12, minutes: 50 });
+    clock.snapMinutes(30);
+    const time = clock.getTime();
+    expect(time.hours).toBe(1);
+    expect(time.minutes).toBe(0);
+  });
+
+  it('should not change hours when snapMinutes does not reach 60 (step=30, min=14)', () => {
+    const clock = new Clock3D();
+    clock.setTime({ hours: 5, minutes: 14 });
+    clock.snapMinutes(30);
+    const time = clock.getTime();
+    expect(time.hours).toBe(5);
+    expect(time.minutes).toBe(0);
+  });
+
   it('should highlight and clear hand', () => {
     const clock = new Clock3D();
     // Should not throw

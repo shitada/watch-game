@@ -13,6 +13,7 @@ import { IncorrectEffect } from '@/game/effects/IncorrectEffect';
 import { HUD } from '@/ui/HUD';
 import { TimeDisplay } from '@/ui/TimeDisplay';
 import { HomeButton } from '@/ui/HomeButton';
+import { Notification } from '@/ui/Notification';
 
 export class SetTimePlayScene implements Scene {
   private scene = new THREE.Scene();
@@ -26,6 +27,7 @@ export class SetTimePlayScene implements Scene {
   private hud = new HUD();
   private timeDisplay = new TimeDisplay();
   private homeButton = new HomeButton();
+  private notification = new Notification();
   private overlay: HTMLDivElement | null = null;
   private confirmBtn: HTMLButtonElement | null = null;
 
@@ -119,6 +121,7 @@ export class SetTimePlayScene implements Scene {
   exit(): void {
     this.pendingTimers.forEach(id => clearTimeout(id));
     this.pendingTimers = [];
+    this.notification.cleanup();
     this.scene.remove(this.clock3D.group);
     this.clockController?.dispose();
     this.clockController = null;
@@ -234,13 +237,14 @@ export class SetTimePlayScene implements Scene {
       this.correctCount++;
       this.sfx.play('correct');
       this.correctEffect.trigger(this.scene, new THREE.Vector3(0, -0.5, 1));
-      this.showNotification('⭕ せいかい！', '#2ECC71');
+      this.notification.show(this.overlay!, '⭕ せいかい！', '#2ECC71');
     } else {
       this.sfx.play('incorrect');
       this.incorrectEffect.trigger(this.scene, new THREE.Vector3(0, -0.5, 1));
       // Show correct answer
       this.clock3D.setTime(target);
-      this.showNotification(
+      this.notification.show(
+        this.overlay!,
         `こたえは ${formatTime(target)} だよ！`,
         '#E74C3C',
       );
@@ -271,40 +275,4 @@ export class SetTimePlayScene implements Scene {
     }, 1500));
   }
 
-  private showNotification(text: string, color: string): void {
-    const notif = document.createElement('div');
-    notif.textContent = text;
-    notif.style.cssText = `
-      position: absolute;
-      top: 40%;
-      left: 50%;
-      transform: translateX(-50%);
-      font-family: 'Zen Maru Gothic', sans-serif;
-      font-size: clamp(24px, 5vw, 40px);
-      font-weight: 900;
-      color: ${color};
-      background: rgba(255,255,255,0.95);
-      padding: 16px 32px;
-      border-radius: 20px;
-      border: 3px solid ${color};
-      pointer-events: none;
-      animation: notifPop 0.3s ease-out;
-      z-index: 50;
-    `;
-
-    if (!document.getElementById('notif-anim')) {
-      const style = document.createElement('style');
-      style.id = 'notif-anim';
-      style.textContent = `
-        @keyframes notifPop {
-          0% { transform: translateX(-50%) scale(0.5); opacity: 0; }
-          100% { transform: translateX(-50%) scale(1); opacity: 1; }
-        }
-      `;
-      document.head.appendChild(style);
-    }
-
-    this.overlay?.appendChild(notif);
-    this.pendingTimers.push(setTimeout(() => notif.remove(), 1200));
-  }
 }

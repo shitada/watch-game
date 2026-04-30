@@ -138,6 +138,9 @@ export class LevelSelectScene implements Scene {
       card.addEventListener('pointerup', () => {
         card.style.transform = 'scale(1)';
       });
+      card.addEventListener('pointerleave', () => {
+        card.style.transform = 'scale(1)';
+      });
 
       card.addEventListener('click', () => {
         this.sfx.play('buttonTap');

@@ -50,6 +50,9 @@ export class ChoiceButtons {
       btn.addEventListener('pointerup', () => {
         btn.style.transform = 'scale(1)';
       });
+      btn.addEventListener('pointerleave', () => {
+        btn.style.transform = 'scale(1)';
+      });
       btn.addEventListener('click', () => {
         if (this.disabled) return;
         this.selectCallback?.(i);

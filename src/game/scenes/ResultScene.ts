@@ -236,6 +236,9 @@ export class ResultScene implements Scene {
     btn.addEventListener('pointerup', () => {
       btn.style.transform = 'scale(1)';
     });
+    btn.addEventListener('pointerleave', () => {
+      btn.style.transform = 'scale(1)';
+    });
     return btn;
   }
 }

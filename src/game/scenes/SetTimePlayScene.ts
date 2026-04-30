@@ -40,6 +40,7 @@ export class SetTimePlayScene implements Scene {
   private correctCount = 0;
   private results: QuizResult[] = [];
   private waitingNext = false;
+  private pendingTimers: ReturnType<typeof setTimeout>[] = [];
 
   constructor(
     sceneManager: SceneManager,
@@ -78,6 +79,7 @@ export class SetTimePlayScene implements Scene {
     this.correctCount = 0;
     this.results = [];
     this.waitingNext = false;
+    this.pendingTimers = [];
 
     // Add clock
     this.scene.add(this.clock3D.group);
@@ -115,6 +117,8 @@ export class SetTimePlayScene implements Scene {
   }
 
   exit(): void {
+    this.pendingTimers.forEach(id => clearTimeout(id));
+    this.pendingTimers = [];
     this.scene.remove(this.clock3D.group);
     this.clockController?.dispose();
     this.clockController = null;
@@ -251,7 +255,7 @@ export class SetTimePlayScene implements Scene {
 
     this.hud.updateScore(this.correctCount);
 
-    setTimeout(() => {
+    this.pendingTimers.push(setTimeout(() => {
       this.waitingNext = false;
       this.currentQuestion++;
 
@@ -264,7 +268,7 @@ export class SetTimePlayScene implements Scene {
       } else {
         this.showQuestion();
       }
-    }, 1500);
+    }, 1500));
   }
 
   private showNotification(text: string, color: string): void {
@@ -301,6 +305,6 @@ export class SetTimePlayScene implements Scene {
     }
 
     this.overlay?.appendChild(notif);
-    setTimeout(() => notif.remove(), 1200);
+    this.pendingTimers.push(setTimeout(() => notif.remove(), 1200));
   }
 }

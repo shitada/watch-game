@@ -5,6 +5,7 @@ import { AudioManager } from '@/game/audio/AudioManager';
 import { SFXGenerator } from '@/game/audio/SFXGenerator';
 import { SaveManager } from '@/game/storage/SaveManager';
 import { FireworkEffect } from '@/game/effects/FireworkEffect';
+import { LEVELS } from '@/game/config/LevelConfig';
 
 export class ResultScene implements Scene {
   private scene = new THREE.Scene();
@@ -199,6 +200,23 @@ export class ResultScene implements Scene {
       this.sfx.play('buttonTap');
       this.sceneManager.requestTransition('title');
     });
+
+    const hasNextLevel = ratio >= 0.6 && this.mode !== 'daily' && this.level < LEVELS.length;
+    if (hasNextLevel) {
+      const nextLevel = this.level + 1;
+      const nextBtn = this.createButton('⏭ つぎのレベルへ ▶', '#9B59B6', '#8E44AD');
+      nextBtn.addEventListener('click', () => {
+        this.sfx.play('buttonTap');
+        if (nextLevel <= LEVELS.length) {
+          const target = this.mode === 'quiz' ? 'quizPlay' : 'setTimePlay';
+          this.sceneManager.requestTransition(
+            target as 'quizPlay' | 'setTimePlay',
+            { mode: this.mode as 'quiz' | 'setTime', level: nextLevel },
+          );
+        }
+      });
+      btnContainer.appendChild(nextBtn);
+    }
 
     btnContainer.appendChild(retryBtn);
     btnContainer.appendChild(modeBtn);

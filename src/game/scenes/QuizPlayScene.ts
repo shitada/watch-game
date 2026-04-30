@@ -107,6 +107,8 @@ export class QuizPlayScene implements Scene {
     this.pendingTimers.forEach(id => clearTimeout(id));
     this.pendingTimers = [];
     this.scene.remove(this.clock3D.group);
+    this.correctEffect.dispose();
+    this.incorrectEffect.dispose();
     this.audioManager.stopBGM();
     this.hud.unmount();
     this.choiceButtons.unmount();

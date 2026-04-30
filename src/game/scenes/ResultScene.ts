@@ -88,6 +88,7 @@ export class ResultScene implements Scene {
   }
 
   exit(): void {
+    this.fireworkEffect.dispose();
     this.audioManager.stopBGM();
     this.overlay?.remove();
     this.overlay = null;

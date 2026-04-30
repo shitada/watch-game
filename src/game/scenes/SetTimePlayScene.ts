@@ -120,6 +120,8 @@ export class SetTimePlayScene implements Scene {
     this.pendingTimers.forEach(id => clearTimeout(id));
     this.pendingTimers = [];
     this.scene.remove(this.clock3D.group);
+    this.correctEffect.dispose();
+    this.incorrectEffect.dispose();
     this.clockController?.dispose();
     this.clockController = null;
     this.audioManager.stopBGM();

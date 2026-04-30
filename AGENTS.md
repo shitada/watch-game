@@ -51,3 +51,52 @@ tests/game/         — src/game/ のミラー構造
 - **新しいエフェクト**: `THREE.Points` + `BufferGeometry` パターン（`CorrectEffect.ts` 参照）
 - **新しい SFX**: `SFXGenerator.play()` の switch に追加、`SFXType` に型追加
 - **セーブデータ変更**: `SaveData` 型を更新 → `SaveManager.defaultData()` にデフォルト値追加 → `isValid()` にバリデーション追加
+
+## 自動改善システム
+
+シェルスクリプト + オーケストレーターによる自動改善ループ。
+
+### 使い方
+
+```bash
+./scripts/auto-improve.sh       # 1回実行
+./scripts/auto-improve.sh 3     # 3回ループ
+```
+
+### パイプライン構成
+
+```
+auto-improve.sh → Orchestrator
+  → Proposer (コード分析・改善提案)
+  → Reviewer (提案の批評・フィルタリング)
+  → Coder (TDD実装・ビルド・コミット)
+  → Tester (全テスト実行・結果報告)
+  → Evaluator (品質ゲート・PR作成)
+```
+
+### エージェント一覧
+
+| エージェント | ファイル | 役割 |
+|---|---|---|
+| Orchestrator | `.github/agents/orchestrator.agent.md` | チームリーダー。サブエージェントの呼び出しと検証 |
+| Proposer | `.github/agents/proposer.agent.md` | コードベース分析 → 1件の改善提案 |
+| Reviewer | `.github/agents/reviewer.agent.md` | 提案の批評。blocker/warning/suggestion で品質フィルタ |
+| Coder | `.github/agents/coder.agent.md` | TDD で実装、ビルド+テスト検証、コミット |
+| Tester | `.github/agents/tester.agent.md` | 全テスト実行、リスク別テスト分類 |
+| Evaluator | `.github/agents/evaluator.agent.md` | ハードゲート判定、セキュリティチェック、PR作成 |
+
+### スキル
+
+| スキル | ファイル | 用途 |
+|---|---|---|
+| security-review | `.github/skills/security-review/SKILL.md` | セキュリティ監査（Evaluator が使用） |
+| quality-playbook | `.github/skills/quality-playbook/SKILL.md` | 品質基準生成（Proposer が使用） |
+
+### ログ
+
+各実行のログは `logs/auto-improve/YYYYMMDD_HHMMSS/` に保存される（.gitignore 済み）。
+
+### Constitution
+
+プロジェクトの最上位ルールは `spec/constitution.md` に定義。
+全ての自動改善は Constitution に準拠しなければならない。

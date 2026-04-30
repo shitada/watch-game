@@ -10,6 +10,8 @@ npm run build                         # tsc + vite build → dist/
 npm run test                          # Run all tests (vitest run)
 npm run test:watch                    # Watch mode
 npx vitest run tests/game/systems/QuizGenerator.test.ts  # Single test file
+./scripts/auto-improve.sh            # Run auto-improvement loop (1 iteration)
+./scripts/auto-improve.sh 3          # Run 3 iterations
 ```
 
 ## Architecture
@@ -36,3 +38,10 @@ npx vitest run tests/game/systems/QuizGenerator.test.ts  # Single test file
 - **Adding an effect**: Use `THREE.Points` + `BufferGeometry` pattern (see `CorrectEffect.ts`)
 - **Adding SFX**: Add case to `SFXGenerator.play()` switch → add to `SFXType` union
 - **Changing save data**: Update `SaveData` type → add default in `SaveManager.defaultData()` → add validation in `isValid()`
+
+## Auto-Improvement System
+
+- **Constitution**: `spec/constitution.md` — project-level rules that all improvements must follow
+- **Pipeline**: `scripts/auto-improve.sh` → Orchestrator → Proposer → Reviewer → Coder → Tester → Evaluator
+- **Agents**: `.github/agents/` — orchestrator, proposer, reviewer, coder, tester, evaluator
+- **Skills**: security-review (security audit), quality-playbook (quality metrics)

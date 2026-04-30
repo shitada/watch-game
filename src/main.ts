@@ -83,7 +83,7 @@ window.addEventListener('resize', () => {
 document.addEventListener('visibilitychange', () => {
   if (document.hidden) {
     gameLoop.pause();
-    audioManager.stopBGM();
+    audioManager.pauseBGM();
   } else {
     gameLoop.resume(onUpdate, onRender);
     audioManager.ensureResumed();

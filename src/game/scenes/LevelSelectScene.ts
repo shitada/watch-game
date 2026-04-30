@@ -89,7 +89,12 @@ export class LevelSelectScene implements Scene {
 
     for (const levelDef of LEVELS) {
       const isDone = completed.includes(levelDef.level);
-      const stars = '★'.repeat(levelDef.level) + '☆'.repeat(4 - levelDef.level);
+      const scoreKey = `${this.currentMode}-${levelDef.level}`;
+      const bestScore = saveData.bestScores[scoreKey];
+      const hasBest = bestScore !== undefined;
+      const perfStars = hasBest
+        ? this.getPerformanceStars(bestScore / levelDef.questionCount)
+        : '☆☆☆';
 
       const card = document.createElement('button');
       card.style.cssText = `
@@ -105,7 +110,7 @@ export class LevelSelectScene implements Scene {
       `;
 
       const starsEl = document.createElement('div');
-      starsEl.textContent = stars;
+      starsEl.textContent = perfStars;
       starsEl.style.cssText = `
         font-size: clamp(16px, 3vw, 24px);
         color: #F39C12;
@@ -131,6 +136,17 @@ export class LevelSelectScene implements Scene {
       card.appendChild(starsEl);
       card.appendChild(nameEl);
       card.appendChild(descEl);
+
+      if (hasBest) {
+        const bestEl = document.createElement('div');
+        bestEl.textContent = `ベスト: ${bestScore}/${levelDef.questionCount}`;
+        bestEl.style.cssText = `
+          font-size: clamp(10px, 1.8vw, 13px);
+          color: #7F8C8D;
+          margin-top: 4px;
+        `;
+        card.appendChild(bestEl);
+      }
 
       card.addEventListener('pointerdown', () => {
         card.style.transform = 'scale(0.95)';
@@ -183,5 +199,13 @@ export class LevelSelectScene implements Scene {
     const uiOverlay = document.getElementById('ui-overlay')!;
     uiOverlay.appendChild(overlay);
     this.overlay = overlay;
+  }
+
+  // NOTE: ResultScene と同一基準。基準変更時は両方更新すること
+  private getPerformanceStars(ratio: number): string {
+    if (ratio === 1) return '★★★';
+    if (ratio >= 0.8) return '★★☆';
+    if (ratio >= 0.6) return '★☆☆';
+    return '☆☆☆';
   }
 }

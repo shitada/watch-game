@@ -201,6 +201,21 @@ export class ResultScene implements Scene {
     });
 
     btnContainer.appendChild(retryBtn);
+
+    // Next level button (shown only on level clear for non-daily modes with remaining levels)
+    if (ratio >= 0.6 && this.mode !== 'daily' && this.level < 4) {
+      const nextLevelBtn = this.createButton('▶ つぎのレベルへ', '#9B59B6', '#8E44AD');
+      nextLevelBtn.addEventListener('click', () => {
+        this.sfx.play('buttonTap');
+        const target = this.mode === 'quiz' ? 'quizPlay' : 'setTimePlay';
+        this.sceneManager.requestTransition(
+          target as 'quizPlay' | 'setTimePlay',
+          { mode: this.mode as 'quiz' | 'setTime', level: this.level + 1 },
+        );
+      });
+      btnContainer.appendChild(nextLevelBtn);
+    }
+
     btnContainer.appendChild(modeBtn);
     btnContainer.appendChild(homeBtn);
     overlay.appendChild(btnContainer);

@@ -37,6 +37,7 @@ export class DailyPlayScene implements Scene {
   private correctCount = 0;
   private results: QuizResult[] = [];
   private waitingNext = false;
+  private pendingTimers: ReturnType<typeof setTimeout>[] = [];
 
   constructor(
     sceneManager: SceneManager,
@@ -66,6 +67,7 @@ export class DailyPlayScene implements Scene {
     this.correctCount = 0;
     this.results = [];
     this.waitingNext = false;
+    this.pendingTimers = [];
 
     // Add clock
     this.scene.add(this.clock3D.group);
@@ -103,6 +105,8 @@ export class DailyPlayScene implements Scene {
   }
 
   exit(): void {
+    this.pendingTimers.forEach(id => clearTimeout(id));
+    this.pendingTimers = [];
     this.scene.remove(this.clock3D.group);
     this.clockController?.dispose();
     this.clockController = null;
@@ -261,7 +265,7 @@ export class DailyPlayScene implements Scene {
       correct: isCorrect,
     });
 
-    setTimeout(() => {
+    this.pendingTimers.push(setTimeout(() => {
       this.waitingNext = false;
       this.currentEventIndex++;
 
@@ -273,7 +277,7 @@ export class DailyPlayScene implements Scene {
       } else {
         this.showEvent();
       }
-    }, 1500);
+    }, 1500));
   }
 
   private showNotification(text: string, color: string): void {
@@ -310,6 +314,6 @@ export class DailyPlayScene implements Scene {
     }
 
     this.overlay?.appendChild(notif);
-    setTimeout(() => notif.remove(), 1200);
+    this.pendingTimers.push(setTimeout(() => notif.remove(), 1200));
   }
 }

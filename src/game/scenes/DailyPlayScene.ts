@@ -12,6 +12,7 @@ import { CorrectEffect } from '@/game/effects/CorrectEffect';
 import { IncorrectEffect } from '@/game/effects/IncorrectEffect';
 import { DailyProgress } from '@/ui/DailyProgress';
 import { HomeButton } from '@/ui/HomeButton';
+import { Notification } from '@/ui/Notification';
 import { formatTime } from '@/game/systems/QuizGenerator';
 
 export class DailyPlayScene implements Scene {
@@ -24,6 +25,7 @@ export class DailyPlayScene implements Scene {
   private incorrectEffect = new IncorrectEffect();
   private dailyProgress = new DailyProgress();
   private homeButton = new HomeButton();
+  private notification = new Notification();
   private overlay: HTMLDivElement | null = null;
   private eventLabel: HTMLDivElement | null = null;
   private confirmBtn: HTMLButtonElement | null = null;
@@ -113,6 +115,7 @@ export class DailyPlayScene implements Scene {
     this.audioManager.stopBGM();
     this.dailyProgress.unmount();
     this.homeButton.unmount();
+    this.notification.unmount();
     this.overlay?.remove();
     this.overlay = null;
     this.eventLabel = null;
@@ -204,6 +207,7 @@ export class DailyPlayScene implements Scene {
     const uiOverlay = document.getElementById('ui-overlay')!;
     uiOverlay.appendChild(overlay);
     this.overlay = overlay;
+    this.notification.mount(overlay);
 
     // Home button
     const hud = document.getElementById('hud')!;
@@ -247,12 +251,12 @@ export class DailyPlayScene implements Scene {
       this.correctCount++;
       this.sfx.play('correct');
       this.correctEffect.trigger(this.scene, new THREE.Vector3(0, -0.2, 1));
-      this.showNotification('⭕ せいかい！', '#2ECC71');
+      this.notification.show('⭕ せいかい！', '#2ECC71');
     } else {
       this.sfx.play('incorrect');
       this.incorrectEffect.trigger(this.scene, new THREE.Vector3(0, -0.2, 1));
       this.clock3D.setTime(event.time);
-      this.showNotification(
+      this.notification.show(
         `${event.name} は ${formatTime(event.time)} だよ！`,
         '#E74C3C',
       );
@@ -278,42 +282,5 @@ export class DailyPlayScene implements Scene {
         this.showEvent();
       }
     }, 1500));
-  }
-
-  private showNotification(text: string, color: string): void {
-    const notif = document.createElement('div');
-    notif.textContent = text;
-    notif.style.cssText = `
-      position: absolute;
-      top: 35%;
-      left: 50%;
-      transform: translateX(-50%);
-      font-family: 'Zen Maru Gothic', sans-serif;
-      font-size: clamp(22px, 4.5vw, 36px);
-      font-weight: 900;
-      color: ${color};
-      background: rgba(255,255,255,0.95);
-      padding: 14px 28px;
-      border-radius: 20px;
-      border: 3px solid ${color};
-      pointer-events: none;
-      animation: notifPop 0.3s ease-out;
-      z-index: 50;
-    `;
-
-    if (!document.getElementById('notif-anim')) {
-      const style = document.createElement('style');
-      style.id = 'notif-anim';
-      style.textContent = `
-        @keyframes notifPop {
-          0% { transform: translateX(-50%) scale(0.5); opacity: 0; }
-          100% { transform: translateX(-50%) scale(1); opacity: 1; }
-        }
-      `;
-      document.head.appendChild(style);
-    }
-
-    this.overlay?.appendChild(notif);
-    this.pendingTimers.push(setTimeout(() => notif.remove(), 1200));
   }
 }

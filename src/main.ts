@@ -29,7 +29,7 @@ const saveManager = new SaveManager();
 
 // ── Scenes ──
 const titleScene = new TitleScene(sceneManager, audioManager, sfx);
-const modeSelectScene = new ModeSelectScene(sceneManager, audioManager, sfx);
+const modeSelectScene = new ModeSelectScene(sceneManager, audioManager, sfx, saveManager);
 const levelSelectScene = new LevelSelectScene(sceneManager, audioManager, sfx, saveManager);
 const quizPlayScene = new QuizPlayScene(sceneManager, audioManager, sfx);
 const setTimePlayScene = new SetTimePlayScene(sceneManager, audioManager, sfx);

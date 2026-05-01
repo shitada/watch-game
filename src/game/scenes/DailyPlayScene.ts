@@ -13,6 +13,7 @@ import { IncorrectEffect } from '@/game/effects/IncorrectEffect';
 import { DailyProgress } from '@/ui/DailyProgress';
 import { HomeButton } from '@/ui/HomeButton';
 import { formatTime } from '@/game/systems/QuizGenerator';
+import { showNotification } from '@/ui/Notification';
 
 export class DailyPlayScene implements Scene {
   private scene = new THREE.Scene();
@@ -249,14 +250,19 @@ export class DailyPlayScene implements Scene {
       this.correctCount++;
       this.sfx.play('correct');
       this.correctEffect.trigger(this.scene, new THREE.Vector3(0, -0.2, 1));
-      this.showNotification('⭕ せいかい！', '#2ECC71');
+      this.pendingTimers.push(
+        showNotification(this.overlay!, '⭕ せいかい！', '#2ECC71', {
+          top: '35%', fontSize: 'clamp(22px, 4.5vw, 36px)', padding: '14px 28px',
+        }),
+      );
     } else {
       this.sfx.play('incorrect');
       this.incorrectEffect.trigger(this.scene, new THREE.Vector3(0, -0.2, 1));
       this.clock3D.setTime(event.time);
-      this.showNotification(
-        `${event.name} は ${formatTime(event.time)} だよ！`,
-        '#E74C3C',
+      this.pendingTimers.push(
+        showNotification(this.overlay!, `${event.name} は ${formatTime(event.time)} だよ！`, '#E74C3C', {
+          top: '35%', fontSize: 'clamp(22px, 4.5vw, 36px)', padding: '14px 28px',
+        }),
       );
     }
 
@@ -280,42 +286,5 @@ export class DailyPlayScene implements Scene {
         this.showEvent();
       }
     }, 1500));
-  }
-
-  private showNotification(text: string, color: string): void {
-    const notif = document.createElement('div');
-    notif.textContent = text;
-    notif.style.cssText = `
-      position: absolute;
-      top: 35%;
-      left: 50%;
-      transform: translateX(-50%);
-      font-family: 'Zen Maru Gothic', sans-serif;
-      font-size: clamp(22px, 4.5vw, 36px);
-      font-weight: 900;
-      color: ${color};
-      background: rgba(255,255,255,0.95);
-      padding: 14px 28px;
-      border-radius: 20px;
-      border: 3px solid ${color};
-      pointer-events: none;
-      animation: notifPop 0.3s ease-out;
-      z-index: 50;
-    `;
-
-    if (!document.getElementById('notif-anim')) {
-      const style = document.createElement('style');
-      style.id = 'notif-anim';
-      style.textContent = `
-        @keyframes notifPop {
-          0% { transform: translateX(-50%) scale(0.5); opacity: 0; }
-          100% { transform: translateX(-50%) scale(1); opacity: 1; }
-        }
-      `;
-      document.head.appendChild(style);
-    }
-
-    this.overlay?.appendChild(notif);
-    this.pendingTimers.push(setTimeout(() => notif.remove(), 1200));
   }
 }

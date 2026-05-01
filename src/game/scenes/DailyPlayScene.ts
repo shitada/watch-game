@@ -13,6 +13,7 @@ import { IncorrectEffect } from '@/game/effects/IncorrectEffect';
 import { DailyProgress } from '@/ui/DailyProgress';
 import { CurrentTimeDisplay } from '@/ui/CurrentTimeDisplay';
 import { HomeButton } from '@/ui/HomeButton';
+import { ConfirmButton } from '@/ui/ConfirmButton';
 import { formatTime } from '@/game/systems/QuizGenerator';
 import { showNotification } from '@/ui/Notification';
 
@@ -27,9 +28,9 @@ export class DailyPlayScene implements Scene {
   private dailyProgress = new DailyProgress();
   private currentTimeDisplay = new CurrentTimeDisplay();
   private homeButton = new HomeButton();
+  private confirmButton = new ConfirmButton({ colorFrom: '#E67E22', colorTo: '#D35400' });
   private overlay: HTMLDivElement | null = null;
   private eventLabel: HTMLDivElement | null = null;
-  private confirmBtn: HTMLButtonElement | null = null;
 
   private sceneManager: SceneManager;
   private audioManager: AudioManager;
@@ -120,10 +121,10 @@ export class DailyPlayScene implements Scene {
     this.dailyProgress.unmount();
     this.currentTimeDisplay.unmount();
     this.homeButton.unmount();
+    this.confirmButton.unmount();
     this.overlay?.remove();
     this.overlay = null;
     this.eventLabel = null;
-    this.confirmBtn = null;
   }
 
   getThreeScene(): THREE.Scene { return this.scene; }
@@ -178,36 +179,10 @@ export class DailyPlayScene implements Scene {
       padding-bottom: 24px;
     `;
 
-    this.confirmBtn = document.createElement('button');
-    this.confirmBtn.textContent = 'けってい！';
-    this.confirmBtn.style.cssText = `
-      font-family: 'Zen Maru Gothic', sans-serif;
-      font-size: clamp(20px, 4vw, 32px);
-      font-weight: 900;
-      padding: 16px 48px;
-      border: none;
-      border-radius: 50px;
-      background: linear-gradient(180deg, #E67E22, #D35400);
-      color: #fff;
-      cursor: pointer;
-      pointer-events: auto;
-      touch-action: manipulation;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.2);
-      transition: transform 0.1s;
-    `;
-    this.confirmBtn.addEventListener('pointerdown', () => {
-      if (this.confirmBtn) this.confirmBtn.style.transform = 'scale(0.95)';
-    });
-    this.confirmBtn.addEventListener('pointerup', () => {
-      if (this.confirmBtn) this.confirmBtn.style.transform = 'scale(1)';
-    });
-    this.confirmBtn.addEventListener('pointerleave', () => {
-      if (this.confirmBtn) this.confirmBtn.style.transform = 'scale(1)';
-    });
-    this.confirmBtn.addEventListener('click', () => {
+    this.confirmButton.mount(bottomArea);
+    this.confirmButton.onClick(() => {
       this.handleConfirm();
     });
-    bottomArea.appendChild(this.confirmBtn);
     overlay.appendChild(bottomArea);
 
     const uiOverlay = document.getElementById('ui-overlay')!;
@@ -236,13 +211,13 @@ export class DailyPlayScene implements Scene {
       this.eventLabel.textContent = `${event.emoji} ${event.name}`;
     }
     this.currentTimeDisplay.setTime({ hours: 12, minutes: 0 });
-    this.enableConfirmButton();
+    this.confirmButton.enable();
   }
 
   private handleConfirm(): void {
     if (this.waitingNext) return;
     this.waitingNext = true;
-    this.disableConfirmButton();
+    this.confirmButton.disable();
 
     const event = DAILY_EVENTS[this.currentEventIndex];
     const answer = this.clock3D.getTime();
@@ -295,22 +270,5 @@ export class DailyPlayScene implements Scene {
         this.showEvent();
       }
     }, 1500));
-  }
-
-  private disableConfirmButton(): void {
-    if (this.confirmBtn?.style) {
-      this.confirmBtn.style.opacity = '0.5';
-      this.confirmBtn.style.pointerEvents = 'none';
-      this.confirmBtn.style.cursor = 'default';
-      this.confirmBtn.style.transform = 'scale(1)';
-    }
-  }
-
-  private enableConfirmButton(): void {
-    if (this.confirmBtn?.style) {
-      this.confirmBtn.style.opacity = '1';
-      this.confirmBtn.style.pointerEvents = 'auto';
-      this.confirmBtn.style.cursor = 'pointer';
-    }
   }
 }

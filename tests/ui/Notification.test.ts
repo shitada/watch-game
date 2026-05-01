@@ -1,90 +1,85 @@
-import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
-import { Notification } from '@/ui/Notification';
+import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
+import { showNotification } from '@/ui/Notification';
 
-describe('Notification', () => {
-  let notification: Notification;
+describe('showNotification', () => {
   let parent: HTMLDivElement;
 
   beforeEach(() => {
     vi.useFakeTimers();
-    notification = new Notification();
     parent = document.createElement('div');
-    notification.mount(parent);
+    document.body.appendChild(parent);
   });
 
   afterEach(() => {
-    notification.dispose();
     vi.useRealTimers();
+    document.body.innerHTML = '';
+    // Remove injected style
+    document.getElementById('notif-anim')?.remove();
   });
 
-  it('should add a style element to document.head on mount', () => {
-    const style = document.getElementById('notif-anim');
-    expect(style).not.toBeNull();
-    expect(style?.tagName).toBe('STYLE');
+  it('DOM要素が親に追加されること', () => {
+    showNotification(parent, 'テスト', '#2ECC71');
+    expect(parent.children.length).toBe(1);
+    expect(parent.children[0].textContent).toBe('テスト');
   });
 
-  it('should append a notification element to parent on show()', () => {
-    notification.show('せいかい！', '#2ECC71');
-    const notif = parent.querySelector('div');
-    expect(notif).not.toBeNull();
-    expect(notif?.textContent).toBe('せいかい！');
+  it('指定されたテキストと色が反映されること', () => {
+    showNotification(parent, '⭕ せいかい！', '#2ECC71');
+    const el = parent.children[0] as HTMLElement;
+    expect(el.textContent).toBe('⭕ せいかい！');
+    // jsdom normalizes hex colors to rgb
+    expect(el.style.color).toBe('rgb(46, 204, 113)');
   });
 
-  it('should apply the specified color to the notification', () => {
-    notification.show('テスト', '#E74C3C');
-    const notif = parent.querySelector('div')!;
-    // jsdom normalizes hex to rgb
-    expect(notif.style.color).toBe('rgb(231, 76, 60)');
-  });
-
-  it('should auto-remove notification after 1200ms', () => {
-    notification.show('消える通知', '#2ECC71');
-    expect(parent.querySelector('div')).not.toBeNull();
-    vi.advanceTimersByTime(1200);
-    expect(parent.querySelector('div')).toBeNull();
-  });
-
-  it('should support multiple simultaneous notifications', () => {
-    notification.show('通知1', '#2ECC71');
-    notification.show('通知2', '#E74C3C');
-    const divs = parent.querySelectorAll('div');
-    expect(divs.length).toBe(2);
-  });
-
-  it('should clear all pending timers on clearAll()', () => {
-    notification.show('通知1', '#2ECC71');
-    notification.show('通知2', '#E74C3C');
-    notification.clearAll();
-    vi.advanceTimersByTime(2000);
-    // Elements remain because timers were cleared
-    const divs = parent.querySelectorAll('div');
-    expect(divs.length).toBe(2);
-  });
-
-  it('should remove style element from document.head on dispose()', () => {
-    notification.dispose();
-    const style = document.getElementById('notif-anim');
-    expect(style).toBeNull();
-  });
-
-  it('should clear timers on dispose()', () => {
-    notification.show('テスト', '#2ECC71');
-    notification.dispose();
-    vi.advanceTimersByTime(2000);
-    // No errors thrown — timers were cleared
-  });
-
-  it('should not throw when show() is called after dispose()', () => {
-    notification.dispose();
-    expect(() => notification.show('テスト', '#2ECC71')).not.toThrow();
-  });
-
-  it('should not duplicate style element on multiple mounts', () => {
-    const other = new Notification();
-    const parent2 = document.createElement('div');
-    other.mount(parent2);
+  it('notif-anim スタイル要素が document.head に1つだけ存在すること', () => {
+    showNotification(parent, 'a', '#fff');
+    showNotification(parent, 'b', '#fff');
+    showNotification(parent, 'c', '#fff');
     const styles = document.querySelectorAll('#notif-anim');
     expect(styles.length).toBe(1);
-    other.dispose();
+    expect(styles[0].textContent).toContain('@keyframes notifPop');
+  });
+
+  it('1200ms後にDOM要素が自動削除されること', () => {
+    showNotification(parent, 'テスト', '#2ECC71');
+    expect(parent.children.length).toBe(1);
+    vi.advanceTimersByTime(1199);
+    expect(parent.children.length).toBe(1);
+    vi.advanceTimersByTime(1);
+    expect(parent.children.length).toBe(0);
+  });
+
+  it('topオプションでカスタム位置が設定できること', () => {
+    showNotification(parent, 'テスト', '#2ECC71', { top: '35%' });
+    const el = parent.children[0] as HTMLElement;
+    expect(el.style.cssText).toContain('top: 35%');
+  });
+
+  it('デフォルトのtopは40%であること', () => {
+    showNotification(parent, 'テスト', '#2ECC71');
+    const el = parent.children[0] as HTMLElement;
+    expect(el.style.cssText).toContain('top: 40%');
+  });
+
+  it('fontSizeオプションでフォントサイズを変更できること', () => {
+    showNotification(parent, 'テスト', '#2ECC71', {
+      fontSize: '22px',
+    });
+    const el = parent.children[0] as HTMLElement;
+    expect(el.style.fontSize).toBe('22px');
+  });
+
+  it('paddingオプションでパディングを変更できること', () => {
+    showNotification(parent, 'テスト', '#2ECC71', {
+      padding: '14px 28px',
+    });
+    const el = parent.children[0] as HTMLElement;
+    expect(el.style.cssText).toContain('14px 28px');
+  });
+
+  it('タイマーIDを返すこと', () => {
+    const timerId = showNotification(parent, 'テスト', '#2ECC71');
+    expect(timerId).toBeDefined();
+    expect(typeof timerId).not.toBe('undefined');
   });
 });

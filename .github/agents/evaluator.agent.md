@@ -108,7 +108,7 @@ git --no-pager diff main...HEAD
    ```
 
 4. **種別に応じたマージ制御:**
-   - **`bugfix` / `performance`** → PR を自動マージ:
+   - **`feature` 以外**（`bugfix`、`performance` など）→ PR を自動マージ:
      ```bash
      gh pr merge [PR番号] --squash --delete-branch
      ```
@@ -163,6 +163,6 @@ complete
 - **ハードゲートは例外なく適用する**
 - **コードの修正は行わない**（レビューと判定のみ）
 - **`feature` の PR は自動マージしない**
-- **`bugfix` / `performance` はハードゲート全通過後に自動マージする**
+- **`feature` 以外の種別はハードゲート全通過後に自動マージする**
 - `gh` CLI が認証済みであることを確認してから PR 操作を行う
 - 全ての出力は **日本語** で記述する

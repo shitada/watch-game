@@ -3,6 +3,8 @@ import type { Scene, SceneContext, GameMode } from '@/types';
 import { SceneManager } from '@/game/SceneManager';
 import { AudioManager } from '@/game/audio/AudioManager';
 import { SFXGenerator } from '@/game/audio/SFXGenerator';
+import { SaveManager } from '@/game/storage/SaveManager';
+import { LEVELS } from '@/game/config/LevelConfig';
 
 interface ModeCard {
   mode: GameMode;
@@ -56,6 +58,7 @@ export class ModeSelectScene implements Scene {
     sceneManager: SceneManager,
     audioManager: AudioManager,
     sfx: SFXGenerator,
+    private saveManager: SaveManager,
   ) {
     this.sceneManager = sceneManager;
     this.audioManager = audioManager;
@@ -195,9 +198,32 @@ export class ModeSelectScene implements Scene {
       line-height: 1.5;
     `;
 
+    card.setAttribute('data-mode', mode.mode);
     card.appendChild(emoji);
     card.appendChild(label);
     card.appendChild(desc);
+
+    // Progress badge
+    const badge = document.createElement('div');
+    const saveData = this.saveManager.load();
+    if (mode.hasLevels) {
+      const completed = saveData.completedLevels[mode.mode]?.length ?? 0;
+      badge.textContent = `★ ${completed}/${LEVELS.length}`;
+    } else {
+      const completed = saveData.completedLevels[mode.mode]?.length ?? 0;
+      badge.textContent = completed > 0 ? '✅ クリア' : '— みプレイ';
+    }
+    badge.style.cssText = `
+      font-family: 'Zen Maru Gothic', sans-serif;
+      font-size: clamp(11px, 2vw, 14px);
+      color: rgba(255,255,255,0.95);
+      background: rgba(0,0,0,0.2);
+      border-radius: 12px;
+      padding: 4px 12px;
+      margin-top: 8px;
+      display: inline-block;
+    `;
+    card.appendChild(badge);
 
     card.addEventListener('pointerdown', () => {
       card.style.transform = 'scale(0.96)';

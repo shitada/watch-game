@@ -11,6 +11,7 @@ import { GameSettings } from '@/game/config/GameSettings';
 import { CorrectEffect } from '@/game/effects/CorrectEffect';
 import { IncorrectEffect } from '@/game/effects/IncorrectEffect';
 import { DailyProgress } from '@/ui/DailyProgress';
+import { CurrentTimeDisplay } from '@/ui/CurrentTimeDisplay';
 import { HomeButton } from '@/ui/HomeButton';
 import { formatTime } from '@/game/systems/QuizGenerator';
 import { showNotification } from '@/ui/Notification';
@@ -24,6 +25,7 @@ export class DailyPlayScene implements Scene {
   private correctEffect = new CorrectEffect();
   private incorrectEffect = new IncorrectEffect();
   private dailyProgress = new DailyProgress();
+  private currentTimeDisplay = new CurrentTimeDisplay();
   private homeButton = new HomeButton();
   private overlay: HTMLDivElement | null = null;
   private eventLabel: HTMLDivElement | null = null;
@@ -86,6 +88,7 @@ export class DailyPlayScene implements Scene {
       this.clockController.setEnabled(true);
       this.clockController.onChange(() => {
         this.sfx.play('tick');
+        this.currentTimeDisplay.setTime(this.clock3D.getTime());
       });
     }
 
@@ -115,6 +118,7 @@ export class DailyPlayScene implements Scene {
     this.clockController = null;
     this.audioManager.stopBGM();
     this.dailyProgress.unmount();
+    this.currentTimeDisplay.unmount();
     this.homeButton.unmount();
     this.overlay?.remove();
     this.overlay = null;
@@ -161,6 +165,8 @@ export class DailyPlayScene implements Scene {
       text-align: center;
     `;
     topSection.appendChild(this.eventLabel);
+
+    this.currentTimeDisplay.mount(topSection);
 
     overlay.appendChild(topSection);
 
@@ -229,6 +235,7 @@ export class DailyPlayScene implements Scene {
     if (this.eventLabel) {
       this.eventLabel.textContent = `${event.emoji} ${event.name}`;
     }
+    this.currentTimeDisplay.setTime({ hours: 12, minutes: 0 });
     this.enableConfirmButton();
   }
 

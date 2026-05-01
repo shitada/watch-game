@@ -10,41 +10,49 @@ describe('HUD', () => {
     parent = document.createElement('div');
   });
 
-  it('should add children to parent on mount', () => {
+  it('mount() で親要素に DOM が追加されること', () => {
     hud.mount(parent);
-    expect(parent.children.length).toBeGreaterThan(0);
+    expect(parent.children.length).toBe(1);
   });
 
-  it('should display question number via updateQuestion', () => {
+  it('mount() で questionEl と scoreEl が生成されること', () => {
     hud.mount(parent);
-    hud.updateQuestion(2, 5);
-    const text = parent.textContent;
-    expect(text).toContain('2');
-    expect(text).toContain('5');
+    const container = parent.children[0];
+    expect(container.children.length).toBe(2);
   });
 
-  it('should display score via updateScore', () => {
+  it('updateQuestion(3, 5) で「もんだい 3/5」が表示されること', () => {
     hud.mount(parent);
-    hud.updateScore(3);
-    const text = parent.textContent;
-    expect(text).toContain('3');
+    hud.updateQuestion(3, 5);
+    const spans = parent.querySelectorAll('span');
+    expect(spans[0].textContent).toBe('もんだい 3/5');
   });
 
-  it('should remove DOM on unmount', () => {
+  it('updateScore(2) で「⭕ 2」が表示されること', () => {
+    hud.mount(parent);
+    hud.updateScore(2);
+    const spans = parent.querySelectorAll('span');
+    expect(spans[1].textContent).toBe('⭕ 2');
+  });
+
+  it('unmount() で DOM が除去されること', () => {
     hud.mount(parent);
     hud.unmount();
     expect(parent.children.length).toBe(0);
   });
 
-  it('should not throw when calling updateQuestion after unmount', () => {
+  it('unmount() 後に updateQuestion/updateScore を呼んでもエラーにならないこと', () => {
     hud.mount(parent);
     hud.unmount();
-    expect(() => hud.updateQuestion(1, 5)).not.toThrow();
+    expect(() => {
+      hud.updateQuestion(1, 5);
+      hud.updateScore(0);
+    }).not.toThrow();
   });
 
-  it('should not throw when calling updateScore after unmount', () => {
+  it('スタイルに pointer-events: none が設定されること', () => {
     hud.mount(parent);
-    hud.unmount();
-    expect(() => hud.updateScore(0)).not.toThrow();
+    const container = parent.children[0] as HTMLElement;
+    expect(container.style.pointerEvents).toBe('none');
   });
 });

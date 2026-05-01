@@ -35,6 +35,7 @@ describe('LevelSelectScene', () => {
 
   beforeEach(() => {
     setupDOM();
+    localStorage.clear();
 
     sceneManager = new SceneManager();
     sceneManager.requestTransition = vi.fn();
@@ -49,6 +50,7 @@ describe('LevelSelectScene', () => {
     } as unknown as SFXGenerator;
 
     saveManager = new SaveManager();
+    scene = new LevelSelectScene(sceneManager, audioManager, sfx, saveManager);
   });
 
   afterEach(() => {
@@ -57,91 +59,193 @@ describe('LevelSelectScene', () => {
     localStorage.clear();
   });
 
-  function getCards(): HTMLButtonElement[] {
-    const overlay = document.getElementById('ui-overlay')!;
-    return Array.from(overlay.querySelectorAll('button')).filter(
-      (btn) => btn.textContent !== '← もどる',
-    ) as HTMLButtonElement[];
-  }
-
-  describe('ベストスコア表示', () => {
-    it('ベストスコアが存在するレベルで「ベスト: X/Y」が表示される', () => {
-      saveManager.updateBestScore('quiz-1', 4);
-      scene = new LevelSelectScene(sceneManager, audioManager, sfx, saveManager);
+  describe('星評価表示（ベストスコアベース）', () => {
+    it('未プレイのレベルは ☆☆☆ を表示する', () => {
       scene.enter({ mode: 'quiz' });
 
-      const cards = getCards();
-      expect(cards[0].textContent).toContain('ベスト: 4/5');
+      const uiOverlay = document.getElementById('ui-overlay')!;
+      const starElements = uiOverlay.querySelectorAll('div');
+      // 各レベルカード内の星テキストを収集
+      const starTexts = Array.from(starElements)
+        .map(el => el.textContent)
+        .filter(text => text && /^[★☆]+$/.test(text));
+
+      expect(starTexts.length).toBe(LEVELS.length);
+      starTexts.forEach(text => {
+        expect(text).toBe('☆☆☆');
+      });
     });
 
-    it('ベストスコアが存在しないレベルでベスト表示がない', () => {
-      scene = new LevelSelectScene(sceneManager, audioManager, sfx, saveManager);
+    it('ratio < 0.6 のとき ☆☆☆ を表示する', () => {
+      // レベル1: questionCount=5, bestScore=2 → ratio=0.4
+      const data = saveManager.load();
+      data.bestScores['quiz-1'] = 2;
+      saveManager.save(data);
+
       scene.enter({ mode: 'quiz' });
 
-      const cards = getCards();
-      expect(cards[0].textContent).not.toContain('ベスト:');
+      const uiOverlay = document.getElementById('ui-overlay')!;
+      const starTexts = Array.from(uiOverlay.querySelectorAll('div'))
+        .map(el => el.textContent)
+        .filter(text => text && /^[★☆]+$/.test(text));
+
+      expect(starTexts[0]).toBe('☆☆☆');
     });
 
-    it('setTimeモードでベストスコアが正しく取得される', () => {
-      saveManager.updateBestScore('setTime-2', 3);
-      scene = new LevelSelectScene(sceneManager, audioManager, sfx, saveManager);
+    it('ratio >= 0.6 のとき ★☆☆ を表示する', () => {
+      // レベル1: questionCount=5, bestScore=3 → ratio=0.6
+      const data = saveManager.load();
+      data.bestScores['quiz-1'] = 3;
+      saveManager.save(data);
+
+      scene.enter({ mode: 'quiz' });
+
+      const uiOverlay = document.getElementById('ui-overlay')!;
+      const starTexts = Array.from(uiOverlay.querySelectorAll('div'))
+        .map(el => el.textContent)
+        .filter(text => text && /^[★☆]+$/.test(text));
+
+      expect(starTexts[0]).toBe('★☆☆');
+    });
+
+    it('ratio >= 0.8 のとき ★★☆ を表示する', () => {
+      // レベル1: questionCount=5, bestScore=4 → ratio=0.8
+      const data = saveManager.load();
+      data.bestScores['quiz-1'] = 4;
+      saveManager.save(data);
+
+      scene.enter({ mode: 'quiz' });
+
+      const uiOverlay = document.getElementById('ui-overlay')!;
+      const starTexts = Array.from(uiOverlay.querySelectorAll('div'))
+        .map(el => el.textContent)
+        .filter(text => text && /^[★☆]+$/.test(text));
+
+      expect(starTexts[0]).toBe('★★☆');
+    });
+
+    it('ratio === 1.0 のとき ★★★ を表示する', () => {
+      // レベル1: questionCount=5, bestScore=5 → ratio=1.0
+      const data = saveManager.load();
+      data.bestScores['quiz-1'] = 5;
+      saveManager.save(data);
+
+      scene.enter({ mode: 'quiz' });
+
+      const uiOverlay = document.getElementById('ui-overlay')!;
+      const starTexts = Array.from(uiOverlay.querySelectorAll('div'))
+        .map(el => el.textContent)
+        .filter(text => text && /^[★☆]+$/.test(text));
+
+      expect(starTexts[0]).toBe('★★★');
+    });
+
+    it('未プレイ（☆☆☆）はグレー(#BDC3C7)で表示される', () => {
+      scene.enter({ mode: 'quiz' });
+
+      const uiOverlay = document.getElementById('ui-overlay')!;
+      const starElements = Array.from(uiOverlay.querySelectorAll('div'))
+        .filter(el => el.textContent && /^[★☆]+$/.test(el.textContent));
+
+      starElements.forEach(el => {
+        expect(el.style.color).toBe('rgb(189, 195, 199)');
+      });
+    });
+
+    it('★ありはゴールド(#F39C12)で表示される', () => {
+      const data = saveManager.load();
+      data.bestScores['quiz-1'] = 5; // ★★★
+      saveManager.save(data);
+
+      scene.enter({ mode: 'quiz' });
+
+      const uiOverlay = document.getElementById('ui-overlay')!;
+      const starElements = Array.from(uiOverlay.querySelectorAll('div'))
+        .filter(el => el.textContent && /^[★☆]+$/.test(el.textContent));
+
+      // レベル1は★ありなのでゴールド
+      expect(starElements[0].style.color).toBe('rgb(243, 156, 18)');
+    });
+
+    it('setTime モードでも正しいキーでスコアを参照する', () => {
+      const data = saveManager.load();
+      data.bestScores['setTime-1'] = 5; // ★★★
+      saveManager.save(data);
+
       scene.enter({ mode: 'setTime' });
 
-      const cards = getCards();
-      // レベル2のカード（index 1）にベストスコアが表示される
-      expect(cards[1].textContent).toContain('ベスト: 3/5');
-      // レベル1のカード（index 0）にはベストスコアが表示されない
-      expect(cards[0].textContent).not.toContain('ベスト:');
+      const uiOverlay = document.getElementById('ui-overlay')!;
+      const starTexts = Array.from(uiOverlay.querySelectorAll('div'))
+        .map(el => el.textContent)
+        .filter(text => text && /^[★☆]+$/.test(text));
+
+      expect(starTexts[0]).toBe('★★★');
     });
   });
 
-  describe('パフォーマンス星評価', () => {
-    it('100%正解で★★★が表示される', () => {
-      const qCount = LEVELS[0].questionCount; // 5
-      saveManager.updateBestScore('quiz-1', qCount);
-      scene = new LevelSelectScene(sceneManager, audioManager, sfx, saveManager);
+  describe('ベストスコア・トロフィー表示', () => {
+    it('ベストスコアがある場合「🎯 3/5」のように表示される', () => {
+      const data = saveManager.load();
+      data.bestScores['quiz-1'] = 3;
+      saveManager.save(data);
+
       scene.enter({ mode: 'quiz' });
 
-      const cards = getCards();
-      expect(cards[0].textContent).toContain('★★★');
+      const uiOverlay = document.getElementById('ui-overlay')!;
+      const overlay = uiOverlay.firstElementChild!;
+      const level1Card = overlay.querySelectorAll('button')[0];
+      expect(level1Card.textContent).toContain('🎯 3/5');
     });
 
-    it('80%以上で★★☆が表示される', () => {
-      // レベル1: questionCount=5, 80%=4
-      saveManager.updateBestScore('quiz-1', 4);
-      scene = new LevelSelectScene(sceneManager, audioManager, sfx, saveManager);
+    it('ベストスコアがない（未プレイ）場合はスコア表示がない', () => {
       scene.enter({ mode: 'quiz' });
 
-      const cards = getCards();
-      expect(cards[0].textContent).toContain('★★☆');
+      const uiOverlay = document.getElementById('ui-overlay')!;
+      const overlay = uiOverlay.firstElementChild!;
+      const level1Card = overlay.querySelectorAll('button')[0];
+      expect(level1Card.textContent).not.toContain('🎯');
     });
 
-    it('60%以上で★☆☆が表示される', () => {
-      // レベル1: questionCount=5, 60%=3
-      saveManager.updateBestScore('quiz-1', 3);
-      scene = new LevelSelectScene(sceneManager, audioManager, sfx, saveManager);
+    it('トロフィーがある場合「🏆」が表示される', () => {
+      const data = saveManager.load();
+      data.trophies = ['quiz-2-perfect'];
+      data.bestScores['quiz-2'] = 5;
+      saveManager.save(data);
+
       scene.enter({ mode: 'quiz' });
 
-      const cards = getCards();
-      expect(cards[0].textContent).toContain('★☆☆');
+      const uiOverlay = document.getElementById('ui-overlay')!;
+      const overlay = uiOverlay.firstElementChild!;
+      const level2Card = overlay.querySelectorAll('button')[1];
+      expect(level2Card.textContent).toContain('🏆');
     });
 
-    it('60%未満で☆☆☆が表示される', () => {
-      // レベル1: questionCount=5, 40%=2
-      saveManager.updateBestScore('quiz-1', 2);
-      scene = new LevelSelectScene(sceneManager, audioManager, sfx, saveManager);
+    it('トロフィーがない場合「🏆」は表示されない', () => {
+      const data = saveManager.load();
+      data.bestScores['quiz-1'] = 3;
+      saveManager.save(data);
+
       scene.enter({ mode: 'quiz' });
 
-      const cards = getCards();
-      expect(cards[0].textContent).toContain('☆☆☆');
+      const uiOverlay = document.getElementById('ui-overlay')!;
+      const overlay = uiOverlay.firstElementChild!;
+      const level1Card = overlay.querySelectorAll('button')[0];
+      expect(level1Card.textContent).not.toContain('🏆');
     });
 
-    it('ベストスコアが未設定のレベルでは☆☆☆が表示される', () => {
-      scene = new LevelSelectScene(sceneManager, audioManager, sfx, saveManager);
-      scene.enter({ mode: 'quiz' });
+    it('setTimeモードでも正しいキーでスコア・トロフィーを参照する', () => {
+      const data = saveManager.load();
+      data.bestScores['setTime-1'] = 4;
+      data.trophies = ['setTime-1-perfect'];
+      saveManager.save(data);
 
-      const cards = getCards();
-      expect(cards[0].textContent).toContain('☆☆☆');
+      scene.enter({ mode: 'setTime' });
+
+      const uiOverlay = document.getElementById('ui-overlay')!;
+      const overlay = uiOverlay.firstElementChild!;
+      const level1Card = overlay.querySelectorAll('button')[0];
+      expect(level1Card.textContent).toContain('🎯 4/5');
+      expect(level1Card.textContent).toContain('🏆');
     });
   });
 });

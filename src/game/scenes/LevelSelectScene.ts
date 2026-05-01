@@ -89,15 +89,17 @@ export class LevelSelectScene implements Scene {
 
     for (const levelDef of LEVELS) {
       const isDone = completed.includes(levelDef.level);
+      // 実績ベースの星評価（閾値は ResultScene と同一基準: 0.6, 0.8, 1.0）
       const scoreKey = `${this.currentMode}-${levelDef.level}`;
-      const bestScore = saveData.bestScores[scoreKey];
-      const hasBest = bestScore !== undefined;
-      const perfStars = hasBest
-        ? this.getPerformanceStars(bestScore / levelDef.questionCount)
-        : '☆☆☆';
+      const rawBestScore = saveData.bestScores[scoreKey];
+      const bestScore = rawBestScore ?? 0;
+      const ratio = levelDef.questionCount > 0 ? bestScore / levelDef.questionCount : 0;
+      const stars = ratio === 1 ? '★★★' : ratio >= 0.8 ? '★★☆' : ratio >= 0.6 ? '★☆☆' : '☆☆☆';
+      const starColor = ratio >= 0.6 ? '#F39C12' : '#BDC3C7';
 
       const card = document.createElement('button');
       card.style.cssText = `
+        position: relative;
         font-family: 'Zen Maru Gothic', sans-serif;
         padding: 16px 20px;
         border: 3px solid ${isDone ? '#27AE60' : '#3498DB'};
@@ -110,10 +112,10 @@ export class LevelSelectScene implements Scene {
       `;
 
       const starsEl = document.createElement('div');
-      starsEl.textContent = perfStars;
+      starsEl.textContent = stars;
       starsEl.style.cssText = `
         font-size: clamp(16px, 3vw, 24px);
-        color: #F39C12;
+        color: ${starColor};
         margin-bottom: 4px;
       `;
 
@@ -137,15 +139,32 @@ export class LevelSelectScene implements Scene {
       card.appendChild(nameEl);
       card.appendChild(descEl);
 
-      if (hasBest) {
-        const bestEl = document.createElement('div');
-        bestEl.textContent = `ベスト: ${bestScore}/${levelDef.questionCount}`;
-        bestEl.style.cssText = `
-          font-size: clamp(10px, 1.8vw, 13px);
-          color: #7F8C8D;
-          margin-top: 4px;
+      // Best score display
+      if (rawBestScore !== undefined) {
+        const scoreEl = document.createElement('div');
+        scoreEl.textContent = `🎯 ${bestScore}/${levelDef.questionCount}`;
+        scoreEl.style.cssText = `
+          font-size: clamp(11px, 2vw, 14px);
+          color: #3498DB;
+          font-weight: 700;
+          margin-top: 6px;
         `;
-        card.appendChild(bestEl);
+        card.appendChild(scoreEl);
+      }
+
+      // Trophy badge
+      const trophyKey = `${this.currentMode}-${levelDef.level}-perfect`;
+      const hasTrophy = saveData.trophies.includes(trophyKey);
+      if (hasTrophy) {
+        const trophyEl = document.createElement('div');
+        trophyEl.textContent = '🏆';
+        trophyEl.style.cssText = `
+          position: absolute;
+          top: 8px;
+          right: 8px;
+          font-size: clamp(16px, 3vw, 24px);
+        `;
+        card.appendChild(trophyEl);
       }
 
       card.addEventListener('pointerdown', () => {
@@ -199,13 +218,5 @@ export class LevelSelectScene implements Scene {
     const uiOverlay = document.getElementById('ui-overlay')!;
     uiOverlay.appendChild(overlay);
     this.overlay = overlay;
-  }
-
-  // NOTE: ResultScene と同一基準。基準変更時は両方更新すること
-  private getPerformanceStars(ratio: number): string {
-    if (ratio === 1) return '★★★';
-    if (ratio >= 0.8) return '★★☆';
-    if (ratio >= 0.6) return '★☆☆';
-    return '☆☆☆';
   }
 }

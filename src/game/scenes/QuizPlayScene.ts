@@ -6,6 +6,7 @@ import { SFXGenerator } from '@/game/audio/SFXGenerator';
 import { Clock3D } from '@/game/entities/Clock3D';
 import { QuizGenerator, formatTime } from '@/game/systems/QuizGenerator';
 import { getLevelDef } from '@/game/config/LevelConfig';
+import { GameSettings } from '@/game/config/GameSettings';
 import { CorrectEffect } from '@/game/effects/CorrectEffect';
 import { IncorrectEffect } from '@/game/effects/IncorrectEffect';
 import { HUD } from '@/ui/HUD';
@@ -38,6 +39,7 @@ export class QuizPlayScene implements Scene {
   private results: QuizResult[] = [];
   private waitingNext = false;
   private pendingTimers: ReturnType<typeof setTimeout>[] = [];
+  private hintShown = false;
 
   constructor(
     sceneManager: SceneManager,
@@ -166,6 +168,11 @@ export class QuizPlayScene implements Scene {
   }
 
   private showQuestion(): void {
+    // Clear previous timers (W-2: hint timer + any lingering notification timers)
+    this.pendingTimers.forEach(id => clearTimeout(id));
+    this.pendingTimers = [];
+    this.hintShown = false;
+
     const q = this.questions[this.currentQuestion];
     const def = getLevelDef(this.level);
 
@@ -173,6 +180,21 @@ export class QuizPlayScene implements Scene {
     this.hud.updateQuestion(this.currentQuestion + 1, def.questionCount);
     this.hud.updateScore(this.correctCount);
     this.choiceButtons.setChoices(this.choices[this.currentQuestion]);
+
+    // Set hint timer (W-1: added to pendingTimers for exit cleanup)
+    this.pendingTimers.push(setTimeout(() => {
+      this.triggerHint();
+    }, GameSettings.HINT_DELAY_MS));
+  }
+
+  private triggerHint(): void {
+    if (this.hintShown || this.waitingNext) return;
+    this.hintShown = true;
+    this.sfx.play('hint');
+    this.choiceButtons.showHint(this.correctIndex[this.currentQuestion]);
+    this.pendingTimers.push(
+      showNotification(this.overlay!, '💡 ヒント！', '#F39C12'),
+    );
   }
 
   private handleAnswer(selectedIndex: number): void {

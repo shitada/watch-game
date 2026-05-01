@@ -91,4 +91,60 @@ describe('ChoiceButtons', () => {
     choiceButtons.unmount();
     expect(parent.querySelector('div')).toBeNull();
   });
+
+  describe('showHint', () => {
+    it('should dim 2 incorrect buttons and keep correct + 1 incorrect visible', () => {
+      choiceButtons.setChoices(sampleChoices);
+      const correctIndex = 1;
+      choiceButtons.showHint(correctIndex);
+
+      const buttons = parent.querySelectorAll('button');
+      const dimmed = Array.from(buttons).filter(b => b.style.opacity === '0.3');
+      const active = Array.from(buttons).filter(b => b.style.opacity !== '0.3');
+
+      expect(dimmed.length).toBe(2);
+      expect(active.length).toBe(2);
+      // Correct button must be active
+      expect(buttons[correctIndex].style.opacity).not.toBe('0.3');
+    });
+
+    it('should set pointerEvents to none on dimmed buttons', () => {
+      choiceButtons.setChoices(sampleChoices);
+      choiceButtons.showHint(0);
+
+      const buttons = parent.querySelectorAll('button');
+      const dimmed = Array.from(buttons).filter(b => b.style.opacity === '0.3');
+      dimmed.forEach(b => {
+        expect(b.style.pointerEvents).toBe('none');
+      });
+    });
+
+    it('should not dim the correct button', () => {
+      choiceButtons.setChoices(sampleChoices);
+      for (let i = 0; i < 4; i++) {
+        choiceButtons.setChoices(sampleChoices);
+        choiceButtons.showHint(i);
+        const buttons = parent.querySelectorAll('button');
+        expect(buttons[i].style.opacity).not.toBe('0.3');
+        expect(buttons[i].style.pointerEvents).not.toBe('none');
+      }
+    });
+
+    it('should do nothing when disabled (after showResult)', () => {
+      choiceButtons.setChoices(sampleChoices);
+      choiceButtons.showResult(0, 1);
+      choiceButtons.showHint(0);
+
+      const buttons = parent.querySelectorAll('button');
+      // showResult already sets opacity 0.5 on non-correct/selected, not 0.3
+      const dimmedByHint = Array.from(buttons).filter(b => b.style.opacity === '0.3');
+      expect(dimmedByHint.length).toBe(0);
+    });
+
+    it('should not dim buttons if not mounted', () => {
+      choiceButtons.unmount();
+      // Should not throw
+      expect(() => choiceButtons.showHint(0)).not.toThrow();
+    });
+  });
 });

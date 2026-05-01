@@ -21,4 +21,5 @@ export const GameSettings = {
   },
   QUIZ_QUESTIONS_PER_LEVEL: 5,
   DAILY_TOLERANCE_MINUTES: 15,
+  HINT_DELAY_MS: 8000,
 } as const;

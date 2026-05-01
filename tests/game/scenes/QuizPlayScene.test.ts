@@ -3,6 +3,7 @@ import { QuizPlayScene } from '@/game/scenes/QuizPlayScene';
 import { SceneManager } from '@/game/SceneManager';
 import { AudioManager } from '@/game/audio/AudioManager';
 import { SFXGenerator } from '@/game/audio/SFXGenerator';
+import { GameSettings } from '@/game/config/GameSettings';
 
 // Mock Canvas 2D context
 HTMLCanvasElement.prototype.getContext = vi.fn().mockReturnValue({
@@ -101,5 +102,83 @@ describe('QuizPlayScene', () => {
       (call: unknown[]) => call[0] === 'result',
     );
     expect(resultTransitions.length).toBe(0);
+  });
+
+  describe('ヒントタイマー', () => {
+    it('8秒後にヒントSFXが再生されること', () => {
+      // Wait for hint delay
+      vi.advanceTimersByTime(GameSettings.HINT_DELAY_MS);
+
+      expect(sfx.play).toHaveBeenCalledWith('hint');
+    });
+
+    it('8秒後にボタンが2つ薄くなること（2択になる）', () => {
+      vi.advanceTimersByTime(GameSettings.HINT_DELAY_MS);
+
+      const buttons = document.querySelectorAll('button');
+      const choiceButtons = Array.from(buttons).filter(b => b.textContent !== '🏠');
+      const dimmed = choiceButtons.filter(b => b.style.opacity === '0.3');
+      expect(dimmed.length).toBe(2);
+    });
+
+    it('回答するとヒントタイマーがクリアされること', () => {
+      // Answer before hint triggers
+      const buttons = document.querySelectorAll('button');
+      const choiceButton = Array.from(buttons).find(b => b.textContent !== '🏠');
+      choiceButton?.click();
+
+      // Advance past the 1500ms answer delay but not enough for new hint timer
+      // handleAnswer sets waitingNext=true, after 1500ms showQuestion resets it
+      // The original hint timer (8000ms) should not fire because waitingNext is true
+      // Advance only to just before the next question's hint would fire
+      vi.advanceTimersByTime(1500);
+
+      // Now we are on next question. Advance less than HINT_DELAY_MS
+      // to confirm the original hint didn't fire
+      const hintCalls = (sfx.play as ReturnType<typeof vi.fn>).mock.calls.filter(
+        (call: unknown[]) => call[0] === 'hint',
+      );
+      expect(hintCalls.length).toBe(0);
+    });
+
+    it('ヒントは1問につき1回のみ発動すること', () => {
+      // Trigger hint
+      vi.advanceTimersByTime(GameSettings.HINT_DELAY_MS);
+
+      const hintCallsBefore = (sfx.play as ReturnType<typeof vi.fn>).mock.calls.filter(
+        (call: unknown[]) => call[0] === 'hint',
+      );
+      expect(hintCallsBefore.length).toBe(1);
+
+      // Wait more time - should not trigger again
+      vi.advanceTimersByTime(GameSettings.HINT_DELAY_MS);
+
+      const hintCallsAfter = (sfx.play as ReturnType<typeof vi.fn>).mock.calls.filter(
+        (call: unknown[]) => call[0] === 'hint',
+      );
+      expect(hintCallsAfter.length).toBe(1);
+    });
+
+    it('exit()でヒントタイマーがクリアされること', () => {
+      scene.exit();
+
+      vi.advanceTimersByTime(GameSettings.HINT_DELAY_MS);
+
+      const hintCalls = (sfx.play as ReturnType<typeof vi.fn>).mock.calls.filter(
+        (call: unknown[]) => call[0] === 'hint',
+      );
+      expect(hintCalls.length).toBe(0);
+    });
+
+    it('💡 ヒント！通知が表示されること', () => {
+      vi.advanceTimersByTime(GameSettings.HINT_DELAY_MS);
+
+      const overlay = document.getElementById('ui-overlay')!;
+      const notifications = overlay.querySelectorAll('div');
+      const hintNotif = Array.from(notifications).find(
+        n => n.textContent === '💡 ヒント！',
+      );
+      expect(hintNotif).toBeTruthy();
+    });
   });
 });

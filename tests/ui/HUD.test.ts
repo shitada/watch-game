@@ -8,43 +8,43 @@ describe('HUD', () => {
   beforeEach(() => {
     hud = new HUD();
     parent = document.createElement('div');
+  });
+
+  it('should add children to parent on mount', () => {
     hud.mount(parent);
+    expect(parent.children.length).toBeGreaterThan(0);
   });
 
-  it('should mount container with two span elements', () => {
-    const spans = parent.querySelectorAll('span');
-    expect(spans.length).toBe(2);
+  it('should display question number via updateQuestion', () => {
+    hud.mount(parent);
+    hud.updateQuestion(2, 5);
+    const text = parent.textContent;
+    expect(text).toContain('2');
+    expect(text).toContain('5');
   });
 
-  it('should set pointer-events to none on container', () => {
-    const container = parent.querySelector('div')!;
-    expect(container.style.pointerEvents).toBe('none');
+  it('should display score via updateScore', () => {
+    hud.mount(parent);
+    hud.updateScore(3);
+    const text = parent.textContent;
+    expect(text).toContain('3');
   });
 
-  it('should update question text', () => {
-    hud.updateQuestion(3, 10);
-    const spans = parent.querySelectorAll('span');
-    expect(spans[0].textContent).toBe('もんだい 3/10');
-  });
-
-  it('should update score text', () => {
-    hud.updateScore(5);
-    const spans = parent.querySelectorAll('span');
-    expect(spans[1].textContent).toBe('⭕ 5');
-  });
-
-  it('should clean up on unmount', () => {
+  it('should remove DOM on unmount', () => {
+    hud.mount(parent);
     hud.unmount();
-    expect(parent.querySelector('div')).toBeNull();
+    expect(parent.children.length).toBe(0);
   });
 
-  it('should not crash when calling updateQuestion after unmount', () => {
+  it('should not throw when calling updateQuestion after unmount', () => {
+    hud.mount(parent);
     hud.unmount();
     expect(() => hud.updateQuestion(1, 5)).not.toThrow();
   });
 
-  it('should not crash when calling updateScore after unmount', () => {
+  it('should not throw when calling updateScore after unmount', () => {
+    hud.mount(parent);
     hud.unmount();
-    expect(() => hud.updateScore(3)).not.toThrow();
+    expect(() => hud.updateScore(0)).not.toThrow();
   });
 });

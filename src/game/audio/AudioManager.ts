@@ -37,6 +37,10 @@ export class AudioManager {
     this.bgmGenerator?.stop();
   }
 
+  pauseBGM(): void {
+    this.bgmGenerator?.pause();
+  }
+
   resumeBGM(): void {
     this.bgmGenerator?.resume();
   }

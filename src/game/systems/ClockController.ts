@@ -1,5 +1,6 @@
 import * as THREE from 'three';
 import { Clock3D, HandType } from '@/game/entities/Clock3D';
+import { ClockTime } from '@/types';
 
 export class ClockController {
   private clock: Clock3D;
@@ -10,6 +11,9 @@ export class ClockController {
   private enabled = false;
   private snapStep = 1;
   private onChangeCallback: (() => void) | null = null;
+
+  // Time change detection
+  private prevTime: ClockTime | null = null;
 
   // Hand selection
   private selectedHand: HandType | null = null;
@@ -62,6 +66,7 @@ export class ClockController {
       this.dragging = false;
       this.selectedHand = null;
       this.prevAngle = null;
+      this.prevTime = null;
       this.clock.clearHighlight();
     }
     this.enabled = enabled;
@@ -156,6 +161,10 @@ export class ClockController {
     return delta;
   }
 
+  private isSameTime(a: ClockTime, b: ClockTime): boolean {
+    return a.hours === b.hours && a.minutes === b.minutes;
+  }
+
   private onPointerDown(e: PointerEvent): void {
     if (!this.enabled) return;
     const ndc = this.getNDC(e);
@@ -166,6 +175,7 @@ export class ClockController {
       this.selectedHand = hand;
       this.dragging = true;
       this.prevAngle = this.getAngleFromPointer(ndc);
+      this.prevTime = this.clock.getTime();
       this.clock.highlightHand(hand);
       this.renderer.domElement.setPointerCapture(e.pointerId);
     }
@@ -190,7 +200,12 @@ export class ClockController {
     } else {
       this.clock.setHourAngle(angle);
     }
-    this.onChangeCallback?.();
+
+    const currentTime = this.clock.getTime();
+    if (!this.prevTime || !this.isSameTime(currentTime, this.prevTime)) {
+      this.prevTime = currentTime;
+      this.onChangeCallback?.();
+    }
   }
 
   private onPointerUp(): void {
@@ -201,7 +216,13 @@ export class ClockController {
     if (this.selectedHand === 'minute' && this.snapStep > 1) {
       this.clock.snapMinutes(this.snapStep);
     }
-    this.onChangeCallback?.();
+
+    const currentTime = this.clock.getTime();
+    if (!this.prevTime || !this.isSameTime(currentTime, this.prevTime)) {
+      this.onChangeCallback?.();
+    }
+
+    this.prevTime = null;
     this.selectedHand = null;
     this.clock.clearHighlight();
   }

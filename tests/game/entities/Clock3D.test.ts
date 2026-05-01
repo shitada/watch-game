@@ -1,4 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
+import * as THREE from 'three';
 import { Clock3D } from '@/game/entities/Clock3D';
 
 // Mock canvas 2D context for jsdom
@@ -151,5 +152,67 @@ describe('Clock3D', () => {
     clock.clearHighlight();
     clock.highlightHand('hour');
     clock.clearHighlight();
+  });
+
+  describe('dispose', () => {
+    it('should not throw when called', () => {
+      const clock = new Clock3D();
+      expect(() => clock.dispose()).not.toThrow();
+    });
+
+    it('should remove all children from group', () => {
+      const clock = new Clock3D();
+      expect(clock.group.children.length).toBeGreaterThan(0);
+      clock.dispose();
+      expect(clock.group.children.length).toBe(0);
+    });
+
+    it('should not throw when called twice (idempotent)', () => {
+      const clock = new Clock3D();
+      clock.dispose();
+      expect(() => clock.dispose()).not.toThrow();
+    });
+
+    it('should call dispose on geometry and material of meshes', () => {
+      const clock = new Clock3D();
+      const spies: { geo: ReturnType<typeof vi.spyOn>; mat: ReturnType<typeof vi.spyOn> }[] = [];
+
+      clock.group.traverse((child) => {
+        if (child instanceof THREE.Mesh) {
+          const geoSpy = vi.spyOn(child.geometry, 'dispose');
+          const matSpy = vi.spyOn(child.material as THREE.Material, 'dispose');
+          spies.push({ geo: geoSpy, mat: matSpy });
+        }
+      });
+
+      expect(spies.length).toBeGreaterThan(0);
+      clock.dispose();
+
+      for (const spy of spies) {
+        expect(spy.geo).toHaveBeenCalled();
+        expect(spy.mat).toHaveBeenCalled();
+      }
+    });
+
+    it('should dispose textures on materials with map property', () => {
+      const clock = new Clock3D();
+      const texSpies: ReturnType<typeof vi.spyOn>[] = [];
+
+      clock.group.traverse((child) => {
+        if (child instanceof THREE.Mesh) {
+          const mat = child.material as THREE.MeshBasicMaterial;
+          if (mat.map) {
+            texSpies.push(vi.spyOn(mat.map, 'dispose'));
+          }
+        }
+      });
+
+      expect(texSpies.length).toBeGreaterThan(0);
+      clock.dispose();
+
+      for (const spy of texSpies) {
+        expect(spy).toHaveBeenCalled();
+      }
+    });
   });
 });

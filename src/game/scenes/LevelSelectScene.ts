@@ -89,7 +89,13 @@ export class LevelSelectScene implements Scene {
 
     for (const levelDef of LEVELS) {
       const isDone = completed.includes(levelDef.level);
-      const stars = '★'.repeat(levelDef.level) + '☆'.repeat(4 - levelDef.level);
+      // 実績ベースの星評価（閾値は ResultScene と同一基準: 0.6, 0.8, 1.0）
+      const scoreKey = `${this.currentMode}-${levelDef.level}`;
+      const rawBestScore = saveData.bestScores[scoreKey];
+      const bestScore = rawBestScore ?? 0;
+      const ratio = levelDef.questionCount > 0 ? bestScore / levelDef.questionCount : 0;
+      const stars = ratio === 1 ? '★★★' : ratio >= 0.8 ? '★★☆' : ratio >= 0.6 ? '★☆☆' : '☆☆☆';
+      const starColor = ratio >= 0.6 ? '#F39C12' : '#BDC3C7';
 
       const card = document.createElement('button');
       card.style.cssText = `
@@ -109,7 +115,7 @@ export class LevelSelectScene implements Scene {
       starsEl.textContent = stars;
       starsEl.style.cssText = `
         font-size: clamp(16px, 3vw, 24px);
-        color: #F39C12;
+        color: ${starColor};
         margin-bottom: 4px;
       `;
 
@@ -134,9 +140,7 @@ export class LevelSelectScene implements Scene {
       card.appendChild(descEl);
 
       // Best score display
-      const scoreKey = `${this.currentMode}-${levelDef.level}`;
-      const bestScore = saveData.bestScores[scoreKey] ?? null;
-      if (bestScore !== null) {
+      if (rawBestScore !== undefined) {
         const scoreEl = document.createElement('div');
         scoreEl.textContent = `🎯 ${bestScore}/${levelDef.questionCount}`;
         scoreEl.style.cssText = `

@@ -21,6 +21,7 @@ export class ResultScene implements Scene {
   private results: QuizResult[] = [];
   private mode: string = 'quiz';
   private level = 1;
+  private isNewTrophy = false;
 
   constructor(
     sceneManager: SceneManager,
@@ -64,9 +65,15 @@ export class ResultScene implements Scene {
     this.saveManager.updateBestScore(scoreKey, correct);
     this.saveManager.incrementStats(correct);
 
-    // Trophy
+    // Trophy — addTrophy() 前に load() で既存トロフィーを確認し新規判定する
+    this.isNewTrophy = false;
     if (ratio === 1) {
-      this.saveManager.addTrophy(`${this.mode}-${this.level}-perfect`);
+      const trophyId = `${this.mode}-${this.level}-perfect`;
+      const existing = this.saveManager.load();
+      if (!existing.trophies.includes(trophyId)) {
+        this.isNewTrophy = true;
+      }
+      this.saveManager.addTrophy(trophyId);
     }
 
     // BGM
@@ -93,6 +100,7 @@ export class ResultScene implements Scene {
     this.audioManager.stopBGM();
     this.overlay?.remove();
     this.overlay = null;
+    this.isNewTrophy = false;
   }
 
   getThreeScene(): THREE.Scene { return this.scene; }
@@ -164,6 +172,19 @@ export class ResultScene implements Scene {
     `;
     overlay.appendChild(msgEl);
 
+    // Trophy notification (new trophy only)
+    if (this.isNewTrophy) {
+      const trophyEl = document.createElement('div');
+      trophyEl.textContent = '🏆 トロフィーゲット！';
+      trophyEl.style.cssText = `
+        font-family: 'Zen Maru Gothic', sans-serif;
+        font-size: clamp(16px, 3vw, 24px);
+        color: #F39C12;
+        font-weight: 700;
+      `;
+      overlay.appendChild(trophyEl);
+    }
+
     // Buttons
     const btnContainer = document.createElement('div');
     btnContainer.style.cssText = `
@@ -201,10 +222,11 @@ export class ResultScene implements Scene {
       this.sceneManager.requestTransition('title');
     });
 
-    const hasNextLevel = ratio >= 0.6 && this.mode !== 'daily' && this.level < LEVELS.length;
-    if (hasNextLevel) {
+    btnContainer.appendChild(retryBtn);
+
+    if (ratio >= 0.6 && this.level < LEVELS.length && this.mode !== 'daily') {
       const nextLevel = this.level + 1;
-      const nextBtn = this.createButton('⏭ つぎのレベルへ ▶', '#9B59B6', '#8E44AD');
+      const nextBtn = this.createButton('つぎのレベルへ ➡️', '#9B59B6', '#8E44AD');
       nextBtn.addEventListener('click', () => {
         this.sfx.play('buttonTap');
         if (nextLevel <= LEVELS.length) {
@@ -218,7 +240,6 @@ export class ResultScene implements Scene {
       btnContainer.appendChild(nextBtn);
     }
 
-    btnContainer.appendChild(retryBtn);
     btnContainer.appendChild(modeBtn);
     btnContainer.appendChild(homeBtn);
     overlay.appendChild(btnContainer);

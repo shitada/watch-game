@@ -52,14 +52,19 @@ export class Clock3D {
   }
 
   private buildTicks(): void {
+    // Share geometry and material per tick type (major/minor) to reduce GPU resources.
+    // Note: dispose() will call dispose() on shared objects multiple times via traverse,
+    // but this is safe as Three.js handles redundant dispose calls gracefully.
+    const majorGeo = new THREE.PlaneGeometry(0.06, 0.25);
+    const majorMat = new THREE.MeshStandardMaterial({ color: S.COLORS.tickMajor, side: THREE.DoubleSide });
+    const minorGeo = new THREE.PlaneGeometry(0.02, 0.12);
+    const minorMat = new THREE.MeshStandardMaterial({ color: S.COLORS.tickMinor, side: THREE.DoubleSide });
+
     for (let i = 0; i < 60; i++) {
       const isMajor = i % 5 === 0;
+      const geo = isMajor ? majorGeo : minorGeo;
+      const mat = isMajor ? majorMat : minorMat;
       const length = isMajor ? 0.25 : 0.12;
-      const width = isMajor ? 0.06 : 0.02;
-      const color = isMajor ? S.COLORS.tickMajor : S.COLORS.tickMinor;
-
-      const geo = new THREE.PlaneGeometry(width, length);
-      const mat = new THREE.MeshStandardMaterial({ color, side: THREE.DoubleSide });
       const tick = new THREE.Mesh(geo, mat);
 
       const angle = (i / 60) * Math.PI * 2 - Math.PI / 2;

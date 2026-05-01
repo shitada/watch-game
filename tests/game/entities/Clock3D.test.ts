@@ -154,6 +154,46 @@ describe('Clock3D', () => {
     clock.clearHighlight();
   });
 
+  describe('tick geometry and material sharing', () => {
+    it('should share geometry among same type ticks (major/minor)', () => {
+      const clock = new Clock3D();
+      const majorTicks: THREE.Mesh[] = [];
+      const minorTicks: THREE.Mesh[] = [];
+
+      // Ticks are PlaneGeometry meshes added to group
+      // Major ticks: 12 (i % 5 === 0), Minor ticks: 48
+      clock.group.children.forEach((child) => {
+        if (child instanceof THREE.Mesh && child.geometry instanceof THREE.PlaneGeometry) {
+          const params = child.geometry.parameters;
+          if (params.width === 0.06 && params.height === 0.25) {
+            majorTicks.push(child);
+          } else if (params.width === 0.02 && params.height === 0.12) {
+            minorTicks.push(child);
+          }
+        }
+      });
+
+      expect(majorTicks.length).toBe(12);
+      expect(minorTicks.length).toBe(48);
+
+      // All major ticks share the same geometry and material reference
+      for (let i = 1; i < majorTicks.length; i++) {
+        expect(majorTicks[i].geometry).toBe(majorTicks[0].geometry);
+        expect(majorTicks[i].material).toBe(majorTicks[0].material);
+      }
+
+      // All minor ticks share the same geometry and material reference
+      for (let i = 1; i < minorTicks.length; i++) {
+        expect(minorTicks[i].geometry).toBe(minorTicks[0].geometry);
+        expect(minorTicks[i].material).toBe(minorTicks[0].material);
+      }
+
+      // Major and minor should NOT share the same geometry or material
+      expect(majorTicks[0].geometry).not.toBe(minorTicks[0].geometry);
+      expect(majorTicks[0].material).not.toBe(minorTicks[0].material);
+    });
+  });
+
   describe('dispose', () => {
     it('should not throw when called', () => {
       const clock = new Clock3D();

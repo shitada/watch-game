@@ -73,7 +73,7 @@ export class SetTimePlayScene implements Scene {
     // Generate questions
     this.questions = [];
     for (let i = 0; i < def.questionCount; i++) {
-      this.questions.push(this.quizGen.generateTime(this.level));
+      this.questions.push(this.quizGen.generateUniqueTime(this.level, this.questions));
     }
 
     this.currentQuestion = 0;

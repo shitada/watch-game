@@ -117,6 +117,50 @@ describe('QuizGenerator', () => {
   });
 });
 
+describe('generateUniqueTime', () => {
+  it('should return a time not in exclude list', () => {
+    const gen2 = new QuizGenerator();
+    const exclude = [
+      { hours: 3, minutes: 0 },
+      { hours: 7, minutes: 0 },
+    ];
+    for (let i = 0; i < 30; i++) {
+      const time = gen2.generateUniqueTime(1, exclude);
+      const isDup = exclude.some(
+        e => e.hours === time.hours && e.minutes === time.minutes,
+      );
+      expect(isDup).toBe(false);
+    }
+  });
+
+  it('should generate all unique times for level 1 with 5 questions', () => {
+    const gen2 = new QuizGenerator();
+    const questions: { hours: number; minutes: number }[] = [];
+    for (let i = 0; i < 5; i++) {
+      const time = gen2.generateUniqueTime(1, questions);
+      const isDup = questions.some(
+        q => q.hours === time.hours && q.minutes === time.minutes,
+      );
+      expect(isDup).toBe(false);
+      questions.push(time);
+    }
+    expect(questions.length).toBe(5);
+  });
+
+  it('should not crash when exclude covers all candidates (fallback)', () => {
+    const gen2 = new QuizGenerator();
+    // Level 1: hours 1-12, minutes=0 → 12 candidates
+    const allTimes = Array.from({ length: 12 }, (_, i) => ({
+      hours: i + 1,
+      minutes: 0,
+    }));
+    // Should not throw, returns fallback
+    const time = gen2.generateUniqueTime(1, allTimes);
+    expect(time).toHaveProperty('hours');
+    expect(time).toHaveProperty('minutes');
+  });
+});
+
 describe('formatTime', () => {
   it('should format exact hours', () => {
     expect(formatTime({ hours: 3, minutes: 0 })).toBe('3時');

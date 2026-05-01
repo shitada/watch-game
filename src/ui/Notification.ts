@@ -1,65 +1,40 @@
 export interface NotificationOptions {
-  topPercent?: number;
+  top?: string;
   fontSize?: string;
   padding?: string;
 }
 
-const DEFAULTS: Required<NotificationOptions> = {
-  topPercent: 40,
-  fontSize: 'clamp(24px, 5vw, 40px)',
-  padding: '16px 32px',
-};
+export function showNotification(
+  parent: HTMLElement,
+  text: string,
+  color: string,
+  options?: NotificationOptions,
+): ReturnType<typeof setTimeout> {
+  const top = options?.top ?? '40%';
+  const fontSize = options?.fontSize ?? 'clamp(24px, 5vw, 40px)';
+  const padding = options?.padding ?? '16px 32px';
 
-export class Notification {
-  private element: HTMLDivElement | null = null;
-  private timerId: ReturnType<typeof setTimeout> | null = null;
+  const notif = document.createElement('div');
+  notif.textContent = text;
+  notif.style.cssText = `
+    position: absolute;
+    top: ${top};
+    left: 50%;
+    transform: translateX(-50%);
+    font-family: 'Zen Maru Gothic', sans-serif;
+    font-size: ${fontSize};
+    font-weight: 900;
+    color: ${color};
+    background: rgba(255,255,255,0.95);
+    padding: ${padding};
+    border-radius: 20px;
+    border: 3px solid ${color};
+    pointer-events: none;
+    animation: notifPop 0.3s ease-out;
+    z-index: 50;
+  `;
 
-  show(parent: HTMLElement, text: string, color: string, options?: NotificationOptions): void {
-    this.cleanup();
-
-    const opts = { ...DEFAULTS, ...options };
-    const notif = document.createElement('div');
-    notif.textContent = text;
-    notif.style.cssText = `
-      position: absolute;
-      top: ${opts.topPercent}%;
-      left: 50%;
-      transform: translateX(-50%);
-      font-family: 'Zen Maru Gothic', sans-serif;
-      font-size: ${opts.fontSize};
-      font-weight: 900;
-      color: ${color};
-      background: rgba(255,255,255,0.95);
-      padding: ${opts.padding};
-      border-radius: 20px;
-      border: 3px solid ${color};
-      pointer-events: none;
-      animation: notifPop 0.3s ease-out;
-      z-index: 50;
-    `;
-
-    Notification.ensureAnimStyle();
-
-    parent.appendChild(notif);
-    this.element = notif;
-    this.timerId = setTimeout(() => {
-      this.element?.remove();
-      this.element = null;
-      this.timerId = null;
-    }, 1200);
-  }
-
-  cleanup(): void {
-    if (this.timerId !== null) {
-      clearTimeout(this.timerId);
-      this.timerId = null;
-    }
-    this.element?.remove();
-    this.element = null;
-  }
-
-  private static ensureAnimStyle(): void {
-    if (document.getElementById('notif-anim')) return;
+  if (!document.getElementById('notif-anim')) {
     const style = document.createElement('style');
     style.id = 'notif-anim';
     style.textContent = `
@@ -70,4 +45,7 @@ export class Notification {
     `;
     document.head.appendChild(style);
   }
+
+  parent.appendChild(notif);
+  return setTimeout(() => notif.remove(), 1200);
 }

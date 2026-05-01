@@ -11,7 +11,7 @@ import { IncorrectEffect } from '@/game/effects/IncorrectEffect';
 import { HUD } from '@/ui/HUD';
 import { ChoiceButtons } from '@/ui/ChoiceButtons';
 import { HomeButton } from '@/ui/HomeButton';
-import { Notification } from '@/ui/Notification';
+import { showNotification } from '@/ui/Notification';
 
 export class QuizPlayScene implements Scene {
   private scene = new THREE.Scene();
@@ -23,7 +23,6 @@ export class QuizPlayScene implements Scene {
   private hud = new HUD();
   private choiceButtons = new ChoiceButtons();
   private homeButton = new HomeButton();
-  private notification = new Notification();
   private overlay: HTMLDivElement | null = null;
 
   private sceneManager: SceneManager;
@@ -108,8 +107,9 @@ export class QuizPlayScene implements Scene {
   exit(): void {
     this.pendingTimers.forEach(id => clearTimeout(id));
     this.pendingTimers = [];
-    this.notification.cleanup();
     this.scene.remove(this.clock3D.group);
+    this.correctEffect.dispose();
+    this.incorrectEffect.dispose();
     this.audioManager.stopBGM();
     this.hud.unmount();
     this.choiceButtons.unmount();
@@ -207,13 +207,13 @@ export class QuizPlayScene implements Scene {
 
     // Show hint for incorrect
     if (!isCorrect) {
-      this.notification.show(
-        this.overlay!,
-        `こたえは ${formatTime(q)} だよ！`,
-        '#E74C3C',
+      this.pendingTimers.push(
+        showNotification(this.overlay!, `こたえは ${formatTime(q)} だよ！`, '#E74C3C'),
       );
     } else {
-      this.notification.show(this.overlay!, '⭕ せいかい！', '#2ECC71');
+      this.pendingTimers.push(
+        showNotification(this.overlay!, '⭕ せいかい！', '#2ECC71'),
+      );
     }
 
     this.pendingTimers.push(setTimeout(() => {
@@ -232,5 +232,4 @@ export class QuizPlayScene implements Scene {
       }
     }, 1500));
   }
-
 }

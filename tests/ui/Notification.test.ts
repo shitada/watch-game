@@ -1,106 +1,85 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
-import { Notification } from '@/ui/Notification';
+import { showNotification } from '@/ui/Notification';
 
-describe('Notification', () => {
-  let notification: Notification;
+describe('showNotification', () => {
   let parent: HTMLDivElement;
 
   beforeEach(() => {
     vi.useFakeTimers();
-    notification = new Notification();
     parent = document.createElement('div');
     document.body.appendChild(parent);
   });
 
   afterEach(() => {
-    notification.cleanup();
     vi.useRealTimers();
-    parent.remove();
+    document.body.innerHTML = '';
+    // Remove injected style
     document.getElementById('notif-anim')?.remove();
   });
 
-  it('show() で通知要素が parent に追加されること', () => {
-    notification.show(parent, 'テスト', '#2ECC71');
-    const notif = parent.querySelector('div');
-    expect(notif).not.toBeNull();
-    expect(notif!.textContent).toBe('テスト');
+  it('DOM要素が親に追加されること', () => {
+    showNotification(parent, 'テスト', '#2ECC71');
+    expect(parent.children.length).toBe(1);
+    expect(parent.children[0].textContent).toBe('テスト');
   });
 
-  it('show() でテキストと色が正しく設定されること', () => {
-    notification.show(parent, '⭕ せいかい！', '#2ECC71');
-    const notif = parent.querySelector('div')!;
-    expect(notif.textContent).toBe('⭕ せいかい！');
-    // jsdom converts hex to rgb
-    expect(notif.style.color).toBe('rgb(46, 204, 113)');
-    expect(notif.style.borderColor).toBe('rgb(46, 204, 113)');
+  it('指定されたテキストと色が反映されること', () => {
+    showNotification(parent, '⭕ せいかい！', '#2ECC71');
+    const el = parent.children[0] as HTMLElement;
+    expect(el.textContent).toBe('⭕ せいかい！');
+    // jsdom normalizes hex colors to rgb
+    expect(el.style.color).toBe('rgb(46, 204, 113)');
   });
 
-  it('show() で notif-anim スタイルが document.head に追加されること', () => {
-    notification.show(parent, 'テスト', '#2ECC71');
-    const style = document.getElementById('notif-anim');
-    expect(style).not.toBeNull();
-    expect(style!.textContent).toContain('notifPop');
-  });
-
-  it('notif-anim スタイルは複数回 show() しても1つだけ追加されること', () => {
-    notification.show(parent, 'テスト1', '#2ECC71');
-    notification.show(parent, 'テスト2', '#E74C3C');
+  it('notif-anim スタイル要素が document.head に1つだけ存在すること', () => {
+    showNotification(parent, 'a', '#fff');
+    showNotification(parent, 'b', '#fff');
+    showNotification(parent, 'c', '#fff');
     const styles = document.querySelectorAll('#notif-anim');
     expect(styles.length).toBe(1);
+    expect(styles[0].textContent).toContain('@keyframes notifPop');
   });
 
-  it('1200ms 後に通知要素が自動削除されること', () => {
-    notification.show(parent, 'テスト', '#2ECC71');
-    expect(parent.querySelector('div')).not.toBeNull();
-    vi.advanceTimersByTime(1200);
-    expect(parent.querySelector('div')).toBeNull();
+  it('1200ms後にDOM要素が自動削除されること', () => {
+    showNotification(parent, 'テスト', '#2ECC71');
+    expect(parent.children.length).toBe(1);
+    vi.advanceTimersByTime(1199);
+    expect(parent.children.length).toBe(1);
+    vi.advanceTimersByTime(1);
+    expect(parent.children.length).toBe(0);
   });
 
-  it('cleanup() で通知要素が即座に削除されること', () => {
-    notification.show(parent, 'テスト', '#2ECC71');
-    expect(parent.querySelector('div')).not.toBeNull();
-    notification.cleanup();
-    expect(parent.querySelector('div')).toBeNull();
+  it('topオプションでカスタム位置が設定できること', () => {
+    showNotification(parent, 'テスト', '#2ECC71', { top: '35%' });
+    const el = parent.children[0] as HTMLElement;
+    expect(el.style.cssText).toContain('top: 35%');
   });
 
-  it('cleanup() で内部タイマーがクリアされること', () => {
-    notification.show(parent, 'テスト', '#2ECC71');
-    notification.cleanup();
-    // タイマー発火後もエラーにならない
-    vi.advanceTimersByTime(2000);
-    expect(parent.querySelector('div')).toBeNull();
+  it('デフォルトのtopは40%であること', () => {
+    showNotification(parent, 'テスト', '#2ECC71');
+    const el = parent.children[0] as HTMLElement;
+    expect(el.style.cssText).toContain('top: 40%');
   });
 
-  it('cleanup() 後も notif-anim スタイルは残ること', () => {
-    notification.show(parent, 'テスト', '#2ECC71');
-    notification.cleanup();
-    expect(document.getElementById('notif-anim')).not.toBeNull();
+  it('fontSizeオプションでフォントサイズを変更できること', () => {
+    showNotification(parent, 'テスト', '#2ECC71', {
+      fontSize: '22px',
+    });
+    const el = parent.children[0] as HTMLElement;
+    expect(el.style.fontSize).toBe('22px');
   });
 
-  it('options で topPercent をカスタマイズできること', () => {
-    notification.show(parent, 'テスト', '#2ECC71', { topPercent: 35 });
-    const notif = parent.querySelector('div')!;
-    expect(notif.style.top).toBe('35%');
+  it('paddingオプションでパディングを変更できること', () => {
+    showNotification(parent, 'テスト', '#2ECC71', {
+      padding: '14px 28px',
+    });
+    const el = parent.children[0] as HTMLElement;
+    expect(el.style.cssText).toContain('14px 28px');
   });
 
-  it('options で padding をカスタマイズできること', () => {
-    notification.show(parent, 'テスト', '#2ECC71', { padding: '14px 28px' });
-    const notif = parent.querySelector('div')!;
-    expect(notif.style.padding).toBe('14px 28px');
-  });
-
-  it('デフォルト値が適用されること', () => {
-    notification.show(parent, 'テスト', '#2ECC71');
-    const notif = parent.querySelector('div')!;
-    expect(notif.style.top).toBe('40%');
-    expect(notif.style.padding).toBe('16px 32px');
-  });
-
-  it('show() を複数回呼ぶと前の通知が削除されること', () => {
-    notification.show(parent, 'テスト1', '#2ECC71');
-    notification.show(parent, 'テスト2', '#E74C3C');
-    const notifs = parent.querySelectorAll('div');
-    expect(notifs.length).toBe(1);
-    expect(notifs[0].textContent).toBe('テスト2');
+  it('タイマーIDを返すこと', () => {
+    const timerId = showNotification(parent, 'テスト', '#2ECC71');
+    expect(timerId).toBeDefined();
+    expect(typeof timerId).not.toBe('undefined');
   });
 });

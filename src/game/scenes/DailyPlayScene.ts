@@ -12,8 +12,8 @@ import { CorrectEffect } from '@/game/effects/CorrectEffect';
 import { IncorrectEffect } from '@/game/effects/IncorrectEffect';
 import { DailyProgress } from '@/ui/DailyProgress';
 import { HomeButton } from '@/ui/HomeButton';
-import { Notification } from '@/ui/Notification';
 import { formatTime } from '@/game/systems/QuizGenerator';
+import { showNotification } from '@/ui/Notification';
 
 export class DailyPlayScene implements Scene {
   private scene = new THREE.Scene();
@@ -25,7 +25,6 @@ export class DailyPlayScene implements Scene {
   private incorrectEffect = new IncorrectEffect();
   private dailyProgress = new DailyProgress();
   private homeButton = new HomeButton();
-  private notification = new Notification();
   private overlay: HTMLDivElement | null = null;
   private eventLabel: HTMLDivElement | null = null;
   private confirmBtn: HTMLButtonElement | null = null;
@@ -109,8 +108,9 @@ export class DailyPlayScene implements Scene {
   exit(): void {
     this.pendingTimers.forEach(id => clearTimeout(id));
     this.pendingTimers = [];
-    this.notification.cleanup();
     this.scene.remove(this.clock3D.group);
+    this.correctEffect.dispose();
+    this.incorrectEffect.dispose();
     this.clockController?.dispose();
     this.clockController = null;
     this.audioManager.stopBGM();
@@ -250,24 +250,19 @@ export class DailyPlayScene implements Scene {
       this.correctCount++;
       this.sfx.play('correct');
       this.correctEffect.trigger(this.scene, new THREE.Vector3(0, -0.2, 1));
-      this.notification.show(this.overlay!, '⭕ せいかい！', '#2ECC71', {
-        topPercent: 35,
-        fontSize: 'clamp(22px, 4.5vw, 36px)',
-        padding: '14px 28px',
-      });
+      this.pendingTimers.push(
+        showNotification(this.overlay!, '⭕ せいかい！', '#2ECC71', {
+          top: '35%', fontSize: 'clamp(22px, 4.5vw, 36px)', padding: '14px 28px',
+        }),
+      );
     } else {
       this.sfx.play('incorrect');
       this.incorrectEffect.trigger(this.scene, new THREE.Vector3(0, -0.2, 1));
       this.clock3D.setTime(event.time);
-      this.notification.show(
-        this.overlay!,
-        `${event.name} は ${formatTime(event.time)} だよ！`,
-        '#E74C3C',
-        {
-          topPercent: 35,
-          fontSize: 'clamp(22px, 4.5vw, 36px)',
-          padding: '14px 28px',
-        },
+      this.pendingTimers.push(
+        showNotification(this.overlay!, `${event.name} は ${formatTime(event.time)} だよ！`, '#E74C3C', {
+          top: '35%', fontSize: 'clamp(22px, 4.5vw, 36px)', padding: '14px 28px',
+        }),
       );
     }
 
@@ -292,5 +287,4 @@ export class DailyPlayScene implements Scene {
       }
     }, 1500));
   }
-
 }

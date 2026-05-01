@@ -103,6 +103,7 @@ title → modeSelect → levelSelect → quizPlay → result
                    → dailyPlay → result
       → trophy
 result → (retry) → quizPlay/setTimePlay/dailyPlay
+       → (nextLevel) → quizPlay/setTimePlay
        → modeSelect
        → title
 ```

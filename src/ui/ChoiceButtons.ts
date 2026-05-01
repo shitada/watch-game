@@ -84,6 +84,17 @@ export class ChoiceButtons {
     this.selectCallback = callback;
   }
 
+  eliminateChoices(keepIndices: number[]): void {
+    this.buttons.forEach((btn, i) => {
+      if (!keepIndices.includes(i)) {
+        btn.style.opacity = '0.3';
+        btn.style.pointerEvents = 'none';
+        btn.style.borderColor = '#BDC3C7';
+        btn.disabled = true;
+      }
+    });
+  }
+
   unmount(): void {
     this.container?.remove();
     this.container = null;

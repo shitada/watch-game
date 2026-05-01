@@ -280,4 +280,23 @@ export class Clock3D {
   getClockFaceMesh(): THREE.Object3D | undefined {
     return this.group.getObjectByName('clockFace');
   }
+
+  /** Dispose all geometries, materials, and textures to free GPU resources */
+  dispose(): void {
+    this.group.traverse((child) => {
+      if (child instanceof THREE.Mesh) {
+        child.geometry.dispose();
+        const materials = Array.isArray(child.material)
+          ? child.material
+          : [child.material];
+        for (const mat of materials) {
+          if ('map' in mat && mat.map) {
+            mat.map.dispose();
+          }
+          mat.dispose();
+        }
+      }
+    });
+    this.group.clear();
+  }
 }

@@ -225,17 +225,14 @@ export class ResultScene implements Scene {
     btnContainer.appendChild(retryBtn);
 
     if (ratio >= 0.6 && this.level < LEVELS.length && this.mode !== 'daily') {
-      const nextLevel = this.level + 1;
       const nextBtn = this.createButton('つぎのレベルへ ➡️', '#9B59B6', '#8E44AD');
       nextBtn.addEventListener('click', () => {
         this.sfx.play('buttonTap');
-        if (nextLevel <= LEVELS.length) {
-          const target = this.mode === 'quiz' ? 'quizPlay' : 'setTimePlay';
-          this.sceneManager.requestTransition(
-            target as 'quizPlay' | 'setTimePlay',
-            { mode: this.mode as 'quiz' | 'setTime', level: nextLevel },
-          );
-        }
+        const target = this.mode === 'quiz' ? 'quizPlay' : 'setTimePlay';
+        this.sceneManager.requestTransition(
+          target as 'quizPlay' | 'setTimePlay',
+          { mode: this.mode as 'quiz' | 'setTime', level: this.level + 1 },
+        );
       });
       btnContainer.appendChild(nextBtn);
     }

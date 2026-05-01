@@ -54,6 +54,11 @@ export class IncorrectEffect {
     }
   }
 
+  /** 外部からリソースを解放する。シーン exit() 時に呼ぶ。 */
+  dispose(): void {
+    this.cleanup();
+  }
+
   private cleanup(): void {
     if (this.particles && this.scene) {
       this.scene.remove(this.particles);

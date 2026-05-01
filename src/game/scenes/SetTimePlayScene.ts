@@ -13,7 +13,7 @@ import { IncorrectEffect } from '@/game/effects/IncorrectEffect';
 import { HUD } from '@/ui/HUD';
 import { TimeDisplay } from '@/ui/TimeDisplay';
 import { HomeButton } from '@/ui/HomeButton';
-import { Notification } from '@/ui/Notification';
+import { showNotification } from '@/ui/Notification';
 
 export class SetTimePlayScene implements Scene {
   private scene = new THREE.Scene();
@@ -27,7 +27,6 @@ export class SetTimePlayScene implements Scene {
   private hud = new HUD();
   private timeDisplay = new TimeDisplay();
   private homeButton = new HomeButton();
-  private notification = new Notification();
   private overlay: HTMLDivElement | null = null;
   private confirmBtn: HTMLButtonElement | null = null;
 
@@ -122,13 +121,14 @@ export class SetTimePlayScene implements Scene {
     this.pendingTimers.forEach(id => clearTimeout(id));
     this.pendingTimers = [];
     this.scene.remove(this.clock3D.group);
+    this.correctEffect.dispose();
+    this.incorrectEffect.dispose();
     this.clockController?.dispose();
     this.clockController = null;
     this.audioManager.stopBGM();
     this.hud.unmount();
     this.timeDisplay.unmount();
     this.homeButton.unmount();
-    this.notification.unmount();
     this.overlay?.remove();
     this.overlay = null;
     this.confirmBtn = null;
@@ -198,7 +198,6 @@ export class SetTimePlayScene implements Scene {
     const uiOverlay = document.getElementById('ui-overlay')!;
     uiOverlay.appendChild(overlay);
     this.overlay = overlay;
-    this.notification.mount(overlay);
 
     // Home button
     const hud = document.getElementById('hud')!;
@@ -238,15 +237,16 @@ export class SetTimePlayScene implements Scene {
       this.correctCount++;
       this.sfx.play('correct');
       this.correctEffect.trigger(this.scene, new THREE.Vector3(0, -0.5, 1));
-      this.notification.show('⭕ せいかい！', '#2ECC71');
+      this.pendingTimers.push(
+        showNotification(this.overlay!, '⭕ せいかい！', '#2ECC71'),
+      );
     } else {
       this.sfx.play('incorrect');
       this.incorrectEffect.trigger(this.scene, new THREE.Vector3(0, -0.5, 1));
       // Show correct answer
       this.clock3D.setTime(target);
-      this.notification.show(
-        `こたえは ${formatTime(target)} だよ！`,
-        '#E74C3C',
+      this.pendingTimers.push(
+        showNotification(this.overlay!, `こたえは ${formatTime(target)} だよ！`, '#E74C3C'),
       );
     }
 

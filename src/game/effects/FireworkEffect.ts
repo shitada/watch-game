@@ -113,6 +113,11 @@ export class FireworkEffect {
     return this.active;
   }
 
+  /** 外部からリソースを解放する。シーン exit() 時に呼ぶ。 */
+  dispose(): void {
+    this.cleanup();
+  }
+
   private cleanup(): void {
     for (const rocket of this.rockets) {
       if (this.scene) this.scene.remove(rocket.particles);
@@ -121,5 +126,6 @@ export class FireworkEffect {
     }
     this.rockets = [];
     this.active = false;
+    this.scene = null;
   }
 }

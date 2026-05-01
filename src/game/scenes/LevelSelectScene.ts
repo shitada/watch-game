@@ -93,6 +93,7 @@ export class LevelSelectScene implements Scene {
 
       const card = document.createElement('button');
       card.style.cssText = `
+        position: relative;
         font-family: 'Zen Maru Gothic', sans-serif;
         padding: 16px 20px;
         border: 3px solid ${isDone ? '#27AE60' : '#3498DB'};
@@ -131,6 +132,36 @@ export class LevelSelectScene implements Scene {
       card.appendChild(starsEl);
       card.appendChild(nameEl);
       card.appendChild(descEl);
+
+      // Best score display
+      const scoreKey = `${this.currentMode}-${levelDef.level}`;
+      const bestScore = saveData.bestScores[scoreKey] ?? null;
+      if (bestScore !== null) {
+        const scoreEl = document.createElement('div');
+        scoreEl.textContent = `🎯 ${bestScore}/${levelDef.questionCount}`;
+        scoreEl.style.cssText = `
+          font-size: clamp(11px, 2vw, 14px);
+          color: #3498DB;
+          font-weight: 700;
+          margin-top: 6px;
+        `;
+        card.appendChild(scoreEl);
+      }
+
+      // Trophy badge
+      const trophyKey = `${this.currentMode}-${levelDef.level}-perfect`;
+      const hasTrophy = saveData.trophies.includes(trophyKey);
+      if (hasTrophy) {
+        const trophyEl = document.createElement('div');
+        trophyEl.textContent = '🏆';
+        trophyEl.style.cssText = `
+          position: absolute;
+          top: 8px;
+          right: 8px;
+          font-size: clamp(16px, 3vw, 24px);
+        `;
+        card.appendChild(trophyEl);
+      }
 
       card.addEventListener('pointerdown', () => {
         card.style.transform = 'scale(0.95)';

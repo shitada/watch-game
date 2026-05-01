@@ -231,12 +231,14 @@ export class Clock3D {
   }
 
   snapMinutes(step: number): void {
-    const snapped =
-      Math.round(this.currentTime.minutes / step) * step;
-    this.setTime({
-      hours: this.currentTime.hours,
-      minutes: snapped % 60,
-    });
+    const snapped = Math.round(this.currentTime.minutes / step) * step;
+    let hours = this.currentTime.hours;
+    let minutes = snapped;
+    if (minutes >= 60) {
+      minutes = 0;
+      hours = (hours % 12) + 1;
+    }
+    this.setTime({ hours, minutes });
   }
 
   /** Set hour hand angle directly from pointer angle (radians, 0=right, CCW positive) */

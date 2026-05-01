@@ -228,6 +228,7 @@ export class SetTimePlayScene implements Scene {
       this.incorrectEffect.trigger(this.scene, new THREE.Vector3(0, -0.5, 1));
       // Show correct answer
       this.clock3D.setTime(target);
+      this.currentTimeDisplay.setTime(target);
       this.pendingTimers.push(
         showNotification(this.overlay!, `こたえは ${formatTime(target)} だよ！`, '#E74C3C'),
       );

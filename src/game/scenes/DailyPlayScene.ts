@@ -243,6 +243,7 @@ export class DailyPlayScene implements Scene {
       this.sfx.play('incorrect');
       this.incorrectEffect.trigger(this.scene, new THREE.Vector3(0, -0.2, 1));
       this.clock3D.setTime(event.time);
+      this.currentTimeDisplay.setTime(event.time);
       this.pendingTimers.push(
         showNotification(this.overlay!, `${event.name} は ${formatTime(event.time)} だよ！`, '#E74C3C', {
           top: '35%', fontSize: 'clamp(22px, 4.5vw, 36px)', padding: '14px 28px',

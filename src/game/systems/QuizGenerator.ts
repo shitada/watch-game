@@ -34,7 +34,8 @@ export class QuizGenerator {
         const diffMin = Math.abs(
           (wrong.hours * 60 + wrong.minutes) - (correct.hours * 60 + correct.minutes),
         );
-        if (diffMin < def.minuteStep * 2 && diffMin > 0) continue;
+        const wrappedDiff = Math.min(diffMin, 720 - diffMin);
+        if (wrappedDiff < def.minuteStep * 2 && wrappedDiff > 0) continue;
       }
 
       const dup = choices.some(

@@ -182,4 +182,70 @@ describe('LevelSelectScene', () => {
       expect(starTexts[0]).toBe('★★★');
     });
   });
+
+  describe('ベストスコア・トロフィー表示', () => {
+    it('ベストスコアがある場合「🎯 3/5」のように表示される', () => {
+      const data = saveManager.load();
+      data.bestScores['quiz-1'] = 3;
+      saveManager.save(data);
+
+      scene.enter({ mode: 'quiz' });
+
+      const uiOverlay = document.getElementById('ui-overlay')!;
+      const overlay = uiOverlay.firstElementChild!;
+      const level1Card = overlay.querySelectorAll('button')[0];
+      expect(level1Card.textContent).toContain('🎯 3/5');
+    });
+
+    it('ベストスコアがない（未プレイ）場合はスコア表示がない', () => {
+      scene.enter({ mode: 'quiz' });
+
+      const uiOverlay = document.getElementById('ui-overlay')!;
+      const overlay = uiOverlay.firstElementChild!;
+      const level1Card = overlay.querySelectorAll('button')[0];
+      expect(level1Card.textContent).not.toContain('🎯');
+    });
+
+    it('トロフィーがある場合「🏆」が表示される', () => {
+      const data = saveManager.load();
+      data.trophies = ['quiz-2-perfect'];
+      data.bestScores['quiz-2'] = 5;
+      saveManager.save(data);
+
+      scene.enter({ mode: 'quiz' });
+
+      const uiOverlay = document.getElementById('ui-overlay')!;
+      const overlay = uiOverlay.firstElementChild!;
+      const level2Card = overlay.querySelectorAll('button')[1];
+      expect(level2Card.textContent).toContain('🏆');
+    });
+
+    it('トロフィーがない場合「🏆」は表示されない', () => {
+      const data = saveManager.load();
+      data.bestScores['quiz-1'] = 3;
+      saveManager.save(data);
+
+      scene.enter({ mode: 'quiz' });
+
+      const uiOverlay = document.getElementById('ui-overlay')!;
+      const overlay = uiOverlay.firstElementChild!;
+      const level1Card = overlay.querySelectorAll('button')[0];
+      expect(level1Card.textContent).not.toContain('🏆');
+    });
+
+    it('setTimeモードでも正しいキーでスコア・トロフィーを参照する', () => {
+      const data = saveManager.load();
+      data.bestScores['setTime-1'] = 4;
+      data.trophies = ['setTime-1-perfect'];
+      saveManager.save(data);
+
+      scene.enter({ mode: 'setTime' });
+
+      const uiOverlay = document.getElementById('ui-overlay')!;
+      const overlay = uiOverlay.firstElementChild!;
+      const level1Card = overlay.querySelectorAll('button')[0];
+      expect(level1Card.textContent).toContain('🎯 4/5');
+      expect(level1Card.textContent).toContain('🏆');
+    });
+  });
 });

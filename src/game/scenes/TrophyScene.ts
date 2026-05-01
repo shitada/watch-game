@@ -55,12 +55,16 @@ export class TrophyScene implements Scene {
   }
 
   enter(_context: SceneContext): void {
+    if (this.audioManager.isInitialized()) {
+      this.audioManager.startBGM('title');
+    }
     this.buildOverlay();
   }
 
   update(_dt: number): void {}
 
   exit(): void {
+    this.audioManager.stopBGM();
     this.overlay?.remove();
     this.overlay = null;
   }

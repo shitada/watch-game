@@ -1,4 +1,4 @@
-import { describe, it, expect, beforeEach } from 'vitest';
+import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { HomeButton } from '@/ui/HomeButton';
 
 describe('HomeButton', () => {
@@ -10,28 +10,38 @@ describe('HomeButton', () => {
     parent = document.createElement('div');
   });
 
-  it('should add a button to parent on mount', () => {
+  it('mount() で親要素にボタンが追加されること', () => {
     homeButton.mount(parent);
     expect(parent.querySelector('button')).not.toBeNull();
   });
 
-  it('should contain 🏠 in button text', () => {
+  it('ボタンテキストが「🏠」であること', () => {
     homeButton.mount(parent);
-    const btn = parent.querySelector('button')!;
-    expect(btn.textContent).toContain('🏠');
+    const button = parent.querySelector('button')!;
+    expect(button.textContent).toBe('🏠');
   });
 
-  it('should call onClick callback when clicked', () => {
+  it('onClick() で登録したコールバックがクリック時に呼ばれること', () => {
     homeButton.mount(parent);
-    let called = false;
-    homeButton.onClick(() => { called = true; });
+    const callback = vi.fn();
+    homeButton.onClick(callback);
     parent.querySelector('button')!.dispatchEvent(new Event('click'));
-    expect(called).toBe(true);
+    expect(callback).toHaveBeenCalledOnce();
   });
 
-  it('should remove DOM on unmount', () => {
+  it('unmount() で DOM が除去されること', () => {
     homeButton.mount(parent);
     homeButton.unmount();
     expect(parent.querySelector('button')).toBeNull();
+  });
+
+  it('unmount() 後にクリックしてもコールバックが呼ばれないこと', () => {
+    homeButton.mount(parent);
+    const callback = vi.fn();
+    homeButton.onClick(callback);
+    const button = parent.querySelector('button')!;
+    homeButton.unmount();
+    button.dispatchEvent(new Event('click'));
+    expect(callback).not.toHaveBeenCalled();
   });
 });

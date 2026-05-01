@@ -7,9 +7,10 @@ describe('DailyProgress', () => {
   let parent: HTMLDivElement;
 
   const sampleEvents: DailyEvent[] = [
-    { id: '1', name: 'あさごはん', emoji: '🍚', time: { hours: 7, minutes: 0 } },
-    { id: '2', name: 'がっこう', emoji: '🏫', time: { hours: 8, minutes: 30 } },
-    { id: '3', name: 'おひるごはん', emoji: '🍱', time: { hours: 12, minutes: 0 } },
+    { id: 'wake', name: 'おきる', emoji: '☀️', time: { hours: 7, minutes: 0 } },
+    { id: 'school', name: 'がっこう', emoji: '🏫', time: { hours: 8, minutes: 30 } },
+    { id: 'lunch', name: 'おひるごはん', emoji: '🍱', time: { hours: 12, minutes: 0 } },
+    { id: 'play', name: 'あそぶ', emoji: '⚽', time: { hours: 3, minutes: 0 } },
   ];
 
   beforeEach(() => {
@@ -17,19 +18,42 @@ describe('DailyProgress', () => {
     parent = document.createElement('div');
   });
 
-  it('should add a container to parent on mount', () => {
+  it('mount() で親要素にコンテナが追加されること', () => {
     dailyProgress.mount(parent);
-    expect(parent.children.length).toBeGreaterThan(0);
+    expect(parent.children.length).toBe(1);
   });
 
-  it('should create dot elements matching event count via setEvents', () => {
+  it('setEvents() でドットが生成されること', () => {
     dailyProgress.mount(parent);
     dailyProgress.setEvents(sampleEvents, 1);
-    const container = parent.firstElementChild!;
-    expect(container.children.length).toBe(sampleEvents.length);
+    const container = parent.children[0];
+    expect(container.children.length).toBe(4);
   });
 
-  it('should remove DOM on unmount', () => {
+  it('現在のイベントのドットがハイライトされること', () => {
+    dailyProgress.mount(parent);
+    dailyProgress.setEvents(sampleEvents, 1);
+    const currentDot = parent.children[0].children[1] as HTMLElement;
+    expect(currentDot.style.background).toBe('rgb(52, 152, 219)');
+  });
+
+  it('完了済みイベントのドットに「✅」が表示されること', () => {
+    dailyProgress.mount(parent);
+    dailyProgress.setEvents(sampleEvents, 2);
+    const doneDot0 = parent.children[0].children[0] as HTMLElement;
+    const doneDot1 = parent.children[0].children[1] as HTMLElement;
+    expect(doneDot0.textContent).toBe('✅');
+    expect(doneDot1.textContent).toBe('✅');
+  });
+
+  it('未到達イベントのドットに emoji が表示されること', () => {
+    dailyProgress.mount(parent);
+    dailyProgress.setEvents(sampleEvents, 1);
+    const futureDot = parent.children[0].children[2] as HTMLElement;
+    expect(futureDot.textContent).toBe('🍱');
+  });
+
+  it('unmount() で DOM が除去されること', () => {
     dailyProgress.mount(parent);
     dailyProgress.unmount();
     expect(parent.children.length).toBe(0);

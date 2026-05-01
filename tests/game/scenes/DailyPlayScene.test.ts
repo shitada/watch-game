@@ -130,6 +130,21 @@ describe('DailyPlayScene', () => {
     expect(resultTransitions.length).toBe(0);
   });
 
+  it('不正解時に CurrentTimeDisplay が正解の時刻に更新されること', () => {
+    // First event is "あさごはん" at 7:00. Clock starts at 12:00.
+    // Confirming without moving → answer is 12:00, target is 7:00 → incorrect
+    const currentTimeEl = document.querySelector('[data-testid="current-time"]') as HTMLElement;
+    expect(currentTimeEl.textContent).toBe('12時');
+
+    const confirmBtn = Array.from(document.querySelectorAll('button')).find(
+      b => b.textContent === 'けってい！',
+    )!;
+    confirmBtn.click();
+
+    // CurrentTimeDisplay should now show the correct answer "7時"
+    expect(currentTimeEl.textContent).toBe('7時');
+  });
+
   it('enter() で CurrentTimeDisplay に初期時刻 12:00 が表示されること', () => {
     const currentTimeEl = document.querySelector('[data-testid="current-time"]') as HTMLElement;
     expect(currentTimeEl).not.toBeNull();

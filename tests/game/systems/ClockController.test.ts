@@ -350,4 +350,68 @@ describe('ClockController', () => {
       expect(snapSpy).toHaveBeenCalledWith(5);
     });
   });
+
+  // ── 一時オブジェクト再利用の検証 ──
+
+  describe('一時オブジェクト再利用', () => {
+    it('getNDC が同一の Vector2 インスタンスを返すこと', () => {
+      controller.setEnabled(true);
+
+      // Access private method via type assertion
+      const ctrl = controller as unknown as {
+        getNDC(e: PointerEvent): THREE.Vector2;
+      };
+
+      const result1 = ctrl.getNDC(pointerEvent('pointermove', 100, 100));
+      const result2 = ctrl.getNDC(pointerEvent('pointermove', 200, 200));
+
+      // Same instance reused (referential equality)
+      expect(result1).toBe(result2);
+      // But values should differ
+      expect(result2.x).not.toBe(((100 - 0) / 800) * 2 - 1);
+    });
+
+    it('getWorldPoint が同一の Vector3 インスタンスを返すこと', () => {
+      const worldPt = new THREE.Vector3(1, 2, 0);
+      setupRaycasterForDrag(worldPt);
+
+      const ctrl = controller as unknown as {
+        getWorldPoint(ndc: THREE.Vector2): THREE.Vector3;
+      };
+
+      const ndc1 = new THREE.Vector2(0, 0);
+      const result1 = ctrl.getWorldPoint(ndc1);
+
+      const worldPt2 = new THREE.Vector3(3, 4, 0);
+      setupRaycasterForDrag(worldPt2);
+      const result2 = ctrl.getWorldPoint(ndc1);
+
+      // Same instance reused
+      expect(result1).toBe(result2);
+    });
+
+    it('selectHand が getHandTipPosition の戻り値を .copy() でコピーすること', () => {
+      clock.setTime({ hours: 12, minutes: 0 });
+      const minuteTip = clock.getHandTipPosition('minute');
+      setupRaycasterForDrag(minuteTip.clone());
+
+      const tipSpy = vi.spyOn(clock, 'getHandTipPosition');
+
+      const ctrl = controller as unknown as {
+        selectHand(ndc: THREE.Vector2): string | null;
+        _hourTip: THREE.Vector3;
+        _minuteTip: THREE.Vector3;
+      };
+
+      ctrl.selectHand(new THREE.Vector2(0, 0));
+
+      // getHandTipPosition was called
+      expect(tipSpy).toHaveBeenCalledWith('hour');
+      expect(tipSpy).toHaveBeenCalledWith('minute');
+
+      // The reusable fields should not be the same reference as the return value
+      const hourTipReturn = clock.getHandTipPosition('hour');
+      expect(ctrl._hourTip).not.toBe(hourTipReturn);
+    });
+  });
 });

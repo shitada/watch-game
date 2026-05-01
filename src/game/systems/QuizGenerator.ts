@@ -15,6 +15,18 @@ export class QuizGenerator {
     return { hours, minutes: step * def.minuteStep };
   }
 
+  generateUniqueTime(level: number, exclude: readonly ClockTime[]): ClockTime {
+    const maxAttempts = 100;
+    for (let i = 0; i < maxAttempts; i++) {
+      const time = this.generateTime(level);
+      const dup = exclude.some(
+        e => e.hours === time.hours && e.minutes === time.minutes,
+      );
+      if (!dup) return time;
+    }
+    return this.generateTime(level);
+  }
+
   generateChoices(correct: ClockTime, level: number): ClockTime[] {
     const choices: ClockTime[] = [correct];
     const def = getLevelDef(level);

@@ -67,7 +67,7 @@ export class QuizPlayScene implements Scene {
     this.choices = [];
     this.correctIndex = [];
     for (let i = 0; i < def.questionCount; i++) {
-      const time = this.quizGen.generateTime(this.level);
+      const time = this.quizGen.generateUniqueTime(this.level, this.questions);
       const choiceSet = this.quizGen.generateChoices(time, this.level);
       const idx = choiceSet.findIndex(
         c => c.hours === time.hours && c.minutes === time.minutes,

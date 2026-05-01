@@ -12,6 +12,7 @@ import { SetTimePlayScene } from '@/game/scenes/SetTimePlayScene';
 import { DailyPlayScene } from '@/game/scenes/DailyPlayScene';
 import { ResultScene } from '@/game/scenes/ResultScene';
 import { TrophyScene } from '@/game/scenes/TrophyScene';
+import { TransitionOverlay } from '@/ui/TransitionOverlay';
 
 // ── Renderer ──
 const canvas = document.getElementById('game-canvas') as HTMLCanvasElement;
@@ -51,9 +52,17 @@ sceneManager.register('dailyPlay', dailyPlayScene);
 sceneManager.register('result', resultScene);
 sceneManager.register('trophy', trophyScene);
 
+// ── Transition Overlay ──
+const overlay = new TransitionOverlay();
+overlay.mount(document.body);
+
 // ── Transition Handler ──
 sceneManager.setTransitionHandler((type, context) => {
-  sceneManager.transitionTo(type, context);
+  if (overlay.isTransitioning()) return;
+  overlay.fadeOut(() => {
+    sceneManager.transitionTo(type, context);
+    overlay.fadeIn();
+  });
 });
 
 // ── Start ──

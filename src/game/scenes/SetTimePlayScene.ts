@@ -12,6 +12,7 @@ import { CorrectEffect } from '@/game/effects/CorrectEffect';
 import { IncorrectEffect } from '@/game/effects/IncorrectEffect';
 import { HUD } from '@/ui/HUD';
 import { TimeDisplay } from '@/ui/TimeDisplay';
+import { CurrentTimeDisplay } from '@/ui/CurrentTimeDisplay';
 import { HomeButton } from '@/ui/HomeButton';
 import { showNotification } from '@/ui/Notification';
 
@@ -26,6 +27,7 @@ export class SetTimePlayScene implements Scene {
   private incorrectEffect = new IncorrectEffect();
   private hud = new HUD();
   private timeDisplay = new TimeDisplay();
+  private currentTimeDisplay = new CurrentTimeDisplay();
   private homeButton = new HomeButton();
   private overlay: HTMLDivElement | null = null;
   private confirmBtn: HTMLButtonElement | null = null;
@@ -98,6 +100,7 @@ export class SetTimePlayScene implements Scene {
       this.clockController.setEnabled(true);
       this.clockController.onChange(() => {
         this.sfx.play('tick');
+        this.currentTimeDisplay.setTime(this.clock3D.getTime());
       });
     }
 
@@ -128,6 +131,7 @@ export class SetTimePlayScene implements Scene {
     this.audioManager.stopBGM();
     this.hud.unmount();
     this.timeDisplay.unmount();
+    this.currentTimeDisplay.unmount();
     this.homeButton.unmount();
     this.overlay?.remove();
     this.overlay = null;
@@ -153,6 +157,7 @@ export class SetTimePlayScene implements Scene {
     topSection.style.cssText = 'display: flex; flex-direction: column; gap: 8px;';
     this.hud.mount(topSection);
     this.timeDisplay.mount(topSection);
+    this.currentTimeDisplay.mount(topSection);
     overlay.appendChild(topSection);
 
     // Bottom — confirm button
@@ -217,6 +222,7 @@ export class SetTimePlayScene implements Scene {
     this.clockController?.setEnabled(true);
 
     this.timeDisplay.setTime(q);
+    this.currentTimeDisplay.setTime({ hours: 12, minutes: 0 });
     this.hud.updateQuestion(this.currentQuestion + 1, def.questionCount);
     this.hud.updateScore(this.correctCount);
     this.enableConfirmButton();

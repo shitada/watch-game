@@ -128,4 +128,16 @@ describe('SetTimePlayScene', () => {
     );
     expect(resultTransitions.length).toBe(0);
   });
+
+  it('enter() で CurrentTimeDisplay に初期時刻 12:00 が表示されること', () => {
+    const currentTimeEl = document.querySelector('[data-testid="current-time"]') as HTMLElement;
+    expect(currentTimeEl).not.toBeNull();
+    expect(currentTimeEl.textContent).toBe('12時');
+  });
+
+  it('exit() で CurrentTimeDisplay が unmount されること', () => {
+    expect(document.querySelector('[data-testid="current-time"]')).not.toBeNull();
+    scene.exit();
+    expect(document.querySelector('[data-testid="current-time"]')).toBeNull();
+  });
 });

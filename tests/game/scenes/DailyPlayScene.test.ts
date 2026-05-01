@@ -82,6 +82,32 @@ describe('DailyPlayScene', () => {
     expect(resultTransitions.length).toBe(0);
   });
 
+  it('handleConfirm() 後にボタンが視覚的に無効化されること', () => {
+    const confirmBtn = Array.from(document.querySelectorAll('button')).find(
+      b => b.textContent === 'けってい！',
+    )!;
+    confirmBtn.click();
+
+    expect(confirmBtn.style.opacity).toBe('0.5');
+    expect(confirmBtn.style.pointerEvents).toBe('none');
+    expect(confirmBtn.style.cursor).toBe('default');
+    expect(confirmBtn.style.transform).toBe('scale(1)');
+  });
+
+  it('次のイベント表示後にボタンが再度有効化されること', () => {
+    const confirmBtn = Array.from(document.querySelectorAll('button')).find(
+      b => b.textContent === 'けってい！',
+    )!;
+    confirmBtn.click();
+
+    // 1500ms 後に次のイベントが表示される
+    vi.advanceTimersByTime(1500);
+
+    expect(confirmBtn.style.opacity).toBe('1');
+    expect(confirmBtn.style.pointerEvents).toBe('auto');
+    expect(confirmBtn.style.cursor).toBe('pointer');
+  });
+
   it('enter() で pendingTimers が初期化されること（再入時の防御）', () => {
     // Click the confirm button
     const confirmBtn = Array.from(document.querySelectorAll('button')).find(

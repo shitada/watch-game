@@ -229,11 +229,13 @@ export class DailyPlayScene implements Scene {
     if (this.eventLabel) {
       this.eventLabel.textContent = `${event.emoji} ${event.name}`;
     }
+    this.enableConfirmButton();
   }
 
   private handleConfirm(): void {
     if (this.waitingNext) return;
     this.waitingNext = true;
+    this.disableConfirmButton();
 
     const event = DAILY_EVENTS[this.currentEventIndex];
     const answer = this.clock3D.getTime();
@@ -286,5 +288,22 @@ export class DailyPlayScene implements Scene {
         this.showEvent();
       }
     }, 1500));
+  }
+
+  private disableConfirmButton(): void {
+    if (this.confirmBtn?.style) {
+      this.confirmBtn.style.opacity = '0.5';
+      this.confirmBtn.style.pointerEvents = 'none';
+      this.confirmBtn.style.cursor = 'default';
+      this.confirmBtn.style.transform = 'scale(1)';
+    }
+  }
+
+  private enableConfirmButton(): void {
+    if (this.confirmBtn?.style) {
+      this.confirmBtn.style.opacity = '1';
+      this.confirmBtn.style.pointerEvents = 'auto';
+      this.confirmBtn.style.cursor = 'pointer';
+    }
   }
 }

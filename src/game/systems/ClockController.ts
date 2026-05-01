@@ -17,6 +17,18 @@ export class ClockController {
   private static readonly HAND_SELECT_THRESHOLD = 1.2; // world units
   private static readonly MAX_ANGLE_DELTA = Math.PI / 3; // ~60° max per event
 
+  // Reusable objects to avoid GC pressure during pointer events
+  private _ndc = new THREE.Vector2();
+  private _worldPoint = new THREE.Vector3();
+  private _clockPos = new THREE.Vector3();
+  private _plane = new THREE.Plane(new THREE.Vector3(0, 0, 1), 0);
+  private _rayTarget = new THREE.Vector3();
+  private _selectClockPos = new THREE.Vector3();
+  private _hourTip = new THREE.Vector3();
+  private _minuteTip = new THREE.Vector3();
+  private _hourMid = new THREE.Vector3();
+  private _minuteMid = new THREE.Vector3();
+
   private boundPointerDown: (e: PointerEvent) => void;
   private boundPointerMove: (e: PointerEvent) => void;
   private boundPointerUp: () => void;
@@ -74,7 +86,7 @@ export class ClockController {
 
   private getNDC(e: PointerEvent): THREE.Vector2 {
     const rect = this.renderer.domElement.getBoundingClientRect();
-    return new THREE.Vector2(
+    return this._ndc.set(
       ((e.clientX - rect.left) / rect.width) * 2 - 1,
       -((e.clientY - rect.top) / rect.height) * 2 + 1,
     );
@@ -90,36 +102,36 @@ export class ClockController {
 
   private getWorldPoint(ndc: THREE.Vector2): THREE.Vector3 {
     this.raycaster.setFromCamera(ndc, this.camera);
-    const clockZ = this.clock.group.getWorldPosition(new THREE.Vector3()).z;
-    const plane = new THREE.Plane(new THREE.Vector3(0, 0, 1), -clockZ);
-    const point = new THREE.Vector3();
-    this.raycaster.ray.intersectPlane(plane, point);
-    return point;
+    const clockZ = this.clock.group.getWorldPosition(this._rayTarget).z;
+    this._plane.normal.set(0, 0, 1);
+    this._plane.constant = -clockZ;
+    this.raycaster.ray.intersectPlane(this._plane, this._worldPoint);
+    return this._worldPoint;
   }
 
   private getAngleFromPointer(ndc: THREE.Vector2): number {
     const point = this.getWorldPoint(ndc);
-    const clockPos = this.clock.group.getWorldPosition(new THREE.Vector3());
-    return Math.atan2(point.y - clockPos.y, point.x - clockPos.x);
+    this.clock.group.getWorldPosition(this._clockPos);
+    return Math.atan2(point.y - this._clockPos.y, point.x - this._clockPos.x);
   }
 
   /** Select the hand closest to the touch point */
   private selectHand(ndc: THREE.Vector2): HandType | null {
     const worldPoint = this.getWorldPoint(ndc);
 
-    const hourTip = this.clock.getHandTipPosition('hour');
-    const minuteTip = this.clock.getHandTipPosition('minute');
+    this._hourTip.copy(this.clock.getHandTipPosition('hour'));
+    this._minuteTip.copy(this.clock.getHandTipPosition('minute'));
 
-    const distHour = worldPoint.distanceTo(hourTip);
-    const distMinute = worldPoint.distanceTo(minuteTip);
+    const distHour = worldPoint.distanceTo(this._hourTip);
+    const distMinute = worldPoint.distanceTo(this._minuteTip);
 
     // Also check distance to the midpoint of each hand for better hit area
-    const clockCenter = this.clock.group.getWorldPosition(new THREE.Vector3());
-    const hourMid = new THREE.Vector3().lerpVectors(clockCenter, hourTip, 0.5);
-    const minuteMid = new THREE.Vector3().lerpVectors(clockCenter, minuteTip, 0.5);
+    this.clock.group.getWorldPosition(this._selectClockPos);
+    this._hourMid.lerpVectors(this._selectClockPos, this._hourTip, 0.5);
+    this._minuteMid.lerpVectors(this._selectClockPos, this._minuteTip, 0.5);
 
-    const distHourMid = worldPoint.distanceTo(hourMid);
-    const distMinuteMid = worldPoint.distanceTo(minuteMid);
+    const distHourMid = worldPoint.distanceTo(this._hourMid);
+    const distMinuteMid = worldPoint.distanceTo(this._minuteMid);
 
     const bestHour = Math.min(distHour, distHourMid);
     const bestMinute = Math.min(distMinute, distMinuteMid);

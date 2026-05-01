@@ -137,6 +137,22 @@ export class QuizPlayScene implements Scene {
     this.hud.mount(topBar);
     overlay.appendChild(topBar);
 
+    const prompt = document.createElement('div');
+    prompt.textContent = 'この とけいは なんじかな？🤔';
+    prompt.style.cssText = `
+      font-family: 'Zen Maru Gothic', sans-serif;
+      font-size: clamp(20px, 4vw, 32px);
+      font-weight: 700;
+      color: #2C3E50;
+      background: rgba(255,255,255,0.9);
+      padding: 10px 24px;
+      border-radius: 16px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      text-align: center;
+      align-self: center;
+    `;
+    overlay.appendChild(prompt);
+
     const bottomArea = document.createElement('div');
     bottomArea.style.cssText = `
       display: flex;

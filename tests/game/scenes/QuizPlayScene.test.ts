@@ -82,6 +82,12 @@ describe('QuizPlayScene', () => {
     expect(resultTransitions.length).toBe(0);
   });
 
+  it('質問プロンプト「なんじかな」が表示されること', () => {
+    const uiOverlay = document.getElementById('ui-overlay')!;
+    const allText = uiOverlay.textContent ?? '';
+    expect(allText).toContain('なんじかな');
+  });
+
   it('enter() で pendingTimers が初期化されること（再入時の防御）', () => {
     // Trigger an answer
     const buttons = document.querySelectorAll('button');

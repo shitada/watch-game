@@ -40,6 +40,9 @@ renderer.setSize(window.innerWidth, window.innerHeight);
 renderer.outputColorSpace = THREE.SRGBColorSpace;
 
 // ── Performance Manager ──
+// PerformanceManager will measure frame times and adjust renderer pixelRatio dynamically.
+// Note: changing pixelRatio can incur a temporary performance cost when it resizes the drawing buffer.
+// If you observe rapid oscillation or jank on some devices, consider tuning `thresholds` and `cooldownMs`.
 const perfManager = new PerformanceManager(renderer, {
   qualityLevels: [1, 1.5, 2],
   sampleSize: 30,
@@ -105,6 +108,9 @@ const onUpdate = (dt: number) => {
   // Record frame time for PerformanceManager (ms). Guard against non-positive dt as GameLoop may initialize with 0.
   if (dt > 0) perfManager.recordFrame(dt * 1000);
   sceneManager.update(dt);
+  // Record the frame time (dt is in seconds) in milliseconds for PerformanceManager so it can
+  // dynamically adjust pixel ratio. Note the multiplication by 1000 to convert seconds -> ms.
+  perfManager.recordFrame(dt * 1000);
 };
 
 const onRender = () => {

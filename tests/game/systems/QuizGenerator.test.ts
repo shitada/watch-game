@@ -115,6 +115,31 @@ describe('QuizGenerator', () => {
 
     vi.restoreAllMocks();
   });
+
+  it('should fallback to enumerated candidates when attempts exhausted', () => {
+    const gen2 = new QuizGenerator();
+    const correct = { hours: 3, minutes: 0 };
+
+    // Make generateTime always return the correct answer so the random attempts are useless
+    vi.spyOn(gen2, 'generateTime').mockImplementation(() => ({ hours: 3, minutes: 0 }));
+    // Fix Math.random so shuffle is deterministic
+    vi.spyOn(Math, 'random').mockReturnValue(0.1);
+
+    const choices = gen2.generateChoices(correct, 1);
+
+    // Should always produce 4 choices
+    expect(choices.length).toBe(4);
+
+    // None should be equal to correct except the original correct which must be present once
+    const correctCount = choices.filter(c => c.hours === 3 && c.minutes === 0).length;
+    expect(correctCount).toBe(1);
+
+    // All choices unique
+    const keys = choices.map(c => `${c.hours}:${c.minutes}`);
+    expect(new Set(keys).size).toBe(4);
+
+    vi.restoreAllMocks();
+  });
 });
 
 describe('generateUniqueTime', () => {

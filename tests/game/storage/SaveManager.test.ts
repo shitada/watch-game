@@ -76,11 +76,36 @@ describe('SaveManager', () => {
     expect(data.trophies).toEqual([]);
   });
 
-  it('should handle corrupted data gracefully', () => {
+  it('should handle corrupted data gracefully (non-json)', () => {
     localStorage.setItem('kids-clock-master-save', 'not-json');
     const sm = new SaveManager();
     const data = sm.load();
 
     expect(data.totalPlays).toBe(0);
+  });
+
+  it('should fallback to default for structurally corrupted data and allow recovery', () => {
+    // completedLevels is null and other fields are wrong types
+    const corrupted = {
+      completedLevels: null,
+      trophies: null,
+      totalCorrect: 'NaN',
+      totalPlays: null,
+      bestScores: null,
+    };
+    localStorage.setItem('kids-clock-master-save', JSON.stringify(corrupted));
+
+    const sm = new SaveManager();
+    const data = sm.load();
+
+    // should return default structure, not the corrupted one
+    expect(data.completedLevels.quiz).toEqual([]);
+    expect(data.trophies).toEqual([]);
+    expect(data.totalPlays).toBe(0);
+
+    // should be able to add completed level without throwing
+    expect(() => sm.addCompletedLevel('quiz', 3)).not.toThrow();
+    const after = sm.load();
+    expect(after.completedLevels.quiz).toContain(3);
   });
 });

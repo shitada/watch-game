@@ -15,13 +15,29 @@ function defaultData(): SaveData {
 function isValid(data: unknown): data is SaveData {
   if (!data || typeof data !== 'object') return false;
   const d = data as Record<string, unknown>;
-  return (
-    typeof d.completedLevels === 'object' &&
-    Array.isArray(d.trophies) &&
-    typeof d.totalCorrect === 'number' &&
-    typeof d.totalPlays === 'number' &&
-    typeof d.bestScores === 'object'
-  );
+
+  // completedLevels must be an object with arrays for each mode
+  const cl = d.completedLevels;
+  if (!cl || typeof cl !== 'object') return false;
+  const modes = ['quiz', 'setTime', 'daily'] as const;
+  for (const m of modes) {
+    const arr = (cl as Record<string, unknown>)[m];
+    if (!Array.isArray(arr)) return false;
+    // ensure array contains only numbers
+    if (!arr.every((v: unknown) => typeof v === 'number')) return false;
+  }
+
+  if (!Array.isArray(d.trophies)) return false;
+  if (typeof d.totalCorrect !== 'number' || typeof d.totalPlays !== 'number') return false;
+
+  const bs = d.bestScores;
+  if (!bs || typeof bs !== 'object' || Array.isArray(bs)) return false;
+  // ensure bestScores values are numbers
+  for (const k in bs as Record<string, unknown>) {
+    if (typeof (bs as Record<string, unknown>)[k] !== 'number') return false;
+  }
+
+  return true;
 }
 
 export class SaveManager {

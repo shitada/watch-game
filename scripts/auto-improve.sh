@@ -125,7 +125,7 @@ EOF
 - プロジェクトルート: ${PROJECT_ROOT}"
 
   local exit_code=0
-  copilot -p "${prompt}" --agent orchestrator --yolo --model gpt-5-mini 2>&1 | tee "${log_dir}/copilot-output.log" || exit_code=$?
+  copilot -p "${prompt}" --agent orchestrator --yolo 2>&1 | tee "${log_dir}/copilot-output.log" || exit_code=$?
 
   # コンソール出力を MD に変換
   cat > "${log_dir}/06-copilot-console.md" << MDEOF

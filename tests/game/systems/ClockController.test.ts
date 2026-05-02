@@ -603,3 +603,53 @@ describe('ClockController', () => {
     });
   });
 });
+
+// Additional tests for pixel->world conversion exported from ClockController
+import { pixelsToWorldDistance } from '@/game/systems/ClockController';
+
+describe('pixelsToWorldDistance (integration)', () => {
+  function createCanvas(w = 800, h = 600) {
+    const c = document.createElement('canvas');
+    c.getBoundingClientRect = () => ({
+      left: 0,
+      top: 0,
+      width: w,
+      height: h,
+      right: w,
+      bottom: h,
+      x: 0,
+      y: 0,
+      toJSON: () => ({}),
+    });
+    return c as HTMLCanvasElement;
+  }
+
+  it('produces positive distances for perspective camera', () => {
+    const canvas = createCanvas(800, 600);
+    const cam = new THREE.PerspectiveCamera(50, 800 / 600, 0.1, 1000);
+    cam.position.set(0, 0, 10);
+    cam.lookAt(0, 0, 0);
+
+    const d = pixelsToWorldDistance(canvas, cam, 48, 0);
+    expect(d).toBeGreaterThan(0);
+  });
+
+  it('produces different values for orthographic vs perspective', () => {
+    const canvas = createCanvas(800, 600);
+    const p = new THREE.PerspectiveCamera(50, 800 / 600, 0.1, 1000);
+    p.position.set(0, 0, 10);
+    p.lookAt(0, 0, 0);
+
+    const aspect = 800 / 600;
+    const o = new THREE.OrthographicCamera(-5 * aspect, 5 * aspect, 5, -5, 0.1, 1000);
+    o.position.set(0, 0, 10);
+    o.lookAt(0, 0, 0);
+
+    const pd = pixelsToWorldDistance(canvas, p, 48, 0);
+    const od = pixelsToWorldDistance(canvas, o, 48, 0);
+
+    expect(pd).toBeGreaterThan(0);
+    expect(od).toBeGreaterThan(0);
+    expect(Math.abs(pd - od)).toBeGreaterThan(1e-6);
+  });
+});

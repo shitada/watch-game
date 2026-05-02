@@ -1,6 +1,52 @@
 import * as THREE from 'three';
 import { Clock3D, HandType } from '@/game/entities/Clock3D';
 import { ClockTime } from '@/types';
+import { GameSettings } from '@/game/config/GameSettings';
+
+/**
+ * Convert a pixel distance on the canvas to world-space distance at planeZ.
+ * This implementation avoids THREE.Ray.intersectPlane to remain test-friendly
+ * by using unproject-based ray math.
+ */
+export function pixelsToWorldDistance(
+  canvas: HTMLCanvasElement,
+  camera: THREE.Camera,
+  pixels: number,
+  planeZ: number,
+): number {
+  const rect = canvas.getBoundingClientRect();
+  const cx = rect.left + rect.width / 2;
+  const cy = rect.top + rect.height / 2;
+
+  const toWorld = (clientX: number, clientY: number): THREE.Vector3 => {
+    // NDC coords
+    const ndc = new THREE.Vector3(
+      ((clientX - rect.left) / rect.width) * 2 - 1,
+      -((clientY - rect.top) / rect.height) * 2 + 1,
+      0.5,
+    );
+
+    // Unproject to a point in world space at an arbitrary depth, then form a ray
+    const worldPoint = ndc.clone().unproject(camera);
+    const camPos = new THREE.Vector3();
+    (camera as any).getWorldPosition(camPos);
+    const dir = worldPoint.sub(camPos).normalize();
+
+    // Intersect with plane z = planeZ: camPos.z + t * dir.z = planeZ => t = (planeZ - camPos.z)/dir.z
+    const t = (planeZ - camPos.z) / dir.z;
+    return camPos.add(dir.multiplyScalar(t));
+  };
+
+  const pCenter = toWorld(cx, cy);
+  const pRight = toWorld(cx + pixels, cy);
+  const pDown = toWorld(cx, cy + pixels);
+
+  const dx = pCenter.distanceTo(pRight);
+  const dy = pCenter.distanceTo(pDown);
+
+  // Combine X/Y contributions to approximate an isotropic pixel radius in world space
+  return Math.sqrt(dx * dx + dy * dy);
+}
 
 export class ClockController {
   private clock: Clock3D;
@@ -21,8 +67,8 @@ export class ClockController {
   // Hand selection
   private selectedHand: HandType | null = null;
   private prevAngle: number | null = null;
-  private static readonly HAND_SELECT_THRESHOLD = 1.2; // world units
   private static readonly MAX_ANGLE_DELTA = Math.PI / 3; // ~60° max per event
+  private touchWorldThreshold: number | null = null;
 
   // Reusable objects to avoid GC pressure during pointer events
   private _ndc = new THREE.Vector2();
@@ -39,6 +85,7 @@ export class ClockController {
   private boundPointerDown: (e: PointerEvent) => void;
   private boundPointerMove: (e: PointerEvent) => void;
   private boundPointerUp: (e?: PointerEvent) => void;
+  private boundOnResize: () => void;
 
   constructor(
     clock: Clock3D,
@@ -52,20 +99,28 @@ export class ClockController {
     this.boundPointerDown = this.onPointerDown.bind(this);
     this.boundPointerMove = this.onPointerMove.bind(this);
     this.boundPointerUp = this.onPointerUp.bind(this);
+    this.boundOnResize = this.invalidateThreshold.bind(this);
   }
 
   setEnabled(enabled: boolean): void {
-    const canvas = this.renderer.domElement;
+    const canvas = this.renderer.domElement as HTMLCanvasElement;
     if (enabled && !this.enabled) {
       canvas.addEventListener('pointerdown', this.boundPointerDown);
       canvas.addEventListener('pointermove', this.boundPointerMove);
       canvas.addEventListener('pointerup', this.boundPointerUp);
       canvas.addEventListener('pointercancel', this.boundPointerUp);
+      // Listen for resizes to invalidate cached threshold
+      if (typeof window !== 'undefined' && typeof window.addEventListener === 'function') {
+        window.addEventListener('resize', this.boundOnResize);
+      }
     } else if (!enabled && this.enabled) {
       canvas.removeEventListener('pointerdown', this.boundPointerDown);
       canvas.removeEventListener('pointermove', this.boundPointerMove);
       canvas.removeEventListener('pointerup', this.boundPointerUp);
       canvas.removeEventListener('pointercancel', this.boundPointerUp);
+      if (typeof window !== 'undefined' && typeof window.removeEventListener === 'function') {
+        window.removeEventListener('resize', this.boundOnResize);
+      }
       // Ensure we release any active pointer capture when disabling
       if (this.activePointerId != null) {
         try {
@@ -88,6 +143,7 @@ export class ClockController {
 
   setCamera(camera: THREE.Camera): void {
     this.camera = camera;
+    this.invalidateThreshold();
   }
 
   setSnapStep(step: number): void {
@@ -134,6 +190,31 @@ export class ClockController {
     return Math.atan2(point.y - this._clockPos.y, point.x - this._clockPos.x);
   }
 
+  private invalidateThreshold(): void {
+    this.touchWorldThreshold = null;
+  }
+
+  private ensureThreshold(): void {
+    if (this.touchWorldThreshold != null) return;
+    try {
+      const canvas = this.renderer.domElement as HTMLCanvasElement;
+      const clockZ = this.clock.group.getWorldPosition(this._rayTarget).z;
+      this.touchWorldThreshold = pixelsToWorldDistance(
+        canvas,
+        this.camera,
+        GameSettings.TOUCH_TARGET_PX,
+        clockZ,
+      );
+      // Guard against non-finite results from geometric calculations (e.g. camera at origin)
+      if (!Number.isFinite(this.touchWorldThreshold) || this.touchWorldThreshold <= 0) {
+        this.touchWorldThreshold = 1.2;
+      }
+    } catch (err) {
+      // Fallback to previous fixed value in unlikely failure
+      this.touchWorldThreshold = 1.2;
+    }
+  }
+
   /** Select the hand closest to the touch point */
   private selectHand(ndc: THREE.Vector2): HandType | null {
     const worldPoint = this.getWorldPoint(ndc);
@@ -155,7 +236,9 @@ export class ClockController {
     const bestHour = Math.min(distHour, distHourMid);
     const bestMinute = Math.min(distMinute, distMinuteMid);
 
-    const threshold = ClockController.HAND_SELECT_THRESHOLD;
+    this.ensureThreshold();
+    const threshold = this.touchWorldThreshold ?? 1.2;
+
     if (bestHour < threshold || bestMinute < threshold) {
       return bestMinute <= bestHour ? 'minute' : 'hour';
     }

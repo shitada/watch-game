@@ -16,6 +16,8 @@ export class Clock3D {
   private secondAngle = 0;
   private originalHourColor = S.COLORS.hourHand;
   private originalMinuteColor = S.COLORS.minuteHand;
+  // Flag to make dispose idempotent
+  private _disposed = false;
 
   constructor() {
     this.buildClockFace();
@@ -288,20 +290,88 @@ export class Clock3D {
 
   /** Dispose all geometries, materials, and textures to free GPU resources */
   dispose(): void {
+    if (this._disposed) return;
+
+    const geos = new Set<THREE.BufferGeometry>();
+    const mats = new Set<THREE.Material>();
+    const texs = new Set<THREE.Texture>();
+
+    // Collect unique resources
     this.group.traverse((child) => {
       if (child instanceof THREE.Mesh) {
-        child.geometry.dispose();
+        if (child.geometry) geos.add(child.geometry);
+
         const materials = Array.isArray(child.material)
           ? child.material
           : [child.material];
+
         for (const mat of materials) {
-          if ('map' in mat && mat.map) {
-            mat.map.dispose();
+          if (mat) mats.add(mat);
+
+          // Collect commonly used texture properties
+          const texProps = [
+            'map',
+            'alphaMap',
+            'aoMap',
+            'bumpMap',
+            'normalMap',
+            'displacementMap',
+            'emissiveMap',
+            'roughnessMap',
+            'metalnessMap',
+            'envMap',
+            'lightMap',
+          ] as const;
+
+          for (const p of texProps) {
+            // @ts-ignore - index into material to find texture props
+            const t = (mat as any)[p] as THREE.Texture | undefined;
+            if (t instanceof THREE.Texture) texs.add(t);
           }
-          mat.dispose();
         }
       }
     });
-    this.group.clear();
+
+    // Dispose textures first
+    for (const t of Array.from(texs)) {
+      try {
+        t.dispose();
+      } catch (e) {
+        // swallow to keep dispose robust
+        // eslint-disable-next-line no-console
+        console.warn('Failed to dispose texture', e);
+      }
+    }
+
+    // Dispose materials
+    for (const m of Array.from(mats)) {
+      try {
+        m.dispose();
+      } catch (e) {
+        // eslint-disable-next-line no-console
+        console.warn('Failed to dispose material', e);
+      }
+    }
+
+    // Dispose geometries
+    for (const g of Array.from(geos)) {
+      try {
+        // geometry may have dispose()
+        if (typeof (g as any).dispose === 'function') (g as any).dispose();
+      } catch (e) {
+        // eslint-disable-next-line no-console
+        console.warn('Failed to dispose geometry', e);
+      }
+    }
+
+    // Clear group children
+    try {
+      this.group.clear();
+    } catch (e) {
+      // eslint-disable-next-line no-console
+      console.warn('Failed to clear group', e);
+    }
+
+    this._disposed = true;
   }
 }

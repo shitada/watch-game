@@ -27,6 +27,41 @@ export class QuizGenerator {
     return this.generateTime(level);
   }
 
+  // Helper: list all possible candidate times for a level
+  private listAllCandidates(level: number): ClockTime[] {
+    const def = getLevelDef(level);
+    const minutes: number[] = [];
+    if (def.minuteStep >= 60) {
+      minutes.push(0);
+    } else {
+      for (let m = 0; m < 60; m += def.minuteStep) minutes.push(m);
+    }
+    const candidates: ClockTime[] = [];
+    for (let h = 1; h <= 12; h++) {
+      for (const m of minutes) candidates.push({ hours: h, minutes: m });
+    }
+    return candidates;
+  }
+
+  // Helper: determines whether a wrong candidate is acceptable
+  private isAcceptableCandidate(wrong: ClockTime, correct: ClockTime, def: ReturnType<typeof getLevelDef>, existing: ClockTime[]): boolean {
+    if (wrong.hours === correct.hours && wrong.minutes === correct.minutes) return false;
+
+    // Avoid too-similar choices for higher levels
+    if (def.minuteStep <= 5) {
+      const diffMin = Math.abs(
+        (wrong.hours * 60 + wrong.minutes) - (correct.hours * 60 + correct.minutes),
+      );
+      const wrappedDiff = Math.min(diffMin, 720 - diffMin);
+      if (wrappedDiff < def.minuteStep * 2 && wrappedDiff > 0) return false;
+    }
+
+    const dup = existing.some(c => c.hours === wrong.hours && c.minutes === wrong.minutes);
+    if (dup) return false;
+
+    return true;
+  }
+
   generateChoices(correct: ClockTime, level: number): ClockTime[] {
     const choices: ClockTime[] = [correct];
     const def = getLevelDef(level);
@@ -37,62 +72,41 @@ export class QuizGenerator {
       attempts++;
       const wrong = this.generateTime(level);
 
-      if (wrong.hours === correct.hours && wrong.minutes === correct.minutes) {
+      if (!this.isAcceptableCandidate(wrong, correct, def, choices)) {
         continue;
       }
 
-      // Avoid too-similar choices for higher levels
-      if (def.minuteStep <= 5) {
-        const diffMin = Math.abs(
-          (wrong.hours * 60 + wrong.minutes) - (correct.hours * 60 + correct.minutes),
-        );
-        const wrappedDiff = Math.min(diffMin, 720 - diffMin);
-        if (wrappedDiff < def.minuteStep * 2 && wrappedDiff > 0) continue;
-      }
-
-      const dup = choices.some(
-        c => c.hours === wrong.hours && c.minutes === wrong.minutes,
-      );
-      if (!dup) choices.push(wrong);
+      choices.push(wrong);
     }
 
-    // Fallback: if not enough choices, enumerate candidates exhaustively
+    // If attempts exhausted and still not enough choices, fallback to enumerating candidates
     if (choices.length < 4) {
-      const candidates: ClockTime[] = [];
-      const step = def.minuteStep >= 60 ? 60 : def.minuteStep;
-      for (let h = 1; h <= 12; h++) {
-        for (let m = 0; m < 60; m += step) {
-          candidates.push({ hours: h, minutes: m });
-        }
+      const all = this.listAllCandidates(level).filter(c => this.isAcceptableCandidate(c, correct, def, choices));
+      // Shuffle candidates for randomness
+      for (let i = all.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [all[i], all[j]] = [all[j], all[i]];
       }
-
-      // First pass: respect the "too-similar" filter
-      for (const cand of candidates) {
-        if (choices.length >= 4) break;
-        if (cand.hours === correct.hours && cand.minutes === correct.minutes) continue;
-        const dup = choices.some(c => c.hours === cand.hours && c.minutes === cand.minutes);
-        if (dup) continue;
-        if (def.minuteStep <= 5) {
-          const diffMin = Math.abs(
-            (cand.hours * 60 + cand.minutes) - (correct.hours * 60 + correct.minutes),
-          );
-          const wrappedDiff = Math.min(diffMin, 720 - diffMin);
-          if (wrappedDiff < def.minuteStep * 2 && wrappedDiff > 0) continue;
-        }
-        choices.push(cand);
+      let idx = 0;
+      while (choices.length < 4 && idx < all.length) {
+        choices.push(all[idx]);
+        idx++;
       }
 
       // Second pass: ignore similarity if still not enough
-      for (const cand of candidates) {
-        if (choices.length >= 4) break;
-        if (cand.hours === correct.hours && cand.minutes === correct.minutes) continue;
-        const dup = choices.some(c => c.hours === cand.hours && c.minutes === cand.minutes);
-        if (dup) continue;
-        choices.push(cand);
+      if (choices.length < 4) {
+        const remaining = this.listAllCandidates(level).filter(
+          c => !(c.hours === correct.hours && c.minutes === correct.minutes) &&
+               !choices.some(e => e.hours === c.hours && e.minutes === c.minutes),
+        );
+        for (const cand of remaining) {
+          if (choices.length >= 4) break;
+          choices.push(cand);
+        }
       }
     }
 
-    // Shuffle
+    // Final shuffle
     for (let i = choices.length - 1; i > 0; i--) {
       const j = Math.floor(Math.random() * (i + 1));
       [choices[i], choices[j]] = [choices[j], choices[i]];

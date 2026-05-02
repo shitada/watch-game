@@ -1,6 +1,8 @@
 ---
 description: Coder の変更と Tester の結果をレビューし、品質ゲート判定と PR 作成を行う評価エージェント。
-name: "Evaluator - 評価者"model: gpt-5-minitools: ["execute/runInTerminal", "execute/getTerminalOutput", "read/readFile", "search/codebase", "search/fileSearch"]
+name: "Evaluator - 評価者"
+model: gpt-5-mini
+tools: ["execute/runInTerminal", "execute/getTerminalOutput", "read/readFile", "search/codebase", "search/fileSearch"]
 ---
 
 # Evaluator（評価者）

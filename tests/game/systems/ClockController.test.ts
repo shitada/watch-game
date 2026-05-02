@@ -677,4 +677,22 @@ describe('pixelsToWorldDistance (integration)', () => {
     expect(od).toBeGreaterThan(0);
     expect(Math.abs(pd - od)).toBeGreaterThan(1e-6);
   });
+
+  it('returns fallback when canvas rect is zero-sized', () => {
+    const canvas = createCanvas(0, 0);
+    const cam = new THREE.PerspectiveCamera(50, 1, 0.1, 1000);
+
+    const d = pixelsToWorldDistance(canvas, cam, 48, 0);
+    expect(d).toBeCloseTo(1.2, 6);
+  });
+
+  it('returns fallback when pixels is non-positive', () => {
+    const canvas = createCanvas(800, 600);
+    const cam = new THREE.PerspectiveCamera(50, 800 / 600, 0.1, 1000);
+
+    const d0 = pixelsToWorldDistance(canvas, cam, 0, 0);
+    const dNeg = pixelsToWorldDistance(canvas, cam, -10, 0);
+    expect(d0).toBeCloseTo(1.2, 6);
+    expect(dNeg).toBeCloseTo(1.2, 6);
+  });
 });

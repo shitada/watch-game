@@ -8,6 +8,8 @@ import { GameSettings } from '@/game/config/GameSettings';
  * This implementation avoids THREE.Ray.intersectPlane to remain test-friendly
  * by using unproject-based ray math.
  */
+const FALLBACK_DISTANCE = 1.2;
+
 export function pixelsToWorldDistance(
   canvas: HTMLCanvasElement,
   camera: THREE.Camera,
@@ -15,7 +17,12 @@ export function pixelsToWorldDistance(
   planeZ: number,
 ): number {
   const EPS = 1e-6;
-  const rect = canvas.getBoundingClientRect();
+
+  // Defensive guards: canvas rect must be valid and pixels must be positive
+  const rect = canvas.getBoundingClientRect?.();
+  if (!rect || rect.width <= 0 || rect.height <= 0) return FALLBACK_DISTANCE;
+  if (!Number.isFinite(pixels) || pixels <= 0) return FALLBACK_DISTANCE;
+
   const cx = rect.left + rect.width / 2;
   const cy = rect.top + rect.height / 2;
 
@@ -51,7 +58,7 @@ export function pixelsToWorldDistance(
     const dx = pCenter.distanceTo(pRight);
     const dy = pCenter.distanceTo(pDown);
     const result = Math.sqrt(dx * dx + dy * dy);
-    if (!Number.isFinite(result) || result <= 0) return 1.2;
+    if (!Number.isFinite(result) || result <= 0) return FALLBACK_DISTANCE;
     return result;
   }
 
@@ -82,13 +89,13 @@ export function pixelsToWorldDistance(
     perPixelX = worldWidth / canvasW;
   } else {
     // Unknown camera type — return safe default
-    return 1.2;
+    return FALLBACK_DISTANCE;
   }
 
   const dx = perPixelX * pixels;
   const dy = perPixelY * pixels;
   const approx = Math.sqrt(dx * dx + dy * dy);
-  if (!Number.isFinite(approx) || approx <= 0) return 1.2;
+  if (!Number.isFinite(approx) || approx <= 0) return FALLBACK_DISTANCE;
   return approx;
 }
 

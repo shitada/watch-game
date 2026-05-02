@@ -28,6 +28,8 @@ function isValid(data: unknown): data is SaveData {
   }
 
   if (!Array.isArray(d.trophies)) return false;
+  // ensure trophies array contains only strings
+  if (!(d.trophies as unknown[]).every((v: unknown) => typeof v === 'string')) return false;
   if (typeof d.totalCorrect !== 'number' || typeof d.totalPlays !== 'number') return false;
 
   const bs = d.bestScores;
@@ -46,6 +48,17 @@ export class SaveManager {
       const raw = localStorage.getItem(STORAGE_KEY);
       if (!raw) return defaultData();
       const parsed: unknown = JSON.parse(raw);
+
+      // Sanitize trophies before validation: keep only string elements when trophies is an array
+      if (parsed && typeof parsed === 'object') {
+        const p = parsed as Record<string, unknown>;
+        if (Array.isArray(p.trophies)) {
+          p.trophies = p.trophies.filter((v: unknown) => typeof v === 'string');
+        } else {
+          p.trophies = [];
+        }
+      }
+
       if (isValid(parsed)) return parsed;
       return defaultData();
     } catch {

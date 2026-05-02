@@ -4,6 +4,7 @@ import { TitleScene } from '@/game/scenes/TitleScene';
 import { SceneManager } from '@/game/SceneManager';
 import { AudioManager } from '@/game/audio/AudioManager';
 import { SFXGenerator } from '@/game/audio/SFXGenerator';
+import { Clock3D } from '@/game/entities/Clock3D';
 
 // Mock Canvas 2D context
 HTMLCanvasElement.prototype.getContext = vi.fn().mockReturnValue({
@@ -114,6 +115,21 @@ describe('TitleScene', () => {
       entered = false;
       // clock3D.group と stars が除去される
       expect(threeScene.children.length).toBe(childrenBeforeExit - 2);
+    });
+
+    it('enter→exit→enter が可能で dispose が呼ばれること', () => {
+      const spy = vi.spyOn(Clock3D.prototype, 'dispose');
+
+      scene.enter({});
+      entered = true;
+      scene.exit();
+      entered = false;
+      scene.enter({});
+      entered = true;
+
+      expect(spy).toHaveBeenCalled();
+
+      spy.mockRestore();
     });
   });
 

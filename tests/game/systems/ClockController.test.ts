@@ -578,7 +578,7 @@ describe('ClockController', () => {
       expect(result1).toBe(result2);
     });
 
-    it('selectHand が getHandTipPosition の戻り値を .copy() でコピーすること', () => {
+    it('selectHand は getHandTipPosition に再利用ベクタを渡して呼び出すこと', () => {
       clock.setTime({ hours: 12, minutes: 0 });
       const minuteTip = clock.getHandTipPosition('minute');
       setupRaycasterForDrag(minuteTip.clone());
@@ -593,13 +593,13 @@ describe('ClockController', () => {
 
       ctrl.selectHand(new THREE.Vector2(0, 0));
 
-      // getHandTipPosition was called
-      expect(tipSpy).toHaveBeenCalledWith('hour');
-      expect(tipSpy).toHaveBeenCalledWith('minute');
+      // getHandTipPosition was called with the reusable target vectors
+      expect(tipSpy).toHaveBeenCalledWith('hour', ctrl._hourTip);
+      expect(tipSpy).toHaveBeenCalledWith('minute', ctrl._minuteTip);
 
-      // The reusable fields should not be the same reference as the return value
-      const hourTipReturn = clock.getHandTipPosition('hour');
-      expect(ctrl._hourTip).not.toBe(hourTipReturn);
+      // The reusable fields should be the same reference as the returned value when target is provided
+      const hourTipReturn = clock.getHandTipPosition('hour', ctrl._hourTip);
+      expect(ctrl._hourTip).toBe(hourTipReturn);
     });
   });
 });

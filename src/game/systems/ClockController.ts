@@ -138,8 +138,8 @@ export class ClockController {
   private selectHand(ndc: THREE.Vector2): HandType | null {
     const worldPoint = this.getWorldPoint(ndc);
 
-    this._hourTip.copy(this.clock.getHandTipPosition('hour'));
-    this._minuteTip.copy(this.clock.getHandTipPosition('minute'));
+    this.clock.getHandTipPosition('hour', this._hourTip);
+    this.clock.getHandTipPosition('minute', this._minuteTip);
 
     const distHour = worldPoint.distanceTo(this._hourTip);
     const distMinute = worldPoint.distanceTo(this._minuteTip);

@@ -61,6 +61,11 @@ sceneManager.setTransitionHandler((type, context) => {
   if (overlay.isTransitioning()) return;
   overlay.fadeOut(() => {
     sceneManager.transitionTo(type, context);
+    // Ensure render loop state is updated after transition and render one frame
+    updateRenderLoopState();
+    const threeScene = sceneManager.getCurrentThreeScene();
+    const camera = sceneManager.getCurrentCamera();
+    if (threeScene && camera) renderer.render(threeScene, camera);
     overlay.fadeIn();
   });
 });
@@ -80,7 +85,30 @@ const onRender = () => {
   }
 };
 
-gameLoop.start(onUpdate, onRender);
+/**
+ * Update the game loop state based on current scene's needs.
+ * If continuous rendering is required, ensure the loop is running.
+ * Otherwise pause the loop but keep the last frame rendered.
+ */
+function updateRenderLoopState() {
+  const needs = sceneManager.currentSceneNeedsContinuousRendering();
+  if (needs) {
+    // Restart loop to ensure fresh timing. We pause first to avoid duplicate loops.
+    gameLoop.pause();
+    gameLoop.start(onUpdate, onRender);
+  } else {
+    // Pause continuous loop to save CPU. Ensure one frame is rendered so screen isn't blank.
+    gameLoop.pause();
+    const threeScene = sceneManager.getCurrentThreeScene();
+    const camera = sceneManager.getCurrentCamera();
+    if (threeScene && camera) {
+      renderer.render(threeScene, camera);
+    }
+  }
+}
+
+// Initial render loop state
+updateRenderLoopState();
 
 // ── Resize ──
 window.addEventListener('resize', () => {
@@ -94,7 +122,15 @@ document.addEventListener('visibilitychange', () => {
     gameLoop.pause();
     audioManager.pauseBGM();
   } else {
-    gameLoop.resume(onUpdate, onRender);
+    // On visibility resume, only resume continuous loop if current scene needs it.
+    if (sceneManager.currentSceneNeedsContinuousRendering()) {
+      gameLoop.resume(onUpdate, onRender);
+    } else {
+      // Render a single frame to ensure UI shows correctly
+      const threeScene = sceneManager.getCurrentThreeScene();
+      const camera = sceneManager.getCurrentCamera();
+      if (threeScene && camera) renderer.render(threeScene, camera);
+    }
     audioManager.ensureResumed();
     audioManager.resumeBGM();
   }

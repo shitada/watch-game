@@ -26,6 +26,10 @@ export interface Scene {
   exit(): void;
   getThreeScene(): THREE.Scene;
   getCamera(): THREE.Camera;
+  // Optional: if provided and returns false, the engine may stop the continuous
+  // render loop while the scene is active to save CPU on idle/static screens.
+  // If not implemented, defaults to true (continuous rendering required).
+  needsContinuousRendering?(): boolean;
 }
 
 // ── Game Data Types ──

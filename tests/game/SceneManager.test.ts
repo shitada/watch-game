@@ -69,4 +69,24 @@ describe('SceneManager', () => {
 
     expect(warnSpy).toHaveBeenCalled();
   });
+
+  // Additional tests for continuous rendering flag
+  it('currentSceneNeedsContinuousRendering respects scene opt-out', () => {
+    const manager = new SceneManager();
+    const staticScene: Scene = {
+      enter: () => {},
+      update: () => {},
+      exit: () => {},
+      getThreeScene: () => new THREE.Scene(),
+      getCamera: () => new THREE.PerspectiveCamera(),
+      // @ts-ignore allow adding optional method inline
+      needsContinuousRendering: () => false,
+    } as unknown as Scene;
+
+    manager.register('title', staticScene);
+    manager.transitionTo('title', {});
+    // should be false because scene opts out
+    // @ts-ignore access for test
+    expect(manager.currentSceneNeedsContinuousRendering()).toBe(false);
+  });
 });

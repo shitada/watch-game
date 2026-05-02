@@ -641,6 +641,40 @@ describe('ClockController', () => {
       expect(result1).toBe(result2);
     });
 
+    it('getWorldPoint フォールバック: intersectPlane が null の場合でも同一インスタンスを維持して平面交差を計算すること', () => {
+      const ctrl = controller as unknown as {
+        getWorldPoint(ndc: THREE.Vector2): THREE.Vector3;
+        _worldPoint: THREE.Vector3;
+      };
+
+      // Make setFromCamera populate ray.origin and ray.direction from camera
+      vi.spyOn(THREE.Raycaster.prototype, 'setFromCamera').mockImplementation(function (_ndc: any, cam: any) {
+        const camPos = new THREE.Vector3();
+        (cam as any).getWorldPosition(camPos);
+        (this as any).ray.origin.copy(camPos);
+        (this as any).ray.direction.set(0, 0, -1);
+      });
+
+      // Force intersectPlane to return null to trigger fallback path
+      vi.spyOn(THREE.Ray.prototype, 'intersectPlane').mockImplementation(() => null);
+
+      // Mock camera.getWorldPosition to a known location (0,0,10)
+      vi.spyOn(camera as any, 'getWorldPosition').mockImplementation((v: THREE.Vector3) => {
+        v.set(0, 0, 10);
+        return v;
+      });
+
+      const ndc = new THREE.Vector2(0, 0);
+      const r1 = ctrl.getWorldPoint(ndc);
+      const r2 = ctrl.getWorldPoint(ndc);
+
+      // Should reuse same instance
+      expect(r1).toBe(r2);
+
+      // With camera at z=10 and ray dir (0,0,-1) intersection with clock plane z=0 => z should be ~0
+      expect(r1.z).toBeCloseTo(0, 6);
+    });
+
     it('selectHand は getHandTipPosition に再利用ベクタを渡して呼び出すこと', () => {
       clock.setTime({ hours: 12, minutes: 0 });
       const minuteTip = clock.getHandTipPosition('minute');

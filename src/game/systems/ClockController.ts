@@ -231,7 +231,35 @@ export class ClockController {
     const clockZ = this.clock.group.getWorldPosition(this._rayTarget).z;
     this._plane.normal.set(0, 0, 1);
     this._plane.constant = -clockZ;
-    this.raycaster.ray.intersectPlane(this._plane, this._worldPoint);
+
+    const EPS = 1e-6;
+
+    // Try the native intersectPlane which may return null when the ray is nearly parallel
+    const intersect = this.raycaster.ray.intersectPlane(this._plane, this._worldPoint);
+    if (intersect) {
+      // intersectPlane wrote into this._worldPoint — preserve the same instance
+      return this._worldPoint;
+    }
+
+    // Fallback: compute intersection explicitly from ray origin and direction
+    const camPos = new THREE.Vector3();
+    (this.camera as any).getWorldPosition(camPos);
+    const dir = this.raycaster.ray.direction.clone();
+
+    // If ray is nearly parallel to plane, fall back to an offset along the ray
+    if (Math.abs(dir.z) < EPS) {
+      this._worldPoint.copy(camPos).addScaledVector(dir, FALLBACK_DISTANCE);
+      return this._worldPoint;
+    }
+
+    const planeZ = -this._plane.constant;
+    const t = (planeZ - camPos.z) / dir.z;
+    if (!Number.isFinite(t)) {
+      this._worldPoint.copy(camPos).addScaledVector(dir, FALLBACK_DISTANCE);
+      return this._worldPoint;
+    }
+
+    this._worldPoint.copy(camPos).addScaledVector(dir, t);
     return this._worldPoint;
   }
 

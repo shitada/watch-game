@@ -110,7 +110,26 @@ const onUpdate = (dt: number) => {
   sceneManager.update(dt);
 };
 
+// Track last render time to measure real frame time and feed PerformanceManager
+let _lastRenderTime: number | null = null;
+
 const onRender = () => {
+  const now = typeof performance !== 'undefined' ? performance.now() : Date.now();
+
+  // Measure frame time (ms) and report to PerformanceManager when available
+  if (_lastRenderTime != null) {
+    const dtMs = now - _lastRenderTime;
+    try {
+      // recordFrame is a best-effort call; PerformanceManager will handle samples
+      perfManager.recordFrame(dtMs);
+    } catch (e) {
+      // swallow to avoid breaking render loop
+      // eslint-disable-next-line no-console
+      console.warn('perfManager.recordFrame failed', e);
+    }
+  }
+  _lastRenderTime = now;
+
   const threeScene = sceneManager.getCurrentThreeScene();
   const camera = sceneManager.getCurrentCamera();
   if (threeScene && camera) {
@@ -128,10 +147,15 @@ function updateRenderLoopState() {
   if (needs) {
     // Restart loop to ensure fresh timing. We pause first to avoid duplicate loops.
     gameLoop.pause();
+    // Reset last render timestamp so the first measured delta is stable
+    _lastRenderTime = typeof performance !== 'undefined' ? performance.now() : Date.now();
     gameLoop.start(onUpdate, onRender);
   } else {
     // Pause continuous loop to save CPU. Ensure one frame is rendered so screen isn't blank.
     gameLoop.pause();
+    // When we pause continuous rendering, clear the last render time so we don't
+    // report a large dt when loop restarts later.
+    _lastRenderTime = null;
     const threeScene = sceneManager.getCurrentThreeScene();
     const camera = sceneManager.getCurrentCamera();
     if (threeScene && camera) {
@@ -157,6 +181,8 @@ document.addEventListener('visibilitychange', () => {
   } else {
     // On visibility resume, only resume continuous loop if current scene needs it.
     if (sceneManager.currentSceneNeedsContinuousRendering()) {
+      // Reset last render timestamp to avoid a large delta on resume
+      _lastRenderTime = typeof performance !== 'undefined' ? performance.now() : Date.now();
       gameLoop.resume(onUpdate, onRender);
     } else {
       // Render a single frame to ensure UI shows correctly

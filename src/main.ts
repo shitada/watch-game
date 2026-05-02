@@ -14,6 +14,7 @@ import { ResultScene } from '@/game/scenes/ResultScene';
 import { TrophyScene } from '@/game/scenes/TrophyScene';
 import { TransitionOverlay } from '@/ui/TransitionOverlay';
 import { configureCanvasForTouch } from '@/ui/CanvasUtils';
+import { PerformanceManager } from '@/game/systems/PerformanceManager';
 
 // ── Renderer ──
 const canvasEl = document.getElementById('game-canvas') as HTMLCanvasElement | null;
@@ -37,6 +38,16 @@ try {
 renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
 renderer.setSize(window.innerWidth, window.innerHeight);
 renderer.outputColorSpace = THREE.SRGBColorSpace;
+
+// ── Performance Manager ──
+const perfManager = new PerformanceManager(renderer, {
+  qualityLevels: [1, 1.5, 2],
+  sampleSize: 30,
+  thresholds: { highMs: 40, lowMs: 18 },
+  cooldownMs: 2000,
+});
+// Apply initial configuration
+perfManager.applyInitial();
 
 // ── Singletons ──
 const sceneManager = new SceneManager();
@@ -91,6 +102,8 @@ sceneManager.setTransitionHandler((type, context) => {
 sceneManager.transitionTo('title', {});
 
 const onUpdate = (dt: number) => {
+  // Record frame time for PerformanceManager (ms). Guard against non-positive dt as GameLoop may initialize with 0.
+  if (dt > 0) perfManager.recordFrame(dt * 1000);
   sceneManager.update(dt);
 };
 
@@ -129,7 +142,7 @@ updateRenderLoopState();
 
 // ── Resize ──
 window.addEventListener('resize', () => {
-  renderer.setSize(window.innerWidth, window.innerHeight);
+  perfManager.onResize(window.innerWidth, window.innerHeight);
   sceneManager.updateAllCamerasAspect(window.innerWidth / window.innerHeight);
 });
 

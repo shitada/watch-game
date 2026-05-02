@@ -8,7 +8,7 @@ import { Clock3D } from '@/game/entities/Clock3D';
 export class TitleScene implements Scene {
   private scene = new THREE.Scene();
   private camera = new THREE.PerspectiveCamera(50, window.innerWidth / window.innerHeight, 0.1, 100);
-  private clock3D = new Clock3D();
+  private clock3D: Clock3D | null = null;
   private overlay: HTMLDivElement | null = null;
   private sceneManager: SceneManager;
   private audioManager: AudioManager;
@@ -37,6 +37,8 @@ export class TitleScene implements Scene {
   }
 
   enter(_context: SceneContext): void {
+    // Create clock instance on enter to allow proper disposal on exit
+    this.clock3D = new Clock3D();
     // Reset clock
     this.scene.add(this.clock3D.group);
     this.clock3D.group.position.set(0, 0.5, 0);
@@ -62,8 +64,8 @@ export class TitleScene implements Scene {
   }
 
   update(dt: number): void {
-    this.clock3D.update(dt);
-    this.clock3D.group.rotation.y = Math.sin(Date.now() * 0.0005) * 0.15;
+    this.clock3D?.update(dt);
+    if (this.clock3D) this.clock3D.group.rotation.y = Math.sin(Date.now() * 0.0005) * 0.15;
 
     // Animate stars
     if (this.stars) {
@@ -72,7 +74,13 @@ export class TitleScene implements Scene {
   }
 
   exit(): void {
-    this.scene.remove(this.clock3D.group);
+    if (this.clock3D) {
+      this.scene.remove(this.clock3D.group);
+      // Dispose GPU resources held by clock and clear reference
+      this.clock3D.dispose();
+      this.clock3D = null;
+    }
+
     if (this.stars) {
       this.scene.remove(this.stars);
       this.stars.geometry.dispose();

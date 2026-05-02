@@ -20,6 +20,9 @@ export const GameSettings = {
     background: 0x87CEEB,
   },
 
+  // Touch target size in CSS pixels. Recommended 48 (AP guidelines)
+  TOUCH_TARGET_PX: 48,
+
   // Numbers texture sizing for different devices. Base is the logical size and
   // MAX_NUMBERS_TEXTURE_SIZE caps the actual texture size (in pixels) to avoid
   // excessive GPU memory on high-DPR devices (e.g. iPad).

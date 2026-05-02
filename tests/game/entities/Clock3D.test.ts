@@ -109,6 +109,25 @@ describe('Clock3D', () => {
     expect(minuteTip.y).toBeGreaterThan(hourTip.y);
   });
 
+  it('getHandTipPosition should reuse provided target instance', () => {
+    const clock = new Clock3D();
+    const target = new THREE.Vector3(123, 456, 789);
+    const ret = clock.getHandTipPosition('hour', target);
+    // same instance is returned
+    expect(ret).toBe(target);
+    // values should be set/updated (y should be positive length)
+    expect(target.y).toBeGreaterThan(0);
+  });
+
+  it('getHandTipPosition without target should return a new Vector3 each call', () => {
+    const clock = new Clock3D();
+    const a = clock.getHandTipPosition('hour');
+    const b = clock.getHandTipPosition('hour');
+    expect(a).not.toBe(b);
+    expect(a instanceof THREE.Vector3).toBe(true);
+    expect(b instanceof THREE.Vector3).toBe(true);
+  });
+
   it('should increment hours when snapMinutes rounds to 60 (step=30, min=45)', () => {
     const clock = new Clock3D();
     clock.setTime({ hours: 3, minutes: 45 });

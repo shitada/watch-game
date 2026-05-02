@@ -257,11 +257,19 @@ export class Clock3D {
     this.setTime({ hours, minutes: this.currentTime.minutes });
   }
 
-  /** Get the tip position of the specified hand in world coordinates */
-  getHandTipPosition(hand: HandType): THREE.Vector3 {
+  /** Get the tip position of the specified hand in world coordinates
+   * If `target` is provided, the same Vector3 instance will be set and returned
+   * to allow reusing an existing object and avoid allocations. If omitted, a
+   * new Vector3 is created (backwards compatible).
+   */
+  getHandTipPosition(hand: HandType, target?: THREE.Vector3): THREE.Vector3 {
     const mesh = hand === 'hour' ? this.hourHand : this.minuteHand;
     const length = hand === 'hour' ? S.HOUR_HAND_LENGTH : S.MINUTE_HAND_LENGTH;
     // Hand is oriented along +Y in local space
+    if (target) {
+      target.set(0, length, 0);
+      return mesh.localToWorld(target);
+    }
     const localTip = new THREE.Vector3(0, length, 0);
     return mesh.localToWorld(localTip);
   }

@@ -66,3 +66,44 @@ describe('GameLoop', () => {
     loop.stop();
   });
 });
+
+// Integration-like test: emulate onRender behavior that reports frame time to a PerformanceManager-like object.
+describe('RenderLoopPerformanceIntegration (simulated)', () => {
+  it('calls recordFrame with measured dt in ms between renders', () => {
+    const perfLike = { recordFrame: vi.fn() } as any;
+
+    // Simulate performance.now timeline
+    const nowValues = [1000, 1016, 1033];
+    let idx = 0;
+    const nowMock = vi.spyOn(performance, 'now').mockImplementation(() => {
+      const v = nowValues[idx] ?? nowValues[nowValues.length - 1];
+      idx += 1;
+      return v;
+    });
+
+    let _last: number | null = null;
+    const onRender = () => {
+      const now = performance.now();
+      if (_last != null) {
+        const dtMs = now - _last;
+        perfLike.recordFrame(dtMs);
+      }
+      _last = now;
+    };
+
+    // First frame should not call recordFrame
+    onRender();
+    expect(perfLike.recordFrame).toHaveBeenCalledTimes(0);
+
+    // Second frame -> dt ~16
+    onRender();
+    // Third frame -> dt ~17
+    onRender();
+
+    expect(perfLike.recordFrame).toHaveBeenCalledTimes(2);
+    expect(perfLike.recordFrame).toHaveBeenNthCalledWith(1, 16);
+    expect(perfLike.recordFrame).toHaveBeenNthCalledWith(2, 17);
+
+    nowMock.mockRestore();
+  });
+});

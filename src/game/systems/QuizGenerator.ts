@@ -2,16 +2,21 @@ import type { ClockTime } from '@/types';
 import { getLevelDef } from '@/game/config/LevelConfig';
 
 export class QuizGenerator {
+  private rng: () => number;
+
+  constructor(rng?: () => number) {
+    this.rng = rng ?? Math.random;
+  }
   generateTime(level: number): ClockTime {
     const def = getLevelDef(level);
-    const hours = Math.floor(Math.random() * 12) + 1;
+    const hours = Math.floor(this.rng() * 12) + 1;
 
     if (def.minuteStep >= 60) {
       return { hours, minutes: 0 };
     }
 
     const steps = 60 / def.minuteStep;
-    const step = Math.floor(Math.random() * steps);
+    const step = Math.floor(this.rng() * steps);
     return { hours, minutes: step * def.minuteStep };
   }
 
@@ -84,7 +89,7 @@ export class QuizGenerator {
       const all = this.listAllCandidates(level).filter(c => this.isAcceptableCandidate(c, correct, def, choices));
       // Shuffle candidates for randomness
       for (let i = all.length - 1; i > 0; i--) {
-        const j = Math.floor(Math.random() * (i + 1));
+        const j = Math.floor(this.rng() * (i + 1));
         [all[i], all[j]] = [all[j], all[i]];
       }
       let idx = 0;
@@ -108,7 +113,7 @@ export class QuizGenerator {
 
     // Final shuffle
     for (let i = choices.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1));
+      const j = Math.floor(this.rng() * (i + 1));
       [choices[i], choices[j]] = [choices[j], choices[i]];
     }
 

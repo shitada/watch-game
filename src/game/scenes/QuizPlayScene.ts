@@ -17,7 +17,7 @@ import { showNotification } from '@/ui/Notification';
 export class QuizPlayScene implements Scene {
   private scene = new THREE.Scene();
   private camera = new THREE.PerspectiveCamera(50, window.innerWidth / window.innerHeight, 0.1, 100);
-  private clock3D = new Clock3D();
+  private clock3D: Clock3D | null = null;
   private quizGen = new QuizGenerator();
   private correctEffect = new CorrectEffect();
   private incorrectEffect = new IncorrectEffect();
@@ -86,6 +86,7 @@ export class QuizPlayScene implements Scene {
     this.pendingTimers = [];
 
     // Add clock
+    this.clock3D = new Clock3D();
     this.scene.add(this.clock3D.group);
     this.clock3D.group.position.set(0, 0.8, 0);
     this.clock3D.setShowSeconds(false);
@@ -101,7 +102,7 @@ export class QuizPlayScene implements Scene {
   }
 
   update(dt: number): void {
-    this.clock3D.update(dt);
+    this.clock3D?.update(dt);
     this.correctEffect.update(dt);
     this.incorrectEffect.update(dt);
   }
@@ -109,7 +110,14 @@ export class QuizPlayScene implements Scene {
   exit(): void {
     this.pendingTimers.forEach(id => clearTimeout(id));
     this.pendingTimers = [];
-    this.scene.remove(this.clock3D.group);
+    if (this.clock3D) {
+      // Remove from scene first
+      this.scene.remove(this.clock3D.group);
+      // Dispose resources
+      // No controller in this scene, so dispose clock directly
+      this.clock3D.dispose();
+      this.clock3D = null;
+    }
     this.correctEffect.dispose();
     this.incorrectEffect.dispose();
     this.audioManager.stopBGM();
@@ -192,7 +200,7 @@ export class QuizPlayScene implements Scene {
     const q = this.questions[this.currentQuestion];
     const def = getLevelDef(this.level);
 
-    this.clock3D.setTime(q);
+    this.clock3D?.setTime(q);
     this.hud.updateQuestion(this.currentQuestion + 1, def.questionCount);
     this.hud.updateScore(this.correctCount);
     this.choiceButtons.setChoices(this.choices[this.currentQuestion]);

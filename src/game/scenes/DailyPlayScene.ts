@@ -20,7 +20,7 @@ import { showNotification } from '@/ui/Notification';
 export class DailyPlayScene implements Scene {
   private scene = new THREE.Scene();
   private camera = new THREE.PerspectiveCamera(50, window.innerWidth / window.innerHeight, 0.1, 100);
-  private clock3D = new Clock3D();
+  private clock3D: Clock3D | null = null;
   private clockController: ClockController | null = null;
   private validator = new TimeValidator();
   private correctEffect = new CorrectEffect();
@@ -74,6 +74,7 @@ export class DailyPlayScene implements Scene {
     this.pendingTimers = [];
 
     // Add clock
+    this.clock3D = new Clock3D();
     this.scene.add(this.clock3D.group);
     this.clock3D.group.position.set(0, -0.2, 0);
     this.clock3D.setShowSeconds(false);
@@ -89,7 +90,7 @@ export class DailyPlayScene implements Scene {
       this.clockController.setEnabled(true);
       this.clockController.onChange(() => {
         this.sfx.play('tick');
-        this.currentTimeDisplay.setTime(this.clock3D.getTime());
+        this.currentTimeDisplay.setTime(this.clock3D!.getTime());
       });
     }
 
@@ -104,7 +105,7 @@ export class DailyPlayScene implements Scene {
   }
 
   update(dt: number): void {
-    this.clock3D.update(dt);
+    this.clock3D?.update(dt);
     this.correctEffect.update(dt);
     this.incorrectEffect.update(dt);
   }
@@ -112,11 +113,22 @@ export class DailyPlayScene implements Scene {
   exit(): void {
     this.pendingTimers.forEach(id => clearTimeout(id));
     this.pendingTimers = [];
-    this.scene.remove(this.clock3D.group);
-    this.correctEffect.dispose();
-    this.incorrectEffect.dispose();
+
+    if (this.clock3D) {
+      this.scene.remove(this.clock3D.group);
+    }
+
+    // Dispose controller before clock
     this.clockController?.dispose();
     this.clockController = null;
+
+    if (this.clock3D) {
+      this.clock3D.dispose();
+      this.clock3D = null;
+    }
+
+    this.correctEffect.dispose();
+    this.incorrectEffect.dispose();
     this.audioManager.stopBGM();
     this.dailyProgress.unmount();
     this.currentTimeDisplay.unmount();
@@ -202,7 +214,7 @@ export class DailyPlayScene implements Scene {
     const event = DAILY_EVENTS[this.currentEventIndex];
 
     // Reset clock
-    this.clock3D.setTime({ hours: 12, minutes: 0 });
+    this.clock3D?.setTime({ hours: 12, minutes: 0 });
     this.clockController?.setEnabled(true);
 
     // Update UI
@@ -220,7 +232,7 @@ export class DailyPlayScene implements Scene {
     this.confirmButton.disable();
 
     const event = DAILY_EVENTS[this.currentEventIndex];
-    const answer = this.clock3D.getTime();
+    const answer = this.clock3D!.getTime();
     const isCorrect = this.validator.validate(
       event.time,
       answer,
@@ -242,7 +254,7 @@ export class DailyPlayScene implements Scene {
     } else {
       this.sfx.play('incorrect');
       this.incorrectEffect.trigger(this.scene, new THREE.Vector3(0, -0.2, 1));
-      this.clock3D.setTime(event.time);
+      this.clock3D?.setTime(event.time);
       this.currentTimeDisplay.setTime(event.time);
       this.pendingTimers.push(
         showNotification(this.overlay!, `${event.name} は ${formatTime(event.time)} だよ！`, '#E74C3C', {

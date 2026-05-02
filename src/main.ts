@@ -13,6 +13,7 @@ import { DailyPlayScene } from '@/game/scenes/DailyPlayScene';
 import { ResultScene } from '@/game/scenes/ResultScene';
 import { TrophyScene } from '@/game/scenes/TrophyScene';
 import { TransitionOverlay } from '@/ui/TransitionOverlay';
+import { PerformanceManager } from '@/game/systems/PerformanceManager';
 
 // ── Renderer ──
 const canvas = document.getElementById('game-canvas') as HTMLCanvasElement;
@@ -20,6 +21,16 @@ const renderer = new THREE.WebGLRenderer({ canvas, antialias: true });
 renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
 renderer.setSize(window.innerWidth, window.innerHeight);
 renderer.outputColorSpace = THREE.SRGBColorSpace;
+
+// ── Performance Manager ──
+const perfManager = new PerformanceManager(renderer, {
+  qualityLevels: [1, 1.5, 2],
+  sampleSize: 30,
+  thresholds: { highMs: 40, lowMs: 18 },
+  cooldownMs: 2000,
+});
+// Apply initial configuration
+perfManager.applyInitial();
 
 // ── Singletons ──
 const sceneManager = new SceneManager();
@@ -112,7 +123,7 @@ updateRenderLoopState();
 
 // ── Resize ──
 window.addEventListener('resize', () => {
-  renderer.setSize(window.innerWidth, window.innerHeight);
+  perfManager.onResize(window.innerWidth, window.innerHeight);
   sceneManager.updateAllCamerasAspect(window.innerWidth / window.innerHeight);
 });
 

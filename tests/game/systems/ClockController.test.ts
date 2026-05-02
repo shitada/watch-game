@@ -634,6 +634,31 @@ describe('pixelsToWorldDistance (integration)', () => {
     expect(d).toBeGreaterThan(0);
   });
 
+  it('returns finite positive distance when camera is at same z as plane (perspective)', () => {
+    const canvas = createCanvas(800, 600);
+    const cam = new THREE.PerspectiveCamera(50, 800 / 600, 0.1, 1000);
+    // Camera at same z as planeZ -> dir.z may be near-zero
+    cam.position.set(0, 0, 0);
+    cam.lookAt(0, 0, -1);
+
+    const d = pixelsToWorldDistance(canvas, cam, 48, 0);
+    expect(Number.isFinite(d)).toBe(true);
+    expect(d).toBeGreaterThan(0);
+  });
+
+  it('produces positive distance for orthographic camera even when camera at same z', () => {
+    const canvas = createCanvas(800, 600);
+    const aspect = 800 / 600;
+    const o = new THREE.OrthographicCamera(-5 * aspect, 5 * aspect, 5, -5, 0.1, 1000);
+    // Position orthographic camera at same z as plane
+    o.position.set(0, 0, 0);
+    o.lookAt(0, 0, -1);
+
+    const od = pixelsToWorldDistance(canvas, o, 48, 0);
+    expect(Number.isFinite(od)).toBe(true);
+    expect(od).toBeGreaterThan(0);
+  });
+
   it('produces different values for orthographic vs perspective', () => {
     const canvas = createCanvas(800, 600);
     const p = new THREE.PerspectiveCamera(50, 800 / 600, 0.1, 1000);
@@ -651,5 +676,23 @@ describe('pixelsToWorldDistance (integration)', () => {
     expect(pd).toBeGreaterThan(0);
     expect(od).toBeGreaterThan(0);
     expect(Math.abs(pd - od)).toBeGreaterThan(1e-6);
+  });
+
+  it('returns fallback when canvas rect is zero-sized', () => {
+    const canvas = createCanvas(0, 0);
+    const cam = new THREE.PerspectiveCamera(50, 1, 0.1, 1000);
+
+    const d = pixelsToWorldDistance(canvas, cam, 48, 0);
+    expect(d).toBeCloseTo(1.2, 6);
+  });
+
+  it('returns fallback when pixels is non-positive', () => {
+    const canvas = createCanvas(800, 600);
+    const cam = new THREE.PerspectiveCamera(50, 800 / 600, 0.1, 1000);
+
+    const d0 = pixelsToWorldDistance(canvas, cam, 0, 0);
+    const dNeg = pixelsToWorldDistance(canvas, cam, -10, 0);
+    expect(d0).toBeCloseTo(1.2, 6);
+    expect(dNeg).toBeCloseTo(1.2, 6);
   });
 });

@@ -13,10 +13,27 @@ import { DailyPlayScene } from '@/game/scenes/DailyPlayScene';
 import { ResultScene } from '@/game/scenes/ResultScene';
 import { TrophyScene } from '@/game/scenes/TrophyScene';
 import { TransitionOverlay } from '@/ui/TransitionOverlay';
+import { configureCanvasForTouch } from '@/ui/CanvasUtils';
 
 // ── Renderer ──
-const canvas = document.getElementById('game-canvas') as HTMLCanvasElement;
-const renderer = new THREE.WebGLRenderer({ canvas, antialias: true });
+const canvasEl = document.getElementById('game-canvas') as HTMLCanvasElement | null;
+let renderer: THREE.WebGLRenderer;
+try {
+  if (canvasEl) {
+    // Best-effort configure canvas to improve touch handling on iPad / mobile
+    // This should not throw; configureCanvasForTouch itself is defensive.
+    configureCanvasForTouch(canvasEl);
+    renderer = new THREE.WebGLRenderer({ canvas: canvasEl, antialias: true });
+  } else {
+    renderer = new THREE.WebGLRenderer({ antialias: true });
+  }
+} catch (e) {
+  // Swallow errors to keep app start-up resilient (best-effort)
+  // Fallback to a renderer without a provided canvas
+  // eslint-disable-next-line no-console
+  console.warn('Renderer init failed, falling back to default renderer', e);
+  renderer = new THREE.WebGLRenderer({ antialias: true });
+}
 renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
 renderer.setSize(window.innerWidth, window.innerHeight);
 renderer.outputColorSpace = THREE.SRGBColorSpace;

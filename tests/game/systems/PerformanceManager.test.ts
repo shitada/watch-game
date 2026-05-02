@@ -40,23 +40,30 @@ describe('PerformanceManager', () => {
   });
 
   it('upgrades quality when frame times are low', () => {
-    const fakeRenderer = { setPixelRatio: vi.fn(), setSize: vi.fn() } as any;
-    const mgr = new PerformanceManager(fakeRenderer, {
-      qualityLevels: [0.5, 1, 2],
-      sampleSize: 3,
-      thresholds: { highMs: 30, lowMs: 10 },
-      cooldownMs: 10,
-      initialIndex: 1,
-    });
+    const origDesc = Object.getOwnPropertyDescriptor(window, 'devicePixelRatio');
+    try {
+      Object.defineProperty(window, 'devicePixelRatio', { value: 2, configurable: true });
+      const fakeRenderer = { setPixelRatio: vi.fn(), setSize: vi.fn() } as any;
+      const mgr = new PerformanceManager(fakeRenderer, {
+        qualityLevels: [0.5, 1, 2],
+        sampleSize: 3,
+        thresholds: { highMs: 30, lowMs: 10 },
+        cooldownMs: 10,
+        initialIndex: 1,
+      });
 
-    mgr.applyInitial();
-    // simulate fast frames
-    mgr.recordFrame(8);
-    mgr.recordFrame(9);
-    mgr.recordFrame(7);
+      mgr.applyInitial();
+      // simulate fast frames
+      mgr.recordFrame(8);
+      mgr.recordFrame(9);
+      mgr.recordFrame(7);
 
-    expect(fakeRenderer.setPixelRatio).toHaveBeenLastCalledWith(2);
-    expect(mgr.getCurrentQualityIndex()).toBe(2);
+      expect(fakeRenderer.setPixelRatio).toHaveBeenLastCalledWith(2);
+      expect(mgr.getCurrentQualityIndex()).toBe(2);
+    } finally {
+      if (origDesc) Object.defineProperty(window, 'devicePixelRatio', origDesc);
+      else delete (window as any).devicePixelRatio;
+    }
   });
 
   it('clamps pixel ratio to window.devicePixelRatio when device DPR is smaller', () => {

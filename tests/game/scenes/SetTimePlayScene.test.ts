@@ -3,6 +3,7 @@ import { SetTimePlayScene } from '@/game/scenes/SetTimePlayScene';
 import { SceneManager } from '@/game/SceneManager';
 import { AudioManager } from '@/game/audio/AudioManager';
 import { SFXGenerator } from '@/game/audio/SFXGenerator';
+import { Clock3D } from '@/game/entities/Clock3D';
 
 // Mock Canvas 2D context
 HTMLCanvasElement.prototype.getContext = vi.fn().mockReturnValue({
@@ -174,5 +175,19 @@ describe('SetTimePlayScene', () => {
     expect(document.querySelector('[data-testid="current-time"]')).not.toBeNull();
     scene.exit();
     expect(document.querySelector('[data-testid="current-time"]')).toBeNull();
+  });
+
+  it('exit() で controller.dispose -> clock.dispose の順序で呼ばれること', () => {
+    const seq: string[] = [];
+    // Spy clock dispose
+    const clockSpy = vi.spyOn(Clock3D.prototype, 'dispose').mockImplementation(() => { seq.push('clock'); });
+    // Inject mock controller to capture dispose call
+    (scene as any).clockController = { dispose: () => { seq.push('controller'); } };
+
+    scene.exit();
+
+    expect(seq).toEqual(['controller', 'clock']);
+
+    clockSpy.mockRestore();
   });
 });

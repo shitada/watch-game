@@ -128,13 +128,17 @@ export class SetTimePlayScene implements Scene {
     this.pendingTimers = [];
     if (this.clock3D) {
       this.scene.remove(this.clock3D.group);
+    }
+    this.clockController?.dispose();
+    this.clockController = null;
+
+    if (this.clock3D) {
       this.clock3D.dispose();
       this.clock3D = null;
     }
+
     this.correctEffect.dispose();
     this.incorrectEffect.dispose();
-    this.clockController?.dispose();
-    this.clockController = null;
     this.audioManager.stopBGM();
     this.hud.unmount();
     this.timeDisplay.unmount();

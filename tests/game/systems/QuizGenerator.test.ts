@@ -168,6 +168,38 @@ describe('generateUniqueTime', () => {
     expect(questions.length).toBe(5);
   });
 
+  it('should pick from remaining candidates when some are excluded (deterministic)', () => {
+    const gen2 = new QuizGenerator();
+    const exclude = [
+      { hours: 1, minutes: 0 },
+      { hours: 2, minutes: 0 },
+      { hours: 3, minutes: 0 },
+    ];
+    // With Math.random = 0, index will be 0 -> remaining[0] should be hours 4 for level 1
+    vi.spyOn(Math, 'random').mockReturnValue(0);
+
+    const time = gen2.generateUniqueTime(1, exclude);
+    expect(time).toEqual({ hours: 4, minutes: 0 });
+
+    vi.restoreAllMocks();
+  });
+
+  it('should fallback when all candidates are excluded and return generated time', () => {
+    const gen2 = new QuizGenerator();
+    const allTimes = Array.from({ length: 12 }, (_, i) => ({
+      hours: i + 1,
+      minutes: 0,
+    }));
+
+    // Make generateTime always return a fixed (excluded) time; final fallback should still return it
+    vi.spyOn(gen2, 'generateTime').mockImplementation(() => ({ hours: 7, minutes: 0 }));
+
+    const time = gen2.generateUniqueTime(1, allTimes);
+    expect(time).toEqual({ hours: 7, minutes: 0 });
+
+    vi.restoreAllMocks();
+  });
+
   it('should not crash when exclude covers all candidates (fallback)', () => {
     const gen2 = new QuizGenerator();
     // Level 1: hours 1-12, minutes=0 → 12 candidates

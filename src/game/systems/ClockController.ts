@@ -14,11 +14,12 @@ export function pixelsToWorldDistance(
   pixels: number,
   planeZ: number,
 ): number {
+  const EPS = 1e-6;
   const rect = canvas.getBoundingClientRect();
   const cx = rect.left + rect.width / 2;
   const cy = rect.top + rect.height / 2;
 
-  const toWorld = (clientX: number, clientY: number): THREE.Vector3 => {
+  const toWorld = (clientX: number, clientY: number): THREE.Vector3 | null => {
     // NDC coords
     const ndc = new THREE.Vector3(
       ((clientX - rect.left) / rect.width) * 2 - 1,
@@ -32,8 +33,12 @@ export function pixelsToWorldDistance(
     (camera as any).getWorldPosition(camPos);
     const dir = worldPoint.sub(camPos).normalize();
 
+    // If ray is nearly parallel to the plane (dir.z ≈ 0) we cannot reliably intersect
+    if (Math.abs(dir.z) < EPS) return null;
+
     // Intersect with plane z = planeZ: camPos.z + t * dir.z = planeZ => t = (planeZ - camPos.z)/dir.z
     const t = (planeZ - camPos.z) / dir.z;
+    if (!Number.isFinite(t)) return null;
     return camPos.add(dir.multiplyScalar(t));
   };
 
@@ -41,11 +46,50 @@ export function pixelsToWorldDistance(
   const pRight = toWorld(cx + pixels, cy);
   const pDown = toWorld(cx, cy + pixels);
 
-  const dx = pCenter.distanceTo(pRight);
-  const dy = pCenter.distanceTo(pDown);
+  // If any intersection failed due to near-parallel ray, fallback to camera-type based approximation
+  if (pCenter && pRight && pDown) {
+    const dx = pCenter.distanceTo(pRight);
+    const dy = pCenter.distanceTo(pDown);
+    const result = Math.sqrt(dx * dx + dy * dy);
+    if (!Number.isFinite(result) || result <= 0) return 1.2;
+    return result;
+  }
 
-  // Combine X/Y contributions to approximate an isotropic pixel radius in world space
-  return Math.sqrt(dx * dx + dy * dy);
+  // Fallback: approximate world size per pixel at planeZ depending on camera
+  const canvasW = rect.width;
+  const canvasH = rect.height;
+
+  let perPixelX = 1;
+  let perPixelY = 1;
+
+  if ((camera as any).isOrthographicCamera || camera instanceof THREE.OrthographicCamera) {
+    const o = camera as THREE.OrthographicCamera;
+    const zoom = (o as any).zoom ?? 1;
+    const worldHeight = (o.top - o.bottom) / zoom;
+    const worldWidth = (o.right - o.left) / zoom;
+    perPixelY = worldHeight / canvasH;
+    perPixelX = worldWidth / canvasW;
+  } else if ((camera as any).isPerspectiveCamera || camera instanceof THREE.PerspectiveCamera) {
+    const p = camera as THREE.PerspectiveCamera;
+    const camPos = new THREE.Vector3();
+    (camera as any).getWorldPosition(camPos);
+    let distance = Math.abs(planeZ - camPos.z);
+    if (distance < EPS) distance = EPS; // avoid zero
+    const vFov = THREE.MathUtils.degToRad(p.fov);
+    const worldHeight = 2 * distance * Math.tan(vFov / 2);
+    const worldWidth = worldHeight * (canvasW / canvasH);
+    perPixelY = worldHeight / canvasH;
+    perPixelX = worldWidth / canvasW;
+  } else {
+    // Unknown camera type — return safe default
+    return 1.2;
+  }
+
+  const dx = perPixelX * pixels;
+  const dy = perPixelY * pixels;
+  const approx = Math.sqrt(dx * dx + dy * dy);
+  if (!Number.isFinite(approx) || approx <= 0) return 1.2;
+  return approx;
 }
 
 export class ClockController {

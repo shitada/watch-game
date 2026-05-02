@@ -1,6 +1,7 @@
 ---
 description: 自動改善ループのオーケストレーター。サブエージェントを順に呼び出し、結果を検証して次に渡すチームリーダー。
 name: "Orchestrator - 自動改善オーケストレーター"
+model: gpt-5-mini
 tools: ["agent", "execute/runInTerminal", "execute/getTerminalOutput", "read/readFile", "edit/editFiles"]
 agents: ["proposer", "reviewer", "coder", "tester", "evaluator"]
 ---

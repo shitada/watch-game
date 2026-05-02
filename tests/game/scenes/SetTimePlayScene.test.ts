@@ -129,6 +129,41 @@ describe('SetTimePlayScene', () => {
     expect(resultTransitions.length).toBe(0);
   });
 
+  it('不正解時に CurrentTimeDisplay が正解の時刻に更新されること', () => {
+    // Clock starts at 12:00. We need the target to differ from 12:00.
+    // Level 1 generates hour-only times (1-12). We mock Math.random to generate hour=3.
+    scene.exit();
+    cleanupDOM();
+    setupDOM();
+
+    // Mock random to produce hour=3 (index 2 of 1-12 range)
+    const origRandom = Math.random;
+    let callCount = 0;
+    Math.random = () => {
+      callCount++;
+      return 0.2; // floor(0.2 * 12) + 1 = 3
+    };
+
+    const scene2 = new SetTimePlayScene(sceneManager, audioManager, sfx);
+    scene2.enter({ level: 1 });
+    Math.random = origRandom;
+
+    const currentTimeEl = document.querySelector('[data-testid="current-time"]') as HTMLElement;
+    // Initially 12:00
+    expect(currentTimeEl.textContent).toBe('12時');
+
+    // Confirm without moving clock → answer is 12:00, target is 3:00 → incorrect
+    const confirmBtn = Array.from(document.querySelectorAll('button')).find(
+      b => b.textContent === 'けってい！',
+    )!;
+    confirmBtn.click();
+
+    // CurrentTimeDisplay should now show the correct answer "3時"
+    expect(currentTimeEl.textContent).toBe('3時');
+
+    scene2.exit();
+  });
+
   it('enter() で CurrentTimeDisplay に初期時刻 12:00 が表示されること', () => {
     const currentTimeEl = document.querySelector('[data-testid="current-time"]') as HTMLElement;
     expect(currentTimeEl).not.toBeNull();

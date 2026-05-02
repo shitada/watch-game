@@ -1,6 +1,7 @@
 ---
 description: Proposer の提案を批評し、実装前に品質フィルタリングを行う批評エージェント。
 name: "Reviewer - 提案批評者"
+model: gpt-5-mini
 tools: ["search/codebase", "search/fileSearch", "read/readFile"]
 ---
 

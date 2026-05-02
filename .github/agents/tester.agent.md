@@ -1,6 +1,7 @@
 ---
 description: 全テストスイートを実行し、品質検証結果をリスク別に報告するテストエージェント。
 name: "Tester - テスター"
+model: gpt-5-mini
 tools: ["execute/runInTerminal", "execute/getTerminalOutput", "execute/runTests", "read/readFile", "search/fileSearch"]
 ---
 

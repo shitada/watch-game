@@ -1,6 +1,7 @@
 ---
 description: Proposer の提案を受けてコード実装・テスト作成・コミットを行う実装エージェント。
 name: "Coder - 実装者"
+model: gpt-5-mini
 tools: ["search/codebase", "search/fileSearch", "read/readFile", "edit/editFiles", "execute/runInTerminal", "execute/getTerminalOutput", "execute/runTests"]
 ---
 

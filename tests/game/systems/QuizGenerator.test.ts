@@ -174,3 +174,33 @@ describe('formatTime', () => {
     expect(formatTime({ hours: 2, minutes: 15 })).toBe('2時15分');
   });
 });
+
+// Fallback-specific tests
+import { vi } from 'vitest';
+
+describe('QuizGenerator fallback', () => {
+  afterEach(() => { vi.restoreAllMocks(); });
+
+  it('should return 4 unique choices when generateTime repeatedly returns filtered candidates', () => {
+    const gen = new QuizGenerator();
+    const correct = { hours: 12, minutes: 55 };
+    const candidates = [
+      { hours: 1, minutes: 0 },
+      { hours: 12, minutes: 50 },
+    ];
+    let idx = 0;
+    vi.spyOn(gen, 'generateTime').mockImplementation(() => {
+      const c = candidates[idx % candidates.length];
+      idx++;
+      return c;
+    });
+    vi.spyOn(Math, 'random').mockReturnValue(0.5);
+
+    const choices = gen.generateChoices(correct, 3);
+    expect(choices.length).toBe(4);
+    const keys = choices.map(c => `${c.hours}:${c.minutes}`);
+    expect(new Set(keys).size).toBe(4);
+    const hasCorrect = choices.some(c => c.hours === 12 && c.minutes === 55);
+    expect(hasCorrect).toBe(true);
+  });
+});

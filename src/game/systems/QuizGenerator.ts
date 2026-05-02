@@ -56,6 +56,42 @@ export class QuizGenerator {
       if (!dup) choices.push(wrong);
     }
 
+    // Fallback: if not enough choices, enumerate candidates exhaustively
+    if (choices.length < 4) {
+      const candidates: ClockTime[] = [];
+      const step = def.minuteStep >= 60 ? 60 : def.minuteStep;
+      for (let h = 1; h <= 12; h++) {
+        for (let m = 0; m < 60; m += step) {
+          candidates.push({ hours: h, minutes: m });
+        }
+      }
+
+      // First pass: respect the "too-similar" filter
+      for (const cand of candidates) {
+        if (choices.length >= 4) break;
+        if (cand.hours === correct.hours && cand.minutes === correct.minutes) continue;
+        const dup = choices.some(c => c.hours === cand.hours && c.minutes === cand.minutes);
+        if (dup) continue;
+        if (def.minuteStep <= 5) {
+          const diffMin = Math.abs(
+            (cand.hours * 60 + cand.minutes) - (correct.hours * 60 + correct.minutes),
+          );
+          const wrappedDiff = Math.min(diffMin, 720 - diffMin);
+          if (wrappedDiff < def.minuteStep * 2 && wrappedDiff > 0) continue;
+        }
+        choices.push(cand);
+      }
+
+      // Second pass: ignore similarity if still not enough
+      for (const cand of candidates) {
+        if (choices.length >= 4) break;
+        if (cand.hours === correct.hours && cand.minutes === correct.minutes) continue;
+        const dup = choices.some(c => c.hours === cand.hours && c.minutes === cand.minutes);
+        if (dup) continue;
+        choices.push(cand);
+      }
+    }
+
     // Shuffle
     for (let i = choices.length - 1; i > 0; i--) {
       const j = Math.floor(Math.random() * (i + 1));

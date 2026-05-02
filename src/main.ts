@@ -108,9 +108,6 @@ const onUpdate = (dt: number) => {
   // Record frame time for PerformanceManager (ms). Guard against non-positive dt as GameLoop may initialize with 0.
   if (dt > 0) perfManager.recordFrame(dt * 1000);
   sceneManager.update(dt);
-  // Record the frame time (dt is in seconds) in milliseconds for PerformanceManager so it can
-  // dynamically adjust pixel ratio. Note the multiplication by 1000 to convert seconds -> ms.
-  perfManager.recordFrame(dt * 1000);
 };
 
 const onRender = () => {

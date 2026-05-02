@@ -19,6 +19,13 @@ export const GameSettings = {
     center: 0xE74C3C,
     background: 0x87CEEB,
   },
+
+  // Numbers texture sizing for different devices. Base is the logical size and
+  // MAX_NUMBERS_TEXTURE_SIZE caps the actual texture size (in pixels) to avoid
+  // excessive GPU memory on high-DPR devices (e.g. iPad).
+  NUMBERS_TEXTURE_BASE: 256,
+  MAX_NUMBERS_TEXTURE_SIZE: 512,
+
   QUIZ_QUESTIONS_PER_LEVEL: 5,
   DAILY_TOLERANCE_MINUTES: 15,
   HINT_DELAY_MS: 8000,

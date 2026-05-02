@@ -16,6 +16,17 @@ export class QuizGenerator {
   }
 
   generateUniqueTime(level: number, exclude: readonly ClockTime[]): ClockTime {
+    // Try to pick from all possible candidates excluding provided ones first
+    const all = this.listAllCandidates(level);
+    const remaining = all.filter(c => !this.equalsTimeList(c, exclude));
+
+    if (remaining.length > 0) {
+      const idx = Math.floor(Math.random() * remaining.length);
+      return remaining[idx];
+    }
+
+    // Fallback: if all candidates are excluded, fall back to randomized attempts
+    // similar to previous behavior to avoid tight loops.
     const maxAttempts = 100;
     for (let i = 0; i < maxAttempts; i++) {
       const time = this.generateTime(level);
@@ -24,6 +35,8 @@ export class QuizGenerator {
       );
       if (!dup) return time;
     }
+
+    // As a last resort, return any generated time (may be duplicate)
     return this.generateTime(level);
   }
 
@@ -41,6 +54,16 @@ export class QuizGenerator {
       for (const m of minutes) candidates.push({ hours: h, minutes: m });
     }
     return candidates;
+  }
+
+  // Helper: equality check for ClockTime
+  private equalsTime(a: ClockTime, b: ClockTime): boolean {
+    return a.hours === b.hours && a.minutes === b.minutes;
+  }
+
+  // Helper: checks if a time exists in a list
+  private equalsTimeList(c: ClockTime, list: readonly ClockTime[]): boolean {
+    return list.some(e => this.equalsTime(e, c));
   }
 
   // Helper: determines whether a wrong candidate is acceptable

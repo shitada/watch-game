@@ -176,7 +176,7 @@ describe('formatTime', () => {
 });
 
 // Fallback-specific tests
-import { vi } from 'vitest';
+
 
 describe('QuizGenerator fallback', () => {
   afterEach(() => { vi.restoreAllMocks(); });

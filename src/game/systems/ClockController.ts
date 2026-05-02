@@ -12,6 +12,9 @@ export class ClockController {
   private snapStep = 1;
   private onChangeCallback: (() => void) | null = null;
 
+  // Track active pointer capture to ensure we always release it
+  private activePointerId: number | null = null;
+
   // Time change detection
   private prevTime: ClockTime | null = null;
 
@@ -35,7 +38,7 @@ export class ClockController {
 
   private boundPointerDown: (e: PointerEvent) => void;
   private boundPointerMove: (e: PointerEvent) => void;
-  private boundPointerUp: () => void;
+  private boundPointerUp: (e?: PointerEvent) => void;
 
   constructor(
     clock: Clock3D,
@@ -63,6 +66,17 @@ export class ClockController {
       canvas.removeEventListener('pointermove', this.boundPointerMove);
       canvas.removeEventListener('pointerup', this.boundPointerUp);
       canvas.removeEventListener('pointercancel', this.boundPointerUp);
+      // Ensure we release any active pointer capture when disabling
+      if (this.activePointerId != null) {
+        try {
+          if (typeof canvas.releasePointerCapture === 'function') {
+            canvas.releasePointerCapture(this.activePointerId);
+          }
+        } catch (err) {
+          // swallow — best effort
+        }
+        this.activePointerId = null;
+      }
       this.dragging = false;
       this.selectedHand = null;
       this.prevAngle = null;
@@ -165,6 +179,19 @@ export class ClockController {
     return a.hours === b.hours && a.minutes === b.minutes;
   }
 
+  private tryReleasePointerCapture(id: number | null): void {
+    if (id == null) return;
+    const canvas = this.renderer.domElement as HTMLElement;
+    try {
+      if (typeof canvas.releasePointerCapture === 'function') {
+        canvas.releasePointerCapture(id);
+      }
+    } catch (err) {
+      // swallow - best effort
+    }
+    this.activePointerId = null;
+  }
+
   private onPointerDown(e: PointerEvent): void {
     if (!this.enabled) return;
     const ndc = this.getNDC(e);
@@ -177,7 +204,15 @@ export class ClockController {
       this.prevAngle = this.getAngleFromPointer(ndc);
       this.prevTime = this.clock.getTime();
       this.clock.highlightHand(hand);
-      this.renderer.domElement.setPointerCapture(e.pointerId);
+      try {
+        const canvas = this.renderer.domElement as HTMLElement;
+        if (typeof canvas.setPointerCapture === 'function') {
+          canvas.setPointerCapture(e.pointerId);
+          this.activePointerId = e.pointerId;
+        }
+      } catch (err) {
+        // ignore - not supported or failed
+      }
     }
   }
 
@@ -208,8 +243,14 @@ export class ClockController {
     }
   }
 
-  private onPointerUp(): void {
-    if (!this.dragging) return;
+  private onPointerUp(e?: PointerEvent): void {
+    if (!this.dragging) {
+      // Even if not dragging, still attempt to release any capture identified by event
+      const id = e?.pointerId ?? this.activePointerId;
+      if (id != null) this.tryReleasePointerCapture(id);
+      return;
+    }
+
     this.dragging = false;
     this.prevAngle = null;
 
@@ -221,6 +262,10 @@ export class ClockController {
     if (!this.prevTime || !this.isSameTime(currentTime, this.prevTime)) {
       this.onChangeCallback?.();
     }
+
+    // Release pointer capture for this pointer (use event.pointerId if available, otherwise stored id)
+    const id = e?.pointerId ?? this.activePointerId;
+    if (id != null) this.tryReleasePointerCapture(id);
 
     this.prevTime = null;
     this.selectedHand = null;

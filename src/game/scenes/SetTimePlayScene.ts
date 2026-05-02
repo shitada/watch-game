@@ -20,7 +20,7 @@ import { showNotification } from '@/ui/Notification';
 export class SetTimePlayScene implements Scene {
   private scene = new THREE.Scene();
   private camera = new THREE.PerspectiveCamera(50, window.innerWidth / window.innerHeight, 0.1, 100);
-  private clock3D = new Clock3D();
+  private clock3D: Clock3D | null = null;
   private clockController: ClockController | null = null;
   private quizGen = new QuizGenerator();
   private validator = new TimeValidator();
@@ -86,14 +86,16 @@ export class SetTimePlayScene implements Scene {
     this.pendingTimers = [];
 
     // Add clock
+    this.clock3D = new Clock3D();
     this.scene.add(this.clock3D.group);
     this.clock3D.group.position.set(0, -0.5, 0);
     this.clock3D.setShowSeconds(false);
 
     // Setup controller
     if (this.renderer) {
+      // clock3D exists here
       this.clockController = new ClockController(
-        this.clock3D,
+        this.clock3D!,
         this.renderer,
         this.camera,
       );
@@ -101,7 +103,7 @@ export class SetTimePlayScene implements Scene {
       this.clockController.setEnabled(true);
       this.clockController.onChange(() => {
         this.sfx.play('tick');
-        this.currentTimeDisplay.setTime(this.clock3D.getTime());
+        this.currentTimeDisplay.setTime(this.clock3D!.getTime());
       });
     }
 
@@ -116,7 +118,7 @@ export class SetTimePlayScene implements Scene {
   }
 
   update(dt: number): void {
-    this.clock3D.update(dt);
+    this.clock3D?.update(dt);
     this.correctEffect.update(dt);
     this.incorrectEffect.update(dt);
   }
@@ -124,7 +126,11 @@ export class SetTimePlayScene implements Scene {
   exit(): void {
     this.pendingTimers.forEach(id => clearTimeout(id));
     this.pendingTimers = [];
-    this.scene.remove(this.clock3D.group);
+    if (this.clock3D) {
+      this.scene.remove(this.clock3D.group);
+      this.clock3D.dispose();
+      this.clock3D = null;
+    }
     this.correctEffect.dispose();
     this.incorrectEffect.dispose();
     this.clockController?.dispose();
@@ -193,7 +199,7 @@ export class SetTimePlayScene implements Scene {
     const def = getLevelDef(this.level);
 
     // Reset clock to 12:00
-    this.clock3D.setTime({ hours: 12, minutes: 0 });
+    this.clock3D?.setTime({ hours: 12, minutes: 0 });
     this.clockController?.setEnabled(true);
 
     this.timeDisplay.setTime(q);
@@ -209,7 +215,7 @@ export class SetTimePlayScene implements Scene {
     this.confirmButton.disable();
 
     const target = this.questions[this.currentQuestion];
-    const answer = this.clock3D.getTime();
+    const answer = this.clock3D?.getTime() ?? { hours: 12, minutes: 0 };
     const def = getLevelDef(this.level);
     const isCorrect = this.validator.validate(target, answer, def.tolerance);
 
@@ -227,7 +233,7 @@ export class SetTimePlayScene implements Scene {
       this.sfx.play('incorrect');
       this.incorrectEffect.trigger(this.scene, new THREE.Vector3(0, -0.5, 1));
       // Show correct answer
-      this.clock3D.setTime(target);
+      this.clock3D?.setTime(target);
       this.currentTimeDisplay.setTime(target);
       this.pendingTimers.push(
         showNotification(this.overlay!, `こたえは ${formatTime(target)} だよ！`, '#E74C3C'),

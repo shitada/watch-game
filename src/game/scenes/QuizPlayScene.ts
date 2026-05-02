@@ -24,6 +24,8 @@ export class QuizPlayScene implements Scene {
   private choiceButtons = new ChoiceButtons();
   private homeButton = new HomeButton();
   private overlay: HTMLDivElement | null = null;
+  private hintBtn: HTMLButtonElement | null = null;
+  private hintUsed = false;
 
   private sceneManager: SceneManager;
   private audioManager: AudioManager;
@@ -116,6 +118,7 @@ export class QuizPlayScene implements Scene {
     this.homeButton.unmount();
     this.overlay?.remove();
     this.overlay = null;
+    this.hintBtn = null;
   }
 
   getThreeScene(): THREE.Scene { return this.scene; }
@@ -144,6 +147,30 @@ export class QuizPlayScene implements Scene {
       align-items: center;
       padding-bottom: 16px;
     `;
+
+    // ヒントボタン（選択肢の上に配置） [W-3]
+    const hintBtn = document.createElement('button');
+    hintBtn.textContent = '💡 ヒント';
+    hintBtn.style.cssText = `
+      font-family: 'Zen Maru Gothic', sans-serif;
+      font-size: clamp(12px, 2.5vw, 18px);
+      font-weight: 700;
+      padding: 8px 20px;
+      border: 2px solid #F39C12;
+      border-radius: 20px;
+      background: linear-gradient(180deg, #FFF9E6, #FEF3CD);
+      color: #7D6608;
+      cursor: pointer;
+      touch-action: manipulation;
+      margin-bottom: 8px;
+      pointer-events: auto;
+    `;
+    hintBtn.addEventListener('click', () => {
+      this.handleHint();
+    });
+    bottomArea.appendChild(hintBtn);
+    this.hintBtn = hintBtn;
+
     this.choiceButtons.mount(bottomArea);
     overlay.appendChild(bottomArea);
 
@@ -172,7 +199,41 @@ export class QuizPlayScene implements Scene {
     this.clock3D.setTime(q);
     this.hud.updateQuestion(this.currentQuestion + 1, def.questionCount);
     this.hud.updateScore(this.correctCount);
+    // setChoices() で DOM が再生成されるため eliminateChoices の変更はリセットされる
     this.choiceButtons.setChoices(this.choices[this.currentQuestion]);
+
+    // [W-2] ヒントボタンを初期状態に復元
+    this.hintUsed = false;
+    if (this.hintBtn) {
+      this.hintBtn.disabled = false;
+      this.hintBtn.style.opacity = '1';
+      this.hintBtn.style.pointerEvents = 'auto';
+    }
+  }
+
+  private handleHint(): void {
+    if (this.hintUsed || this.waitingNext) return;
+    this.hintUsed = true;
+
+    // 効果音再生
+    this.sfx.play('hint');
+
+    // ヒントボタンを非活性化
+    if (this.hintBtn) {
+      this.hintBtn.disabled = true;
+      this.hintBtn.style.opacity = '0.3';
+      this.hintBtn.style.pointerEvents = 'none';
+    }
+
+    // 不正解のインデックスを収集し、ランダムに2つ選んで除外
+    const correct = this.correctIndex[this.currentQuestion];
+    const wrongIndices = [0, 1, 2, 3].filter(i => i !== correct);
+    // wrongIndices から1つ残す（ランダムに選択）
+    const keepWrongIdx = Math.floor(Math.random() * wrongIndices.length);
+    const keepWrong = wrongIndices[keepWrongIdx];
+    const keepIndices = [correct, keepWrong];
+
+    this.choiceButtons.eliminateChoices(keepIndices);
   }
 
   private handleAnswer(selectedIndex: number): void {

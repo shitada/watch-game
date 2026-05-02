@@ -82,6 +82,78 @@ describe('QuizPlayScene', () => {
     expect(resultTransitions.length).toBe(0);
   });
 
+  describe('ヒントボタン', () => {
+    function getHintButton(): HTMLButtonElement | null {
+      const buttons = document.querySelectorAll('button');
+      return Array.from(buttons).find(b => b.textContent === '💡 ヒント') as HTMLButtonElement | null;
+    }
+
+    function getChoiceButtons(): HTMLButtonElement[] {
+      const buttons = document.querySelectorAll('button');
+      return Array.from(buttons).filter(
+        b => b.textContent !== '🏠' && b.textContent !== '💡 ヒント',
+      ) as HTMLButtonElement[];
+    }
+
+    it('ヒントボタンが表示されること', () => {
+      const hintBtn = getHintButton();
+      expect(hintBtn).not.toBeNull();
+    });
+
+    it('ヒントボタン押下で sfx.play("hint") が呼ばれること', () => {
+      const hintBtn = getHintButton()!;
+      hintBtn.click();
+      expect(sfx.play).toHaveBeenCalledWith('hint');
+    });
+
+    it('ヒントボタン押下で不正解2つが非活性化され2択になること', () => {
+      vi.spyOn(Math, 'random').mockReturnValue(0);
+      const hintBtn = getHintButton()!;
+      hintBtn.click();
+      const choices = getChoiceButtons();
+      const activeChoices = choices.filter(b => !b.disabled);
+      expect(activeChoices.length).toBe(2);
+      vi.spyOn(Math, 'random').mockRestore();
+    });
+
+    it('ヒントボタンは1問につき1回のみ使用可能であること', () => {
+      const hintBtn = getHintButton()!;
+      hintBtn.click();
+      expect(hintBtn.disabled).toBe(true);
+      expect(hintBtn.style.opacity).toBe('0.3');
+      expect(hintBtn.style.pointerEvents).toBe('none');
+    });
+
+    it('正解ボタンは常に残ること', () => {
+      vi.spyOn(Math, 'random').mockReturnValue(0.99);
+      const hintBtn = getHintButton()!;
+      hintBtn.click();
+      const choices = getChoiceButtons();
+      const activeChoices = choices.filter(b => !b.disabled);
+      // 正解1つ + 不正解1つ = 2つがアクティブ
+      expect(activeChoices.length).toBe(2);
+      vi.spyOn(Math, 'random').mockRestore();
+    });
+
+    it('次の問題に進むとヒントボタンが再活性化されること', () => {
+      const hintBtn = getHintButton()!;
+      hintBtn.click();
+      expect(hintBtn.disabled).toBe(true);
+
+      // 回答して次の問題へ
+      const choices = getChoiceButtons();
+      const activeChoice = choices.find(b => !b.disabled)!;
+      activeChoice.click();
+      vi.advanceTimersByTime(2000);
+
+      // 次の問題でヒントボタンが復活
+      const hintBtn2 = getHintButton()!;
+      expect(hintBtn2.disabled).toBe(false);
+      expect(hintBtn2.style.opacity).not.toBe('0.3');
+      expect(hintBtn2.style.pointerEvents).not.toBe('none');
+    });
+  });
+
   it('enter() で pendingTimers が初期化されること（再入時の防御）', () => {
     // Trigger an answer
     const buttons = document.querySelectorAll('button');

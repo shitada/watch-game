@@ -91,4 +91,39 @@ describe('ChoiceButtons', () => {
     choiceButtons.unmount();
     expect(parent.querySelector('div')).toBeNull();
   });
+
+  describe('eliminateChoices', () => {
+    it('keepIndices に含まれないボタンが非活性化されること', () => {
+      choiceButtons.setChoices(sampleChoices);
+      choiceButtons.eliminateChoices([0, 2]);
+      const buttons = parent.querySelectorAll('button');
+      // index 1, 3 が非活性化
+      expect(buttons[1].style.opacity).toBe('0.3');
+      expect(buttons[1].style.pointerEvents).toBe('none');
+      expect(buttons[1].disabled).toBe(true);
+      expect(buttons[3].style.opacity).toBe('0.3');
+      expect(buttons[3].style.pointerEvents).toBe('none');
+      expect(buttons[3].disabled).toBe(true);
+    });
+
+    it('keepIndices に含まれるボタンはそのまま残ること', () => {
+      choiceButtons.setChoices(sampleChoices);
+      choiceButtons.eliminateChoices([0, 2]);
+      const buttons = parent.querySelectorAll('button');
+      expect(buttons[0].style.opacity).not.toBe('0.3');
+      expect(buttons[0].disabled).toBe(false);
+      expect(buttons[2].style.opacity).not.toBe('0.3');
+      expect(buttons[2].disabled).toBe(false);
+    });
+
+    it('非活性化ボタンの borderColor が変更されること', () => {
+      choiceButtons.setChoices(sampleChoices);
+      choiceButtons.eliminateChoices([1]);
+      const buttons = parent.querySelectorAll('button');
+      // jsdom は hex を rgb に変換するため rgb で比較
+      expect(buttons[0].style.borderColor).toBe('rgb(189, 195, 199)');
+      expect(buttons[2].style.borderColor).toBe('rgb(189, 195, 199)');
+      expect(buttons[3].style.borderColor).toBe('rgb(189, 195, 199)');
+    });
+  });
 });

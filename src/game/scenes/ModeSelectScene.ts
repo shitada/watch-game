@@ -87,6 +87,9 @@ export class ModeSelectScene implements Scene {
   getThreeScene(): THREE.Scene { return this.scene; }
   getCamera(): THREE.Camera { return this.camera; }
 
+  // Static UI scene — continuous rendering not required
+  needsContinuousRendering(): boolean { return false; }
+
   private buildOverlay(): void {
     const overlay = document.createElement('div');
     overlay.style.cssText = `

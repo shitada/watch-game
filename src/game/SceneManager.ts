@@ -55,6 +55,20 @@ export class SceneManager {
     return this.currentType;
   }
 
+  currentSceneNeedsContinuousRendering(): boolean {
+    // If there is no current scene, be conservative and require continuous rendering
+    if (!this.currentScene) return true;
+    // If scene does not implement the flag, default to true
+    const fn = (this.currentScene as any).needsContinuousRendering;
+    if (typeof fn !== 'function') return true;
+    try {
+      return fn.call(this.currentScene) ?? true;
+    } catch (e) {
+      // In case of error, fall back to continuous rendering to be safe
+      return true;
+    }
+  }
+
   updateAllCamerasAspect(aspect: number): void {
     for (const scene of this.scenes.values()) {
       const cam = scene.getCamera();

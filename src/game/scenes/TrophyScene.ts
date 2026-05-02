@@ -72,6 +72,9 @@ export class TrophyScene implements Scene {
   getThreeScene(): THREE.Scene { return this.scene; }
   getCamera(): THREE.Camera { return this.camera; }
 
+  // Static UI scene — continuous rendering not required
+  needsContinuousRendering(): boolean { return false; }
+
   private buildOverlay(): void {
     const saveData = this.saveManager.load();
     const earned = new Set(saveData.trophies);

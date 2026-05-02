@@ -213,46 +213,81 @@ describe('Clock3D', () => {
       expect(() => clock.dispose()).not.toThrow();
     });
 
-    it('should call dispose on geometry and material of meshes', () => {
+    it('should dispose unique geometries and materials once', () => {
       const clock = new Clock3D();
-      const spies: { geo: ReturnType<typeof vi.spyOn>; mat: ReturnType<typeof vi.spyOn> }[] = [];
+      const geos = new Set<any>();
+      const mats = new Set<any>();
 
       clock.group.traverse((child) => {
         if (child instanceof THREE.Mesh) {
-          const geoSpy = vi.spyOn(child.geometry, 'dispose');
-          const matSpy = vi.spyOn(child.material as THREE.Material, 'dispose');
-          spies.push({ geo: geoSpy, mat: matSpy });
+          if (child.geometry) geos.add(child.geometry);
+          const materials = Array.isArray(child.material) ? child.material : [child.material];
+          for (const m of materials) if (m) mats.add(m);
         }
       });
 
-      expect(spies.length).toBeGreaterThan(0);
+      expect(geos.size).toBeGreaterThan(0);
+      expect(mats.size).toBeGreaterThan(0);
+
+      const geoSpies = Array.from(geos).map((g) => vi.spyOn(g, 'dispose'));
+      const matSpies = Array.from(mats).map((m) => vi.spyOn(m, 'dispose'));
+
       clock.dispose();
 
-      for (const spy of spies) {
-        expect(spy.geo).toHaveBeenCalled();
-        expect(spy.mat).toHaveBeenCalled();
-      }
+      for (const s of geoSpies) expect(s).toHaveBeenCalled();
+      for (const s of matSpies) expect(s).toHaveBeenCalled();
+
+      // calling dispose again should be idempotent and not call dispose again
+      const geoCalls = geoSpies.map((s) => s.mock.calls.length);
+      const matCalls = matSpies.map((s) => s.mock.calls.length);
+      clock.dispose();
+      for (let i = 0; i < geoSpies.length; i++) expect(geoSpies[i].mock.calls.length).toBe(geoCalls[i]);
+      for (let i = 0; i < matSpies.length; i++) expect(matSpies[i].mock.calls.length).toBe(matCalls[i]);
     });
 
-    it('should dispose textures on materials with map property', () => {
+    it('should dispose unique textures on materials', () => {
       const clock = new Clock3D();
-      const texSpies: ReturnType<typeof vi.spyOn>[] = [];
+      const texs = new Set<any>();
+
+      const texProps = [
+        'map',
+        'alphaMap',
+        'aoMap',
+        'bumpMap',
+        'normalMap',
+        'displacementMap',
+        'emissiveMap',
+        'roughnessMap',
+        'metalnessMap',
+        'envMap',
+        'lightMap',
+      ];
 
       clock.group.traverse((child) => {
         if (child instanceof THREE.Mesh) {
-          const mat = child.material as THREE.MeshBasicMaterial;
-          if (mat.map) {
-            texSpies.push(vi.spyOn(mat.map, 'dispose'));
+          const materials = Array.isArray(child.material) ? child.material : [child.material];
+          for (const m of materials) {
+            for (const p of texProps) {
+              // @ts-ignore
+              const t = (m as any)[p] as THREE.Texture | undefined;
+              if (t instanceof THREE.Texture) texs.add(t);
+            }
           }
         }
       });
 
-      expect(texSpies.length).toBeGreaterThan(0);
+      expect(texs.size).toBeGreaterThan(0);
+
+      const texSpies = Array.from(texs).map((t) => vi.spyOn(t, 'dispose'));
+
       clock.dispose();
 
-      for (const spy of texSpies) {
-        expect(spy).toHaveBeenCalled();
-      }
+      for (const s of texSpies) expect(s).toHaveBeenCalled();
+
+      // idempotent
+      const texCalls = texSpies.map((s) => s.mock.calls.length);
+      clock.dispose();
+      for (let i = 0; i < texSpies.length; i++) expect(texSpies[i].mock.calls.length).toBe(texCalls[i]);
     });
   });
 });

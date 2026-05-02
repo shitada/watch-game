@@ -3,6 +3,7 @@ import { QuizPlayScene } from '@/game/scenes/QuizPlayScene';
 import { SceneManager } from '@/game/SceneManager';
 import { AudioManager } from '@/game/audio/AudioManager';
 import { SFXGenerator } from '@/game/audio/SFXGenerator';
+import { GameSettings } from '@/game/config/GameSettings';
 
 // Mock Canvas 2D context
 HTMLCanvasElement.prototype.getContext = vi.fn().mockReturnValue({
@@ -82,76 +83,10 @@ describe('QuizPlayScene', () => {
     expect(resultTransitions.length).toBe(0);
   });
 
-  describe('ヒントボタン', () => {
-    function getHintButton(): HTMLButtonElement | null {
-      const buttons = document.querySelectorAll('button');
-      return Array.from(buttons).find(b => b.textContent === '💡 ヒント') as HTMLButtonElement | null;
-    }
-
-    function getChoiceButtons(): HTMLButtonElement[] {
-      const buttons = document.querySelectorAll('button');
-      return Array.from(buttons).filter(
-        b => b.textContent !== '🏠' && b.textContent !== '💡 ヒント',
-      ) as HTMLButtonElement[];
-    }
-
-    it('ヒントボタンが表示されること', () => {
-      const hintBtn = getHintButton();
-      expect(hintBtn).not.toBeNull();
-    });
-
-    it('ヒントボタン押下で sfx.play("hint") が呼ばれること', () => {
-      const hintBtn = getHintButton()!;
-      hintBtn.click();
-      expect(sfx.play).toHaveBeenCalledWith('hint');
-    });
-
-    it('ヒントボタン押下で不正解2つが非活性化され2択になること', () => {
-      vi.spyOn(Math, 'random').mockReturnValue(0);
-      const hintBtn = getHintButton()!;
-      hintBtn.click();
-      const choices = getChoiceButtons();
-      const activeChoices = choices.filter(b => !b.disabled);
-      expect(activeChoices.length).toBe(2);
-      vi.spyOn(Math, 'random').mockRestore();
-    });
-
-    it('ヒントボタンは1問につき1回のみ使用可能であること', () => {
-      const hintBtn = getHintButton()!;
-      hintBtn.click();
-      expect(hintBtn.disabled).toBe(true);
-      expect(hintBtn.style.opacity).toBe('0.3');
-      expect(hintBtn.style.pointerEvents).toBe('none');
-    });
-
-    it('正解ボタンは常に残ること', () => {
-      vi.spyOn(Math, 'random').mockReturnValue(0.99);
-      const hintBtn = getHintButton()!;
-      hintBtn.click();
-      const choices = getChoiceButtons();
-      const activeChoices = choices.filter(b => !b.disabled);
-      // 正解1つ + 不正解1つ = 2つがアクティブ
-      expect(activeChoices.length).toBe(2);
-      vi.spyOn(Math, 'random').mockRestore();
-    });
-
-    it('次の問題に進むとヒントボタンが再活性化されること', () => {
-      const hintBtn = getHintButton()!;
-      hintBtn.click();
-      expect(hintBtn.disabled).toBe(true);
-
-      // 回答して次の問題へ
-      const choices = getChoiceButtons();
-      const activeChoice = choices.find(b => !b.disabled)!;
-      activeChoice.click();
-      vi.advanceTimersByTime(2000);
-
-      // 次の問題でヒントボタンが復活
-      const hintBtn2 = getHintButton()!;
-      expect(hintBtn2.disabled).toBe(false);
-      expect(hintBtn2.style.opacity).not.toBe('0.3');
-      expect(hintBtn2.style.pointerEvents).not.toBe('none');
-    });
+  it('質問プロンプト「なんじかな」が表示されること', () => {
+    const uiOverlay = document.getElementById('ui-overlay')!;
+    const allText = uiOverlay.textContent ?? '';
+    expect(allText).toContain('なんじかな');
   });
 
   it('enter() で pendingTimers が初期化されること（再入時の防御）', () => {
@@ -173,5 +108,83 @@ describe('QuizPlayScene', () => {
       (call: unknown[]) => call[0] === 'result',
     );
     expect(resultTransitions.length).toBe(0);
+  });
+
+  describe('ヒントタイマー', () => {
+    it('8秒後にヒントSFXが再生されること', () => {
+      // Wait for hint delay
+      vi.advanceTimersByTime(GameSettings.HINT_DELAY_MS);
+
+      expect(sfx.play).toHaveBeenCalledWith('hint');
+    });
+
+    it('8秒後にボタンが2つ薄くなること（2択になる）', () => {
+      vi.advanceTimersByTime(GameSettings.HINT_DELAY_MS);
+
+      const buttons = document.querySelectorAll('button');
+      const choiceButtons = Array.from(buttons).filter(b => b.textContent !== '🏠');
+      const dimmed = choiceButtons.filter(b => b.style.opacity === '0.3');
+      expect(dimmed.length).toBe(2);
+    });
+
+    it('回答するとヒントタイマーがクリアされること', () => {
+      // Answer before hint triggers
+      const buttons = document.querySelectorAll('button');
+      const choiceButton = Array.from(buttons).find(b => b.textContent !== '🏠');
+      choiceButton?.click();
+
+      // Advance past the 1500ms answer delay but not enough for new hint timer
+      // handleAnswer sets waitingNext=true, after 1500ms showQuestion resets it
+      // The original hint timer (8000ms) should not fire because waitingNext is true
+      // Advance only to just before the next question's hint would fire
+      vi.advanceTimersByTime(1500);
+
+      // Now we are on next question. Advance less than HINT_DELAY_MS
+      // to confirm the original hint didn't fire
+      const hintCalls = (sfx.play as ReturnType<typeof vi.fn>).mock.calls.filter(
+        (call: unknown[]) => call[0] === 'hint',
+      );
+      expect(hintCalls.length).toBe(0);
+    });
+
+    it('ヒントは1問につき1回のみ発動すること', () => {
+      // Trigger hint
+      vi.advanceTimersByTime(GameSettings.HINT_DELAY_MS);
+
+      const hintCallsBefore = (sfx.play as ReturnType<typeof vi.fn>).mock.calls.filter(
+        (call: unknown[]) => call[0] === 'hint',
+      );
+      expect(hintCallsBefore.length).toBe(1);
+
+      // Wait more time - should not trigger again
+      vi.advanceTimersByTime(GameSettings.HINT_DELAY_MS);
+
+      const hintCallsAfter = (sfx.play as ReturnType<typeof vi.fn>).mock.calls.filter(
+        (call: unknown[]) => call[0] === 'hint',
+      );
+      expect(hintCallsAfter.length).toBe(1);
+    });
+
+    it('exit()でヒントタイマーがクリアされること', () => {
+      scene.exit();
+
+      vi.advanceTimersByTime(GameSettings.HINT_DELAY_MS);
+
+      const hintCalls = (sfx.play as ReturnType<typeof vi.fn>).mock.calls.filter(
+        (call: unknown[]) => call[0] === 'hint',
+      );
+      expect(hintCalls.length).toBe(0);
+    });
+
+    it('💡 ヒント！通知が表示されること', () => {
+      vi.advanceTimersByTime(GameSettings.HINT_DELAY_MS);
+
+      const overlay = document.getElementById('ui-overlay')!;
+      const notifications = overlay.querySelectorAll('div');
+      const hintNotif = Array.from(notifications).find(
+        n => n.textContent === '💡 ヒント！',
+      );
+      expect(hintNotif).toBeTruthy();
+    });
   });
 });

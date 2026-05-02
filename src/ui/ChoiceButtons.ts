@@ -41,7 +41,7 @@ export class ChoiceButtons {
         color: #2C3E50;
         cursor: pointer;
         touch-action: manipulation;
-        transition: transform 0.1s, background 0.2s;
+        transition: transform 0.1s, background 0.2s, opacity 0.3s;
       `;
 
       btn.addEventListener('pointerdown', () => {
@@ -80,19 +80,29 @@ export class ChoiceButtons {
     });
   }
 
-  onSelect(callback: (index: number) => void): void {
-    this.selectCallback = callback;
+  showHint(correctIndex: number): void {
+    if (this.disabled || this.buttons.length === 0) return;
+
+    // Collect incorrect indices
+    const incorrectIndices = this.buttons
+      .map((_, i) => i)
+      .filter(i => i !== correctIndex);
+
+    // Randomly pick 2 of the 3 incorrect to dim
+    for (let i = incorrectIndices.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [incorrectIndices[i], incorrectIndices[j]] = [incorrectIndices[j], incorrectIndices[i]];
+    }
+    const toDim = incorrectIndices.slice(0, 2);
+
+    toDim.forEach(i => {
+      this.buttons[i].style.opacity = '0.3';
+      this.buttons[i].style.pointerEvents = 'none';
+    });
   }
 
-  eliminateChoices(keepIndices: number[]): void {
-    this.buttons.forEach((btn, i) => {
-      if (!keepIndices.includes(i)) {
-        btn.style.opacity = '0.3';
-        btn.style.pointerEvents = 'none';
-        btn.style.borderColor = '#BDC3C7';
-        btn.disabled = true;
-      }
-    });
+  onSelect(callback: (index: number) => void): void {
+    this.selectCallback = callback;
   }
 
   unmount(): void {

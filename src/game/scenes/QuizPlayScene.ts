@@ -6,6 +6,7 @@ import { SFXGenerator } from '@/game/audio/SFXGenerator';
 import { Clock3D } from '@/game/entities/Clock3D';
 import { QuizGenerator, formatTime } from '@/game/systems/QuizGenerator';
 import { getLevelDef } from '@/game/config/LevelConfig';
+import { GameSettings } from '@/game/config/GameSettings';
 import { CorrectEffect } from '@/game/effects/CorrectEffect';
 import { IncorrectEffect } from '@/game/effects/IncorrectEffect';
 import { HUD } from '@/ui/HUD';
@@ -24,8 +25,6 @@ export class QuizPlayScene implements Scene {
   private choiceButtons = new ChoiceButtons();
   private homeButton = new HomeButton();
   private overlay: HTMLDivElement | null = null;
-  private hintBtn: HTMLButtonElement | null = null;
-  private hintUsed = false;
 
   private sceneManager: SceneManager;
   private audioManager: AudioManager;
@@ -40,6 +39,7 @@ export class QuizPlayScene implements Scene {
   private results: QuizResult[] = [];
   private waitingNext = false;
   private pendingTimers: ReturnType<typeof setTimeout>[] = [];
+  private hintShown = false;
 
   constructor(
     sceneManager: SceneManager,
@@ -118,7 +118,6 @@ export class QuizPlayScene implements Scene {
     this.homeButton.unmount();
     this.overlay?.remove();
     this.overlay = null;
-    this.hintBtn = null;
   }
 
   getThreeScene(): THREE.Scene { return this.scene; }
@@ -140,6 +139,22 @@ export class QuizPlayScene implements Scene {
     this.hud.mount(topBar);
     overlay.appendChild(topBar);
 
+    const prompt = document.createElement('div');
+    prompt.textContent = 'この とけいは なんじかな？🤔';
+    prompt.style.cssText = `
+      font-family: 'Zen Maru Gothic', sans-serif;
+      font-size: clamp(20px, 4vw, 32px);
+      font-weight: 700;
+      color: #2C3E50;
+      background: rgba(255,255,255,0.9);
+      padding: 10px 24px;
+      border-radius: 16px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      text-align: center;
+      align-self: center;
+    `;
+    overlay.appendChild(prompt);
+
     const bottomArea = document.createElement('div');
     bottomArea.style.cssText = `
       display: flex;
@@ -147,30 +162,6 @@ export class QuizPlayScene implements Scene {
       align-items: center;
       padding-bottom: 16px;
     `;
-
-    // ヒントボタン（選択肢の上に配置） [W-3]
-    const hintBtn = document.createElement('button');
-    hintBtn.textContent = '💡 ヒント';
-    hintBtn.style.cssText = `
-      font-family: 'Zen Maru Gothic', sans-serif;
-      font-size: clamp(12px, 2.5vw, 18px);
-      font-weight: 700;
-      padding: 8px 20px;
-      border: 2px solid #F39C12;
-      border-radius: 20px;
-      background: linear-gradient(180deg, #FFF9E6, #FEF3CD);
-      color: #7D6608;
-      cursor: pointer;
-      touch-action: manipulation;
-      margin-bottom: 8px;
-      pointer-events: auto;
-    `;
-    hintBtn.addEventListener('click', () => {
-      this.handleHint();
-    });
-    bottomArea.appendChild(hintBtn);
-    this.hintBtn = hintBtn;
-
     this.choiceButtons.mount(bottomArea);
     overlay.appendChild(bottomArea);
 
@@ -193,47 +184,33 @@ export class QuizPlayScene implements Scene {
   }
 
   private showQuestion(): void {
+    // Clear previous timers (W-2: hint timer + any lingering notification timers)
+    this.pendingTimers.forEach(id => clearTimeout(id));
+    this.pendingTimers = [];
+    this.hintShown = false;
+
     const q = this.questions[this.currentQuestion];
     const def = getLevelDef(this.level);
 
     this.clock3D.setTime(q);
     this.hud.updateQuestion(this.currentQuestion + 1, def.questionCount);
     this.hud.updateScore(this.correctCount);
-    // setChoices() で DOM が再生成されるため eliminateChoices の変更はリセットされる
     this.choiceButtons.setChoices(this.choices[this.currentQuestion]);
 
-    // [W-2] ヒントボタンを初期状態に復元
-    this.hintUsed = false;
-    if (this.hintBtn) {
-      this.hintBtn.disabled = false;
-      this.hintBtn.style.opacity = '1';
-      this.hintBtn.style.pointerEvents = 'auto';
-    }
+    // Set hint timer (W-1: added to pendingTimers for exit cleanup)
+    this.pendingTimers.push(setTimeout(() => {
+      this.triggerHint();
+    }, GameSettings.HINT_DELAY_MS));
   }
 
-  private handleHint(): void {
-    if (this.hintUsed || this.waitingNext) return;
-    this.hintUsed = true;
-
-    // 効果音再生
+  private triggerHint(): void {
+    if (this.hintShown || this.waitingNext) return;
+    this.hintShown = true;
     this.sfx.play('hint');
-
-    // ヒントボタンを非活性化
-    if (this.hintBtn) {
-      this.hintBtn.disabled = true;
-      this.hintBtn.style.opacity = '0.3';
-      this.hintBtn.style.pointerEvents = 'none';
-    }
-
-    // 不正解のインデックスを収集し、ランダムに2つ選んで除外
-    const correct = this.correctIndex[this.currentQuestion];
-    const wrongIndices = [0, 1, 2, 3].filter(i => i !== correct);
-    // wrongIndices から1つ残す（ランダムに選択）
-    const keepWrongIdx = Math.floor(Math.random() * wrongIndices.length);
-    const keepWrong = wrongIndices[keepWrongIdx];
-    const keepIndices = [correct, keepWrong];
-
-    this.choiceButtons.eliminateChoices(keepIndices);
+    this.choiceButtons.showHint(this.correctIndex[this.currentQuestion]);
+    this.pendingTimers.push(
+      showNotification(this.overlay!, '💡 ヒント！', '#F39C12'),
+    );
   }
 
   private handleAnswer(selectedIndex: number): void {

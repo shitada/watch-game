@@ -92,6 +92,18 @@ export class QuizGenerator {
         choices.push(all[idx]);
         idx++;
       }
+
+      // Second pass: ignore similarity if still not enough
+      if (choices.length < 4) {
+        const remaining = this.listAllCandidates(level).filter(
+          c => !(c.hours === correct.hours && c.minutes === correct.minutes) &&
+               !choices.some(e => e.hours === c.hours && e.minutes === c.minutes),
+        );
+        for (const cand of remaining) {
+          if (choices.length >= 4) break;
+          choices.push(cand);
+        }
+      }
     }
 
     // Final shuffle

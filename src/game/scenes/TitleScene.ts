@@ -37,6 +37,8 @@ export class TitleScene implements Scene {
   }
 
   enter(_context: SceneContext): void {
+    // Create clock instance on enter to allow proper disposal on exit
+    this.clock3D = new Clock3D();
     // Reset clock
     this.clock3D = new Clock3D();
     this.scene.add(this.clock3D.group);
@@ -64,9 +66,7 @@ export class TitleScene implements Scene {
 
   update(dt: number): void {
     this.clock3D?.update(dt);
-    if (this.clock3D) {
-      this.clock3D.group.rotation.y = Math.sin(Date.now() * 0.0005) * 0.15;
-    }
+    if (this.clock3D) this.clock3D.group.rotation.y = Math.sin(Date.now() * 0.0005) * 0.15;
 
     // Animate stars
     if (this.stars) {
@@ -80,6 +80,7 @@ export class TitleScene implements Scene {
       this.clock3D.dispose();
       this.clock3D = null;
     }
+
     if (this.stars) {
       this.scene.remove(this.stars);
       this.stars.geometry.dispose();

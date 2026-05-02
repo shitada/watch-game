@@ -111,10 +111,7 @@ export class QuizPlayScene implements Scene {
     this.pendingTimers.forEach(id => clearTimeout(id));
     this.pendingTimers = [];
     if (this.clock3D) {
-      // Remove from scene first
       this.scene.remove(this.clock3D.group);
-      // Dispose resources
-      // No controller in this scene, so dispose clock directly
       this.clock3D.dispose();
       this.clock3D = null;
     }

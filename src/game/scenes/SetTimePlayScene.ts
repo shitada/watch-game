@@ -93,8 +93,9 @@ export class SetTimePlayScene implements Scene {
 
     // Setup controller
     if (this.renderer) {
+      // clock3D exists here
       this.clockController = new ClockController(
-        this.clock3D,
+        this.clock3D!,
         this.renderer,
         this.camera,
       );
@@ -125,12 +126,9 @@ export class SetTimePlayScene implements Scene {
   exit(): void {
     this.pendingTimers.forEach(id => clearTimeout(id));
     this.pendingTimers = [];
-    // Remove clock from scene first
     if (this.clock3D) {
       this.scene.remove(this.clock3D.group);
     }
-
-    // Dispose controller before disposing clock
     this.clockController?.dispose();
     this.clockController = null;
 
@@ -221,7 +219,7 @@ export class SetTimePlayScene implements Scene {
     this.confirmButton.disable();
 
     const target = this.questions[this.currentQuestion];
-    const answer = this.clock3D!.getTime();
+    const answer = this.clock3D?.getTime() ?? { hours: 12, minutes: 0 };
     const def = getLevelDef(this.level);
     const isCorrect = this.validator.validate(target, answer, def.tolerance);
 

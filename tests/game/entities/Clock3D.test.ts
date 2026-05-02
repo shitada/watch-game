@@ -15,6 +15,9 @@ beforeEach(() => {
   vi.spyOn(HTMLCanvasElement.prototype, 'getContext').mockReturnValue(
     mockCtx as unknown as CanvasRenderingContext2D,
   );
+
+  // Reset shared numbers cache between tests to ensure isolation
+  (Clock3D as any)._sharedNumbers = { texture: undefined, refCount: 0 };
 });
 
 describe('Clock3D', () => {
@@ -307,6 +310,55 @@ describe('Clock3D', () => {
       const texCalls = texSpies.map((s) => s.mock.calls.length);
       clock.dispose();
       for (let i = 0; i < texSpies.length; i++) expect(texSpies[i].mock.calls.length).toBe(texCalls[i]);
+    });
+  });
+
+  describe('shared numbers texture', () => {
+    it('should reuse same texture across instances', () => {
+      const a = new Clock3D();
+      const b = new Clock3D();
+
+      const findNumbersTex = (c: Clock3D) => {
+        let tex: THREE.Texture | undefined;
+        c.group.traverse((child) => {
+          if (child instanceof THREE.Mesh && child.name === 'numbers') {
+            const mat = Array.isArray(child.material) ? child.material[0] as any : child.material as any;
+            tex = mat.map as THREE.Texture | undefined;
+          }
+        });
+        return tex;
+      };
+
+      const ta = findNumbersTex(a);
+      const tb = findNumbersTex(b);
+      expect(ta).toBeDefined();
+      expect(tb).toBeDefined();
+      expect(ta).toBe(tb);
+    });
+
+    it('should call shared texture.dispose only once when disposing multiple instances', () => {
+      const a = new Clock3D();
+      const b = new Clock3D();
+
+      const getShared = (c: Clock3D) => {
+        let tex: any;
+        c.group.traverse((child) => {
+          if (child instanceof THREE.Mesh && child.name === 'numbers') {
+            const mat = Array.isArray(child.material) ? child.material[0] as any : child.material as any;
+            tex = mat.map;
+          }
+        });
+        return tex;
+      };
+
+      const shared = getShared(a);
+      const spy = vi.spyOn(shared, 'dispose');
+
+      a.dispose();
+      expect(spy).not.toHaveBeenCalled();
+
+      b.dispose();
+      expect(spy).toHaveBeenCalledTimes(1);
     });
   });
 });

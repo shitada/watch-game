@@ -82,7 +82,7 @@ export class DailyPlayScene implements Scene {
     // Setup controller
     if (this.renderer) {
       this.clockController = new ClockController(
-        this.clock3D,
+        this.clock3D!,
         this.renderer,
         this.camera,
       );
@@ -113,12 +113,9 @@ export class DailyPlayScene implements Scene {
   exit(): void {
     this.pendingTimers.forEach(id => clearTimeout(id));
     this.pendingTimers = [];
-
     if (this.clock3D) {
       this.scene.remove(this.clock3D.group);
     }
-
-    // Dispose controller before clock
     this.clockController?.dispose();
     this.clockController = null;
 
@@ -232,7 +229,7 @@ export class DailyPlayScene implements Scene {
     this.confirmButton.disable();
 
     const event = DAILY_EVENTS[this.currentEventIndex];
-    const answer = this.clock3D!.getTime();
+    const answer = this.clock3D?.getTime() ?? { hours: 12, minutes: 0 };
     const isCorrect = this.validator.validate(
       event.time,
       answer,

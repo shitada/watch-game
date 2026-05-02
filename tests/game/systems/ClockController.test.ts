@@ -5,6 +5,10 @@ import { Clock3D } from '@/game/entities/Clock3D';
 
 // ── Mock setup ──
 
+// Preserve originals so tests can restore after each
+let _origSetPointerCapture: typeof HTMLElement.prototype.setPointerCapture | undefined;
+let _origReleasePointerCapture: typeof HTMLElement.prototype.releasePointerCapture | undefined;
+
 // Mock canvas 2D context for jsdom (Clock3D texture generation)
 beforeEach(() => {
   const mockCtx = {
@@ -15,13 +19,28 @@ beforeEach(() => {
     textAlign: '',
     textBaseline: '',
   };
+  // spyOn so it can be restored by vi.restoreAllMocks in nested beforeEach/afterEach
   vi.spyOn(HTMLCanvasElement.prototype, 'getContext').mockReturnValue(
     mockCtx as unknown as CanvasRenderingContext2D,
   );
 
-  // [W-2] Stub setPointerCapture / releasePointerCapture
+  // Save originals and stub pointer capture methods at prototype level
+  _origSetPointerCapture = HTMLElement.prototype.setPointerCapture;
+  _origReleasePointerCapture = HTMLElement.prototype.releasePointerCapture;
   HTMLElement.prototype.setPointerCapture = vi.fn();
   HTMLElement.prototype.releasePointerCapture = vi.fn();
+});
+
+afterEach(() => {
+  // Restore prototypes to avoid cross-test pollution [S-1]
+  if (_origSetPointerCapture !== undefined) {
+    HTMLElement.prototype.setPointerCapture = _origSetPointerCapture;
+  }
+  if (_origReleasePointerCapture !== undefined) {
+    HTMLElement.prototype.releasePointerCapture = _origReleasePointerCapture;
+  }
+  // Restore any spies/mocks created via vi.spyOn / vi.fn
+  vi.restoreAllMocks();
 });
 
 /** Create a minimal mock renderer with a real DOM canvas */
@@ -150,6 +169,50 @@ describe('ClockController', () => {
       controller.dispose();
 
       expect(removeSpy).toHaveBeenCalledTimes(4);
+    });
+
+    it('pointerdown で setPointerCapture が呼ばれ、setEnabled(false) ／ dispose() で releasePointerCapture が呼ばれること', () => {
+      const canvas = renderer.domElement;
+      // Prefer element-level spies to avoid global prototype spying [S-3]
+      const setSpy = vi.spyOn(canvas as any, 'setPointerCapture');
+      const releaseSpy = vi.spyOn(canvas as any, 'releasePointerCapture');
+
+      controller.setEnabled(true);
+
+      // pointerdown should attempt to capture the pointer with provided id
+      canvas.dispatchEvent(pointerEvent('pointerdown', 400, 300, 5));
+      expect(setSpy).toHaveBeenCalledWith(5);
+
+      // setEnabled(false) should release capture for active pointer
+      controller.setEnabled(false);
+      expect(releaseSpy).toHaveBeenCalledWith(5);
+
+      // Now test dispose() path: start new capture then dispose
+      setSpy.mockClear();
+      releaseSpy.mockClear();
+
+      controller.setEnabled(true);
+      canvas.dispatchEvent(pointerEvent('pointerdown', 400, 300, 7));
+      expect(setSpy).toHaveBeenCalledWith(7);
+
+      controller.dispose();
+      expect(releaseSpy).toHaveBeenCalledWith(7);
+    });
+
+    it('pointerdown → pointerup のフローで pointerId を使って releasePointerCapture が呼ばれること', () => {
+      const canvas = renderer.domElement;
+      const setSpy = vi.spyOn(canvas as any, 'setPointerCapture');
+      const releaseSpy = vi.spyOn(canvas as any, 'releasePointerCapture');
+
+      controller.setEnabled(true);
+
+      const pid = 42;
+      canvas.dispatchEvent(pointerEvent('pointerdown', 400, 300, pid));
+      expect(setSpy).toHaveBeenCalledWith(pid);
+
+      // pointerup with same pointerId should release
+      canvas.dispatchEvent(pointerEvent('pointerup', 400, 300, pid));
+      expect(releaseSpy).toHaveBeenCalledWith(pid);
     });
   });
 
@@ -676,5 +739,23 @@ describe('pixelsToWorldDistance (integration)', () => {
     expect(pd).toBeGreaterThan(0);
     expect(od).toBeGreaterThan(0);
     expect(Math.abs(pd - od)).toBeGreaterThan(1e-6);
+  });
+
+  it('returns fallback when canvas rect is zero-sized', () => {
+    const canvas = createCanvas(0, 0);
+    const cam = new THREE.PerspectiveCamera(50, 1, 0.1, 1000);
+
+    const d = pixelsToWorldDistance(canvas, cam, 48, 0);
+    expect(d).toBeCloseTo(1.2, 6);
+  });
+
+  it('returns fallback when pixels is non-positive', () => {
+    const canvas = createCanvas(800, 600);
+    const cam = new THREE.PerspectiveCamera(50, 800 / 600, 0.1, 1000);
+
+    const d0 = pixelsToWorldDistance(canvas, cam, 0, 0);
+    const dNeg = pixelsToWorldDistance(canvas, cam, -10, 0);
+    expect(d0).toBeCloseTo(1.2, 6);
+    expect(dNeg).toBeCloseTo(1.2, 6);
   });
 });

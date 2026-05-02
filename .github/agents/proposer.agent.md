@@ -1,6 +1,7 @@
 ---
 description: コードベースを分析し、1つの改善提案を作成する提案エージェント。
 name: "Proposer - 改善提案者"
+model: gpt-5-mini
 tools: ["search/codebase", "search/fileSearch", "read/readFile", "execute/runInTerminal", "execute/getTerminalOutput"]
 ---
 

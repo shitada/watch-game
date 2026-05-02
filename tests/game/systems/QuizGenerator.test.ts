@@ -54,7 +54,7 @@ describe('QuizGenerator', () => {
     expect(hasCorrect).toBe(true);
   });
   it('should filter wrap-around close choices (correct=12:55, wrong=1:00)', () => {
-    const gen2 = new QuizGenerator();
+    const gen2 = new QuizGenerator(() => 0.5);
     const correct = { hours: 12, minutes: 55 };
     // Level 3: minuteStep=5, threshold = < 5*2 = < 10 min
     // 1:00 is 5 min away on clock face (wraps around 12) but 710 min by naive calc
@@ -71,7 +71,6 @@ describe('QuizGenerator', () => {
       candidateIdx++;
       return c;
     });
-    vi.spyOn(Math, 'random').mockReturnValue(0.5);
 
     const choices = gen2.generateChoices(correct, 3);
 
@@ -86,7 +85,7 @@ describe('QuizGenerator', () => {
   });
 
   it('should filter wrap-around close choices (correct=1:00, wrong=12:55)', () => {
-    const gen2 = new QuizGenerator();
+    const gen2 = new QuizGenerator(() => 0.5);
     const correct = { hours: 1, minutes: 0 };
     // 12:55 is 5 min away on clock face (wraps around 12) but 715 min by naive calc
     const candidates = [
@@ -102,7 +101,6 @@ describe('QuizGenerator', () => {
       candidateIdx++;
       return c;
     });
-    vi.spyOn(Math, 'random').mockReturnValue(0.5);
 
     const choices = gen2.generateChoices(correct, 3);
 
@@ -117,13 +115,11 @@ describe('QuizGenerator', () => {
   });
 
   it('should fallback to enumerated candidates when attempts exhausted', () => {
-    const gen2 = new QuizGenerator();
+    const gen2 = new QuizGenerator(() => 0.1);
     const correct = { hours: 3, minutes: 0 };
 
     // Make generateTime always return the correct answer so the random attempts are useless
     vi.spyOn(gen2, 'generateTime').mockImplementation(() => ({ hours: 3, minutes: 0 }));
-    // Fix Math.random so shuffle is deterministic
-    vi.spyOn(Math, 'random').mockReturnValue(0.1);
 
     const choices = gen2.generateChoices(correct, 1);
 
@@ -239,7 +235,7 @@ describe('QuizGenerator fallback', () => {
   afterEach(() => { vi.restoreAllMocks(); });
 
   it('should return 4 unique choices when generateTime repeatedly returns filtered candidates', () => {
-    const gen = new QuizGenerator();
+    const gen = new QuizGenerator(() => 0.5);
     const correct = { hours: 12, minutes: 55 };
     const candidates = [
       { hours: 1, minutes: 0 },
@@ -251,7 +247,6 @@ describe('QuizGenerator fallback', () => {
       idx++;
       return c;
     });
-    vi.spyOn(Math, 'random').mockReturnValue(0.5);
 
     const choices = gen.generateChoices(correct, 3);
     expect(choices.length).toBe(4);

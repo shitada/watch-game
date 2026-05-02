@@ -4,6 +4,7 @@ import { SceneManager } from '@/game/SceneManager';
 import { AudioManager } from '@/game/audio/AudioManager';
 import { SFXGenerator } from '@/game/audio/SFXGenerator';
 import { GameSettings } from '@/game/config/GameSettings';
+import { Clock3D } from '@/game/entities/Clock3D';
 
 // Mock Canvas 2D context
 HTMLCanvasElement.prototype.getContext = vi.fn().mockReturnValue({
@@ -186,5 +187,18 @@ describe('QuizPlayScene', () => {
       );
       expect(hintNotif).toBeTruthy();
     });
+  });
+
+  it('enter→exit→enter が可能で dispose が呼ばれること', () => {
+    const spy = vi.spyOn(Clock3D.prototype, 'dispose');
+
+    // Re-enter flow
+    scene.exit();
+    scene.enter({ level: 1 });
+    scene.exit();
+
+    expect(spy).toHaveBeenCalled();
+
+    spy.mockRestore();
   });
 });

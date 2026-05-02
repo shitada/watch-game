@@ -83,19 +83,28 @@ export class Clock3D {
 
   private buildNumbers(): void {
     const canvas = document.createElement('canvas');
-    canvas.width = 512;
-    canvas.height = 512;
-    const ctx = canvas.getContext('2d')!;
-    ctx.clearRect(0, 0, 512, 512);
 
-    ctx.font = 'bold 42px "Zen Maru Gothic", sans-serif';
+    // Determine texture size based on devicePixelRatio but capped to MAX_NUMBERS_TEXTURE_SIZE
+    const base = (S as any).NUMBERS_TEXTURE_BASE ?? 256;
+    const maxSize = (S as any).MAX_NUMBERS_TEXTURE_SIZE ?? 512;
+    const dpr = (typeof window !== 'undefined' && (window as any).devicePixelRatio) ? (window as any).devicePixelRatio : 1;
+    const size = Math.min(maxSize, Math.max(128, Math.round(base * dpr)));
+
+    canvas.width = size;
+    canvas.height = size;
+    const ctx = canvas.getContext('2d')!;
+    ctx.clearRect(0, 0, size, size);
+
+    // Scale font and numeric radius proportionally to texture size to preserve appearance
+    const fontPx = Math.round(size * 0.082); // ~42px at 512
+    ctx.font = `bold ${fontPx}px "Zen Maru Gothic", sans-serif`;
     ctx.fillStyle = '#2C3E50';
     ctx.textAlign = 'center';
     ctx.textBaseline = 'middle';
 
-    const centerX = 256;
-    const centerY = 256;
-    const numRadius = 185;
+    const centerX = size / 2;
+    const centerY = size / 2;
+    const numRadius = Math.round(size * 0.361); // ~185 at 512
 
     for (let i = 1; i <= 12; i++) {
       const angle = (i / 12) * Math.PI * 2 - Math.PI / 2;

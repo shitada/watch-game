@@ -33,7 +33,8 @@ export class PerformanceManager {
 
   applyInitial() {
     // Ensure renderer starts with configured pixel ratio and size
-    this.renderer.setPixelRatio(this.qualityLevels[this.index]);
+    const pr = this.getEffectivePixelRatio(this.qualityLevels[this.index]);
+    this.renderer.setPixelRatio(pr);
     this.renderer.setSize(window.innerWidth, window.innerHeight);
     // Allow immediate adaptation after applying initial settings by offsetting lastChangeAt
     this.lastChangeAt = Date.now() - this.cooldownMs;
@@ -66,7 +67,7 @@ export class PerformanceManager {
   }
 
   private apply() {
-    const pr = this.qualityLevels[this.index];
+    const pr = this.getEffectivePixelRatio(this.qualityLevels[this.index]);
     this.renderer.setPixelRatio(pr);
     this.renderer.setSize(window.innerWidth, window.innerHeight);
   }
@@ -82,4 +83,24 @@ export class PerformanceManager {
     this.apply();
     this.lastChangeAt = Date.now();
   }
+
+  // Determine an effective pixel ratio by clamping the requested value to the
+  // device's window.devicePixelRatio when that value is a finite number.
+  // If devicePixelRatio is undefined or not a finite number (NaN/Infinity),
+  // the requested value is returned unchanged.
+  private getEffectivePixelRatio(requested: number): number {
+    try {
+      // Use typeof check and Number.isFinite per reviewer guidance
+      const dpr = (typeof window !== 'undefined' && 'devicePixelRatio' in window)
+        ? (window as any).devicePixelRatio
+        : undefined;
+      if (typeof dpr === 'number' && Number.isFinite(dpr)) {
+        return Math.min(requested, dpr);
+      }
+    } catch (e) {
+      // If accessing window fails for any reason, fall back to requested
+    }
+    return requested;
+  }
 }
+

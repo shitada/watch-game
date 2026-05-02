@@ -1,6 +1,12 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import * as THREE from 'three';
 import { Clock3D } from '@/game/entities/Clock3D';
+
+// Utility: convert minutes (0-59) to pointer angle in radians
+// 0 minutes -> 12 o'clock -> PI/2, clockwise decreasing angle
+function minutesToAngle(minutes: number): number {
+  return Math.PI / 2 - (minutes / 60) * 2 * Math.PI;
+}
 
 // Mock canvas 2D context for jsdom
 beforeEach(() => {
@@ -15,6 +21,14 @@ beforeEach(() => {
   vi.spyOn(HTMLCanvasElement.prototype, 'getContext').mockReturnValue(
     mockCtx as unknown as CanvasRenderingContext2D,
   );
+
+  // Reset shared numbers cache between tests to ensure isolation
+  (Clock3D as any)._sharedNumbers = { texture: undefined, refCount: 0 };
+});
+
+afterEach(() => {
+  // Restore all spies/mocks to avoid cross-test leakage
+  vi.restoreAllMocks();
 });
 
 describe('Clock3D', () => {
@@ -70,6 +84,17 @@ describe('Clock3D', () => {
     expect(minutes).toBe(30);
   });
 
+  it('angleToMinutes round-trip for common minutes', () => {
+    const clock = new Clock3D();
+    const minutesList = [0, 15, 30, 45, 5, 50];
+    for (const m of minutesList) {
+      const angle = minutesToAngle(m);
+      const converted = clock.angleToMinutes(angle);
+      const diff = Math.abs(converted - m);
+      expect(diff).toBeLessThanOrEqual(0.5);
+    }
+  });
+
   it('should have a clock face mesh', () => {
     const clock = new Clock3D();
     const face = clock.getClockFaceMesh();
@@ -98,6 +123,24 @@ describe('Clock3D', () => {
     // 6 o'clock: angle = -PI/2 (pointing down)
     clock.setHourAngle(-Math.PI / 2);
     expect(clock.getTime().hours).toBe(6);
+  });
+
+  it('setMinuteAngle should wrap forward (prev 50 -> target 5 increments hour)', () => {
+    const clock = new Clock3D();
+    clock.setTime({ hours: 3, minutes: 50 });
+    clock.setMinuteAngle(minutesToAngle(5));
+    const time = clock.getTime();
+    expect(time.hours).toBe(4);
+    expect(time.minutes).toBe(5);
+  });
+
+  it('setMinuteAngle should wrap backward (prev 5 -> target 50 decrements hour)', () => {
+    const clock = new Clock3D();
+    clock.setTime({ hours: 3, minutes: 5 });
+    clock.setMinuteAngle(minutesToAngle(50));
+    const time = clock.getTime();
+    expect(time.hours).toBe(2);
+    expect(time.minutes).toBe(50);
   });
 
   it('should return hand tip positions', () => {
@@ -162,6 +205,22 @@ describe('Clock3D', () => {
     const time = clock.getTime();
     expect(time.hours).toBe(5);
     expect(time.minutes).toBe(0);
+  });
+
+  it('should snap correctly for step=15 near lower boundary (min=7 -> 0)', () => {
+    const clock = new Clock3D();
+    clock.setTime({ hours: 4, minutes: 7 });
+    clock.snapMinutes(15);
+    const time = clock.getTime();
+    expect(time.minutes).toBe(0);
+  });
+
+  it('should snap correctly for step=15 near upper boundary (min=8 -> 15)', () => {
+    const clock = new Clock3D();
+    clock.setTime({ hours: 4, minutes: 8 });
+    clock.snapMinutes(15);
+    const time = clock.getTime();
+    expect(time.minutes).toBe(15);
   });
 
   it('should highlight and clear hand', () => {
@@ -307,6 +366,55 @@ describe('Clock3D', () => {
       const texCalls = texSpies.map((s) => s.mock.calls.length);
       clock.dispose();
       for (let i = 0; i < texSpies.length; i++) expect(texSpies[i].mock.calls.length).toBe(texCalls[i]);
+    });
+  });
+
+  describe('shared numbers texture', () => {
+    it('should reuse same texture across instances', () => {
+      const a = new Clock3D();
+      const b = new Clock3D();
+
+      const findNumbersTex = (c: Clock3D) => {
+        let tex: THREE.Texture | undefined;
+        c.group.traverse((child) => {
+          if (child instanceof THREE.Mesh && child.name === 'numbers') {
+            const mat = Array.isArray(child.material) ? child.material[0] as any : child.material as any;
+            tex = mat.map as THREE.Texture | undefined;
+          }
+        });
+        return tex;
+      };
+
+      const ta = findNumbersTex(a);
+      const tb = findNumbersTex(b);
+      expect(ta).toBeDefined();
+      expect(tb).toBeDefined();
+      expect(ta).toBe(tb);
+    });
+
+    it('should call shared texture.dispose only once when disposing multiple instances', () => {
+      const a = new Clock3D();
+      const b = new Clock3D();
+
+      const getShared = (c: Clock3D) => {
+        let tex: any;
+        c.group.traverse((child) => {
+          if (child instanceof THREE.Mesh && child.name === 'numbers') {
+            const mat = Array.isArray(child.material) ? child.material[0] as any : child.material as any;
+            tex = mat.map;
+          }
+        });
+        return tex;
+      };
+
+      const shared = getShared(a);
+      const spy = vi.spyOn(shared, 'dispose');
+
+      a.dispose();
+      expect(spy).not.toHaveBeenCalled();
+
+      b.dispose();
+      expect(spy).toHaveBeenCalledTimes(1);
     });
   });
 });

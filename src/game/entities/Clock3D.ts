@@ -16,6 +16,11 @@ export class Clock3D {
   private secondAngle = 0;
   private originalHourColor = S.COLORS.hourHand;
   private originalMinuteColor = S.COLORS.minuteHand;
+
+  // Shared numbers texture cache (CanvasTexture) with reference counting
+  private static _sharedNumbers: { texture?: THREE.CanvasTexture; refCount: number } = { texture: undefined, refCount: 0 };
+  private _usesSharedNumbers = false;
+
   // Flag to make dispose idempotent
   private _disposed = false;
 
@@ -82,6 +87,30 @@ export class Clock3D {
   }
 
   private buildNumbers(): void {
+    // Use shared CanvasTexture across instances to reduce memory and recreate cost
+    if (Clock3D._sharedNumbers.texture) {
+      // reuse
+      const texture = Clock3D._sharedNumbers.texture;
+      Clock3D._sharedNumbers.refCount += 1;
+      this._usesSharedNumbers = true;
+
+      const numGeo = new THREE.PlaneGeometry(
+        S.CLOCK_RADIUS * 2,
+        S.CLOCK_RADIUS * 2,
+      );
+      const numMat = new THREE.MeshBasicMaterial({
+        map: texture,
+        transparent: true,
+        side: THREE.DoubleSide,
+      });
+      const numbers = new THREE.Mesh(numGeo, numMat);
+      numbers.name = 'numbers';
+      numbers.position.z = 0.03;
+      this.group.add(numbers);
+      return;
+    }
+
+    // create new canvas texture and store in shared cache
     const canvas = document.createElement('canvas');
 
     // Determine texture size based on devicePixelRatio but capped to MAX_NUMBERS_TEXTURE_SIZE
@@ -115,6 +144,11 @@ export class Clock3D {
 
     const texture = new THREE.CanvasTexture(canvas);
     texture.colorSpace = THREE.SRGBColorSpace;
+
+    Clock3D._sharedNumbers.texture = texture;
+    Clock3D._sharedNumbers.refCount = 1;
+    this._usesSharedNumbers = true;
+
     const numGeo = new THREE.PlaneGeometry(
       S.CLOCK_RADIUS * 2,
       S.CLOCK_RADIUS * 2,
@@ -125,6 +159,7 @@ export class Clock3D {
       side: THREE.DoubleSide,
     });
     const numbers = new THREE.Mesh(numGeo, numMat);
+    numbers.name = 'numbers';
     numbers.position.z = 0.03;
     this.group.add(numbers);
   }
@@ -309,6 +344,30 @@ export class Clock3D {
   dispose(): void {
     if (this._disposed) return;
 
+    // Handle shared numbers texture refCount first to avoid double-dispose
+    let sharedTextureToSkip: THREE.Texture | undefined = undefined;
+    if (this._usesSharedNumbers) {
+      // take a snapshot of the shared texture reference
+      const sharedSnapshot = Clock3D._sharedNumbers.texture;
+      // decrement refCount
+      Clock3D._sharedNumbers.refCount -= 1;
+      // if this was the last user, dispose shared texture now and clear cache
+      if (Clock3D._sharedNumbers.refCount <= 0 && Clock3D._sharedNumbers.texture) {
+        try {
+          Clock3D._sharedNumbers.texture.dispose();
+        } catch (e) {
+          // eslint-disable-next-line no-console
+          console.warn('Failed to dispose shared numbers texture', e);
+        }
+        // remember disposed reference so we can skip it later in texs loop
+        sharedTextureToSkip = sharedSnapshot;
+        Clock3D._sharedNumbers.texture = undefined;
+      } else {
+        // still has remaining users; ensure texs loop will skip disposing the shared texture
+        sharedTextureToSkip = sharedSnapshot;
+      }
+    }
+
     const geos = new Set<THREE.BufferGeometry>();
     const mats = new Set<THREE.Material>();
     const texs = new Set<THREE.Texture>();
@@ -349,8 +408,9 @@ export class Clock3D {
       }
     });
 
-    // Dispose textures first
+    // Dispose textures first, but skip the shared texture if it was already handled or still in use
     for (const t of Array.from(texs)) {
+      if (t === sharedTextureToSkip) continue;
       try {
         t.dispose();
       } catch (e) {

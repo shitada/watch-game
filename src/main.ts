@@ -85,6 +85,8 @@ sceneManager.setTransitionHandler((type, context) => {
 sceneManager.transitionTo('title', {});
 
 const onUpdate = (dt: number) => {
+  // Record frame time (ms) so PerformanceManager can adapt pixel ratio
+  perfManager.recordFrame(dt * 1000);
   sceneManager.update(dt);
 };
 

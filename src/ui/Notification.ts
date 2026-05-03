@@ -4,6 +4,8 @@ export interface NotificationOptions {
   padding?: string;
 }
 
+let notifCounter = 0;
+
 export function showNotification(
   parent: HTMLElement,
   text: string,
@@ -15,6 +17,11 @@ export function showNotification(
   const padding = options?.padding ?? '16px 32px';
 
   const notif = document.createElement('div');
+  // Accessibility: announce to screen readers
+  notif.setAttribute('role', 'status');
+  notif.setAttribute('aria-live', 'polite');
+  notif.dataset.notifId = String(++notifCounter);
+
   notif.textContent = text;
   notif.style.cssText = `
     position: absolute;

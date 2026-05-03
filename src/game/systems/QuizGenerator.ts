@@ -11,6 +11,25 @@ export class QuizGenerator {
     this.rng = rng ?? Math.random;
   }
 
+  // Hint state: one hint per question
+  private hintUsedForQuestion = false;
+
+  startQuestion(): void {
+    this.hintUsedForQuestion = false;
+  }
+
+  canUseHint(): boolean {
+    return !this.hintUsedForQuestion;
+  }
+
+  useHint(): void {
+    this.hintUsedForQuestion = true;
+  }
+
+  remainingHints(): number {
+    return this.canUseHint() ? 1 : 0;
+  }
+
   onAnswerCorrect() {
     this.streak++;
     if (this.streak >= this.DIFFICULTY_THRESHOLDS[1]) this.difficultyLevel = 3;

@@ -133,6 +133,33 @@ describe('TitleScene', () => {
     });
   });
 
+  // Clock3D instantiation count
+  describe('Clock3D instantiation count', () => {
+    it('enter() creates Clock3D once', () => {
+      const spy = vi.spyOn(Clock3D.prototype as any, 'buildClockFace');
+      scene.enter({});
+      entered = true;
+      expect(spy).toHaveBeenCalledTimes(1);
+      scene.exit();
+      entered = false;
+      spy.mockRestore();
+    });
+
+    it('enter->exit->enter creates one Clock3D per enter', () => {
+      const spy = vi.spyOn(Clock3D.prototype as any, 'buildClockFace');
+      scene.enter({});
+      entered = true;
+      scene.exit();
+      entered = false;
+      scene.enter({});
+      entered = true;
+      expect(spy).toHaveBeenCalledTimes(2);
+      scene.exit();
+      entered = false;
+      spy.mockRestore();
+    });
+  });
+
   // ── 背景 stars ──
 
   describe('背景 stars', () => {

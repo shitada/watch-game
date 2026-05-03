@@ -39,8 +39,7 @@ export class TitleScene implements Scene {
   enter(_context: SceneContext): void {
     // Create clock instance on enter to allow proper disposal on exit
     this.clock3D = new Clock3D();
-    // Reset clock
-    this.clock3D = new Clock3D();
+
     this.scene.add(this.clock3D.group);
     this.clock3D.group.position.set(0, 0.5, 0);
     this.clock3D.setShowSeconds(true);

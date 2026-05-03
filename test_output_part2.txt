@@ -1,0 +1,521 @@
+tests/game/scenes/QuizPlayScene.test.ts > QuizPlayScene > ヒントタイマー > exit()でヒントタイマーがクリアされること 12ms
+ ✓ tests/game/scenes/QuizPlayScene.test.ts > QuizPlayScene > ヒントタイマー > 💡 ヒント！通知が表示されること 11ms
+ ✓ tests/game/scenes/QuizPlayScene.test.ts > QuizPlayScene > enter→exit→enter が可能で dispose が呼ばれること 36ms
+ ✓ tests/game/scenes/SetTimePlayScene.test.ts > SetTimePlayScene > 不正解時に CurrentTimeDisplay が正解の時刻に更新されること 49ms
+ ✓ tests/game/scenes/SetTimePlayScene.test.ts > SetTimePlayScene > enter() で CurrentTimeDisplay に初期時刻 12:00 が表示されること 9ms
+ ✓ tests/game/scenes/SetTimePlayScene.test.ts > SetTimePlayScene > exit() で CurrentTimeDisplay が unmount されること 5ms
+ ✓ tests/game/scenes/SetTimePlayScene.test.ts > SetTimePlayScene > exit() で controller.dispose -> clock.dispose の順序で呼ばれること 10ms
+ ✓ tests/game/scenes/DailyPlayScene.test.ts > DailyPlayScene > exit() 後に setTimeout コールバックが requestTransition を呼ばないこと 190ms
+ ✓ tests/game/scenes/DailyPlayScene.test.ts > DailyPlayScene > handleConfirm() 後にボタンが視覚的に無効化されること 41ms
+
+ ❯ tests/game/scenes/DailyPlayScene.test.ts 2/8
+ ❯ tests/game/scenes/ModeSelectScene.test.ts 1/8
+ ❯ tests/game/scenes/QuizPlayScene.test.ts 10/10
+ ❯ tests/game/scenes/SetTimePlayScene.test.ts 8/8
+ ❯ tests/ui/TransitionOverlay.test.ts 16/16
+
+ Test Files 12 passed (49)
+      Tests 245 passed (258)
+   Start at 23:45:51
+   Duration 7.96s
+ ✓ tests/game/scenes/ModeSelectScene.test.ts > ModeSelectScene > 進捗バッジ表示 > 未プレイ時は quiz カードに「★ 0/4」と表示される 164ms
+ ✓ tests/game/scenes/ModeSelectScene.test.ts > ModeSelectScene > 進捗バッジ表示 > quiz モードでレベル1,2をクリア済みの場合「★ 2/4」と表示される 10ms
+ ✓ tests/game/scenes/ModeSelectScene.test.ts > ModeSelectScene > 進捗バッジ表示 > setTime モードでレベル1をクリア済みの場合「★ 1/4」と表示される 16ms
+ ✓ tests/game/scenes/ModeSelectScene.test.ts > ModeSelectScene > 進捗バッジ表示 > daily モードが未クリアの場合チェックマークが表示されない 11ms
+ ✓ tests/game/scenes/ModeSelectScene.test.ts > ModeSelectScene > 進捗バッジ表示 > daily モードがクリア済み（completedLevels.daily.length > 0）の場合「✅」が表示される 4ms
+ ✓ tests/game/scenes/ModeSelectScene.test.ts > ModeSelectScene > 進捗バッジ表示 > 全レベルクリア済みの場合、分母は LEVELS.length と一致する 5ms
+ ✓ tests/game/scenes/ModeSelectScene.test.ts > ModeSelectScene > カード操作 > quiz カードをクリックすると levelSelect に遷移する 7ms
+ ✓ tests/game/scenes/ModeSelectScene.test.ts > ModeSelectScene > カード操作 > daily カードをクリックすると dailyPlay に遷移する 8ms
+ ✓ tests/game/scenes/DailyPlayScene.test.ts > DailyPlayScene > 次のイベント表示後にボタンが再度有効化されること 37ms
+ ✓ tests/game/scenes/DailyPlayScene.test.ts > DailyPlayScene > enter() で pendingTimers が初期化されること（再入時の防御） 39ms
+ ✓ tests/game/scenes/DailyPlayScene.test.ts > DailyPlayScene > 不正解時に CurrentTimeDisplay が正解の時刻に更新されること 27ms
+ ✓ tests/game/scenes/DailyPlayScene.test.ts > DailyPlayScene > enter() で CurrentTimeDisplay に初期時刻 12:00 が表示されること 13ms
+ ✓ tests/game/scenes/DailyPlayScene.test.ts > DailyPlayScene > exit() で CurrentTimeDisplay が unmount されること 12ms
+ ✓ tests/game/scenes/DailyPlayScene.test.ts > DailyPlayScene > exit() で controller.dispose -> clock.dispose の順序で呼ばれること 22ms
+
+ ❯ tests/game/scenes/DailyPlayScene.test.ts 8/8
+ ❯ tests/game/scenes/ModeSelectScene.test.ts 8/8
+ ❯ tests/game/scenes/QuizPlayScene.test.ts 10/10
+ ❯ tests/game/scenes/SetTimePlayScene.test.ts 8/8
+ ❯ tests/game/scenes/TrophyScene.test.ts [queued]
+
+ Test Files 14 passed (49)
+      Tests 258 passed (258)
+   Start at 23:45:51
+   Duration 8.16s
+
+ ❯ tests/game/scenes/DailyPlayScene.test.ts 8/8
+ ❯ tests/game/scenes/ModeSelectScene.test.ts 8/8
+ ❯ tests/game/scenes/QuizPlayScene.test.ts 10/10
+ ❯ tests/game/scenes/SetTimePlayScene.test.ts 8/8
+ ❯ tests/game/scenes/TrophyScene.test.ts 1/10
+
+ Test Files 14 passed (49)
+      Tests 259 passed (268)
+   Start at 23:45:51
+   Duration 8.37s
+ ✓ tests/game/scenes/TrophyScene.test.ts > TrophyScene > BGM > enter() で startBGM("title") が呼ばれること 86ms
+ ✓ tests/game/scenes/TrophyScene.test.ts > TrophyScene > BGM > audioManager が未初期化の場合 startBGM が呼ばれないこと 11ms
+
+ ❯ tests/game/scenes/DailyPlayScene.test.ts 8/8
+ ❯ tests/game/scenes/ModeSelectScene.test.ts 8/8
+ ❯ tests/game/scenes/SetTimePlayScene.test.ts 8/8
+ ❯ tests/game/scenes/TrophyScene.test.ts 3/10
+ ❯ tests/game/systems/PerformanceManager.test.ts [queued]
+
+ Test Files 14 passed (49)
+      Tests 261 passed (268)
+   Start at 23:45:51
+   Duration 8.48s
+ ✓ tests/game/scenes/TrophyScene.test.ts > TrophyScene > BGM > exit() で stopBGM() が呼ばれること 8ms
+ ✓ tests/game/scenes/TrophyScene.test.ts > TrophyScene > トロフィー表示 > 獲得済みトロフィーが正しい emoji・ラベルで表示されること 68ms
+ ✓ tests/game/scenes/TrophyScene.test.ts > TrophyScene > トロフィー表示 > 未獲得トロフィーが ❓ / ??? で表示されること 6ms
+ ✓ tests/game/scenes/TrophyScene.test.ts > TrophyScene > トロフィー表示 > トロフィー数が「earned / 9」形式で表示されること 14ms
+ ✓ tests/game/systems/PerformanceManager.test.ts > PerformanceManager > applies initial pixel ratio and size on applyInitial 2ms
+ ✓ tests/game/systems/PerformanceManager.test.ts > PerformanceManager > downgrades quality when frame times are high 0ms
+ ✓ tests/game/systems/PerformanceManager.test.ts > PerformanceManager > upgrades quality when frame times are low 0ms
+ ✓ tests/game/systems/PerformanceManager.test.ts > PerformanceManager > clamps pixel ratio to window.devicePixelRatio when device DPR is smaller 0ms
+ ✓ tests/game/systems/PerformanceManager.test.ts > PerformanceManager > uses requested pixel ratio when device DPR is larger 0ms
+ ✓ tests/game/systems/PerformanceManager.test.ts > PerformanceManager > falls back to requested when device DPR is NaN or undefined 0ms
+ ✓ tests/game/scenes/TrophyScene.test.ts > TrophyScene > 統計表示 > totalPlays と totalCorrect が表示されること 21ms
+ ✓ tests/game/scenes/TrophyScene.test.ts > TrophyScene > 戻るボタン > 戻るボタンクリックで title に遷移すること 13ms
+ ✓ tests/game/scenes/TrophyScene.test.ts > TrophyScene > 戻るボタン > 戻るボタンクリックで buttonTap SFX が再生されること 6ms
+ ✓ tests/game/scenes/TrophyScene.test.ts > TrophyScene > exit() > exit() でオーバーレイ DOM が除去されること 25ms
+
+ ❯ tests/game/effects/EffectDispose.test.ts 0/12
+ ❯ tests/game/scenes/DailyPlayScene.test.ts 8/8
+ ❯ tests/game/scenes/ModeSelectScene.test.ts 8/8
+ ❯ tests/game/scenes/TrophyScene.test.ts 10/10
+ ❯ tests/game/systems/PerformanceManager.test.ts 6/6
+
+ Test Files 16 passed (49)
+      Tests 274 passed (286)
+   Start at 23:45:51
+   Duration 8.68s
+ ✓ tests/game/effects/EffectDispose.test.ts > CorrectEffect > dispose() で geometry と material が解放されること 2ms
+ ✓ tests/game/effects/EffectDispose.test.ts > CorrectEffect > dispose() 後に update() を呼んでもエラーにならないこと 1ms
+ ✓ tests/game/effects/EffectDispose.test.ts > CorrectEffect > dispose() を2回呼んでもエラーにならないこと（冪等性） 0ms
+ ✓ tests/game/effects/EffectDispose.test.ts > CorrectEffect > trigger() 前に dispose() を呼んでもエラーにならないこと 0ms
+ ✓ tests/game/effects/EffectDispose.test.ts > IncorrectEffect > dispose() で geometry と material が解放されること 0ms
+ ✓ tests/game/effects/EffectDispose.test.tsm > IncorrectEffect > dispose() 後に update() を呼んでもエラーにならないこと 0ms
+ ✓ tests/game/effects/EffectDispose.test.ts > IncorrectEffect > dispose() を2回呼んでもエラーにならないこと（冪等性） 0ms
+ ✓ tests/game/effects/EffectDispose.test.ts > IncorrectEffect > trigger() 前に dispose() を呼んでもエラーにならないこと 0ms
+ ✓ tests/game/effects/EffectDispose.test.ts > FireworkEffect > dispose() でロケットがシーンから除去されること 0ms
+ ✓ tests/game/effects/EffectDispose.test.ts > FireworkEffect > dispose() 後に update() を呼んでもエラーにならないこと 0ms
+ ✓ tests/game/effects/EffectDispose.test.ts > FireworkEffect > dispose() を2回呼んでもエラーにならないこと（冪等性） 0ms
+ ✓ tests/game/effects/EffectDispose.test.ts > FireworkEffect > trigger() 前に dispose() を呼んでもエラーにならないこと 0ms
+
+ ❯ tests/game/effects/EffectDispose.test.ts 12/12
+ ❯ tests/game/scenes/DailyPlayScene.test.ts 8/8
+ ❯ tests/game/scenes/TrophyScene.test.ts 10/10
+ ❯ tests/game/systems/PerformanceManager.test.ts 6/6
+ ❯ tests/ui/Notification.test.ts [queued]
+
+ Test Files 17 passed (49)
+      Tests 286 passed (286)
+   Start at 23:45:51
+   Duration 8.89s
+
+ ❯ tests/game/effects/EffectDispose.test.ts 12/12
+ ❯ tests/game/GameLoop.test.ts [queued]
+ ❯ tests/game/scenes/TrophyScene.test.ts 10/10
+ ❯ tests/ui/ConfirmButton.test.ts 0/10
+ ❯ tests/ui/Notification.test.ts 1/10
+
+ Test Files 17 passed (49)
+      Tests 287 passed (306)
+   Start at 23:45:51
+   Duration 9.09s
+ ✓ tests/ui/Notification.test.ts > showNotification > スクリーンリーダー向け属性が設定されること 71ms
+ ✓ tests/ui/Notification.test.ts > showNotification > DOM要素が親に追加されること 7ms
+ ✓ tests/ui/Notification.test.ts > showNotification > 指定されたテキストと色が反映されること 3ms
+ ✓ tests/ui/Notification.test.ts > showNotification > notif-anim スタイル要素が document.head に1つだけ存在すること 7ms
+ ✓ tests/ui/Notification.test.ts > showNotification > 1200ms後にDOM要素が自動削除されること 2ms
+ ✓ tests/ui/Notification.test.ts > showNotification > topオプションでカスタム位置が設定できること 2ms
+ ✓ tests/ui/Notification.test.ts > showNotification > デフォルトのtopは40%であること 5ms
+ ✓ tests/ui/Notification.test.ts > showNotification > fontSizeオプションでフォントサイズを変更できること 2ms
+ ✓ tests/ui/Notification.test.ts > showNotification > paddingオプションでパディングを変更できること 2ms
+ ✓ tests/ui/Notification.test.ts > showNotification > タイマーIDを返すこと 2ms
+ ✓ tests/ui/ConfirmButton.test.ts > ConfirmButton > mount(parent) でボタン要素が parent に追加されること 77ms
+ ✓ tests/ui/ConfirmButton.test.ts > ConfirmButton > デフォルトのラベルが「けってい！」であること 7ms
+ ✓ tests/ui/ConfirmButton.test.ts > ConfirmButton > カスタムラベルが適用されること 3ms
+ ✓ tests/ui/ConfirmButton.test.ts > ConfirmButton > unmount() でボタン要素が削除されること 2ms
+ ✓ tests/ui/ConfirmButton.test.ts > ConfirmButton > onClick(callback) でクリック時にコールバックが呼ばれること 2ms
+ ✓ tests/ui/ConfirmButton.test.ts > ConfirmButton > unmount() 後にクリックしてもコールバックが呼ばれないこと 1ms
+ ✓ tests/ui/ConfirmButton.test.ts > ConfirmButton > disable() で opacity が 0.5、pointerEvents が none になること 2ms
+ ✓ tests/ui/ConfirmButton.test.ts > ConfirmButton > enable() で opacity が 1、pointerEvents が auto になること 2ms
+ ✓ tests/ui/ConfirmButton.test.ts > ConfirmButton > カスタムカラー（gradient）が適用されること 7ms
+ ✓ tests/ui/ConfirmButton.test.ts > ConfirmButton > デフォルトカラー（グリーン gradient）が適用されること 2ms
+ ✓ tests/game/GameLoop.test.ts > GameLoop > should start and call update/render 8ms
+ ✓ tests/game/GameLoop.test.ts > GameLoop > should cap delta time at 0.1s 0ms
+ ✓ tests/game/GameLoop.test.ts > GameLoop > should pause and stop 0ms
+ ✓ tests/game/GameLoop.test.ts > RenderLoopPerformanceIntegration (simulated) > calls recordFrame with measured dt in ms between renders 1ms
+
+ ❯ tests/game/audio/BGMGenerator.test.ts 0/5
+ ❯ tests/game/effects/EffectDispose.test.ts 12/12
+ ❯ tests/game/GameLoop.test.ts 4/4
+ ❯ tests/ui/ConfirmButton.test.ts 10/10
+ ❯ tests/ui/Notification.test.ts 10/10
+
+ Test Files 20 passed (49)
+      Tests 310 passed (315)
+   Start at 23:45:51
+   Duration 9.19s
+ ✓ tests/game/audio/BGMGenerator.test.ts > BGMGenerator > pause() > pause() 後に currentMode が保持されること 2ms
+ ✓ tests/game/audio/BGMGenerator.test.ts > BGMGenerator > pause() > pause() で playing が false になること 0ms
+ ✓ tests/game/audio/BGMGenerator.test.ts > BGMGenerator > pause() > pause() → resume() で playing が true に復帰すること 0ms
+ ✓ tests/game/audio/BGMGenerator.test.ts > BGMGenerator > stop() 後の resume() > stop() 後に resume() が何もしないこと 0ms
+ ✓ tests/game/audio/BGMGenerator.test.ts > BGMGenerator > pause() vs stop() の違い > pause() 後は resume() で再開できるが stop() 後はできない 0ms
+
+m ❯ tests/game/audio/BGMGenerator.test.ts 5/5
+ ❯ tests/game/GameLoop.test.ts 4/4
+ ❯ tests/game/scenes/SceneDisposal.test.ts [queued]
+ ❯ tests/ui/ConfirmButton.test.ts 10/10
+
+ Test Files 21 passed (49)
+      Tests 315 passed (315)
+   Start at 23:45:51
+   Duration 9.72s
+stderr | tests/game/scenes/SceneDisposal.test.ts > SceneManager disposal fallback > calls disposer when exit() throws
+Scene dispose threw Error: exit boom
+    at PrevScene.exit (/Users/shingotada/Documents/vscode/watch-game/tests/game/scenes/SceneDisposal.test.ts:39:28)
+    at SceneManager.transitionTo (/Users/shingotada/Documents/vscode/watch-game/src/game/SceneManager.ts:36:16)
+    at /Users/shingotada/Documents/vscode/watch-game/tests/game/scenes/SceneDisposal.test.ts:68:26
+    at Proxy.assertThrows (file:///Users/shingotada/Documents/vscode/watch-game/node_modules/chai/index.js:2798:5)
+    at Proxy.methodWrapper (file:///Users/shingotada/Documents/vscode/watch-game/node_modules/chai/index.js:1700:25)
+    at Proxy.<anonymous> (file:///Users/shingotada/Documents/vscode/watch-game/node_modules/@vitest/expect/dist/index.js:1216:120m)
+    at Proxy.overwritingMethodWrapper (file:///Users/shingotada/Documents/vscode/watch-game/node_modules/chai/index.js:1750:33)
+    at Proxy.<anonymous> (file:///Users/shingotada/Documents/vscode/watch-game/node_modules/@vitest/expect/dist/index.js:1552:16)
+    at Proxy.<anonymous> (file:///Users/shingotada/Documents/vscode/watch-game/node_modules/@vitest/expect/dist/index.js:1156:15)
+    at Proxy.methodWrapper (file:///Users/shingotada/Documents/vscode/watch-game/node_modules/chai/index.js:1700:25)
+
+
+ ❯ tests/game/audio/BGMGenerator.test.ts 5/5
+ ❯ tests/game/entities/Clock3DSharedResources.test.ts [queued]
+ ❯ tests/game/SceneManager.test.ts [queued]
+ ❯ tests/game/scenes/SceneDisposal.test.ts 2/2
+
+ Test Files 22 passed (49)
+      Tests 317 passed (317)
+   Start at 23:45:51
+   Duration 9.82s
+ ✓ tests/game/scenes/SceneDisposal.test.ts > SceneManager disposal fallback > calls disposer when exit() throws 8ms
+ ✓ tests/game/scenes/SceneDisposal.test.ts > SceneManager disposal fallback > calls disposer when exit() is noop 1ms
+
+ ❯ tests/game/audio/BGMGenerator.test.ts 5/5
+ ❯ tests/game/entities/Clock3DSharedResources.test.ts [queued]
+ ❯ tests/game/SceneManager.test.ts [queued]
+ ❯ tests/game/scenes/SceneDisposal.test.ts 2/2
+
+ Test Files 22 passed (49)
+      Tests 317 passed (317)
+   Start at 23:45:51
+   Duration 9.82s
+ ✓ tests/game/SceneManager.test.ts > SceneManager > should register and transition to a scene 14ms
+ ✓ tests/game/SceneManager.test.ts > SceneManager > should call exit on previous scene when transitioning 1ms
+ ✓ tests/game/SceneManager.test.ts > SceneManager > should delegate update to current scene 0ms
+ ✓ tests/game/SceneManager.test.ts > SceneManager > should use transition handler if set 0ms
+ ✓ tests/game/SceneManager.test.ts > SceneManager > should warn on unregistered scene 0ms
+ ✓ tests/game/SceneManager.test.ts > SceneManager > currentSceneNeedsContinuousRendering respects scene opt-out 0ms
+ ✓ tests/game/entities/Clock3DSharedResources.test.ts > Clock3D shared tick resources > should share tick geometry and material across instances 10ms
+ ✓ tests/game/entities/Clock3DSharedResources.test.ts > Clock3D shared tick resources > should dispose shared tick resources only after last instance disposed 15ms
+
+ ❯ tests/game/audio/BGMGenerator.test.ts 5/5
+ ❯ tests/game/entities/Clock3DSharedResources.test.ts 2/2
+ ❯ tests/game/SceneManager.test.ts 6/6
+ ❯ tests/game/scenes/SceneDisposal.test.ts 2/2
+
+ Test Files 24 passed (49)
+      Tests 325 passed (325)
+   Start at 23:45:51
+   Duration 9.92s
+
+
+ ❯ tests/game/entities/Clock3DSharedResources.test.ts 2/2
+ ❯ tests/game/SceneManager.test.ts 6/6
+ ❯ tests/game/ui/ChoiceButtons.test.ts [queued]
+
+ Test Files 24 passed (49)
+      Tests 325 passed (325)
+   Start at 23:45:51
+   Duration 10.23s
+
+
+ ❯ tests/game/entities/Clock3DPrewarm.test.ts [queued]
+ ❯ tests/game/scenes/ResultSceneRendering.test.ts [queued]
+ ❯ tests/game/ui/ChoiceButtons.test.ts 0/1
+
+ Test Files 24 passed (49)
+      Tests 325 passed (326)
+   Start at 23:45:51
+   Duration 10.33s
+ ✓ tests/game/entities/Clock3DPrewarm.test.ts > Clock3D.prewarmSharedResources > creates shared resources without increasing refCount and instances pick them up 8ms
+
+ ❯ tests/game/scenes/ResultSceneRendering.test.ts [queued]
+ ❯ tests/game/ui/ChoiceButtons.test.ts 0/1
+ ❯ tests/ui/CurrentTimeDisplay.test.ts 0/9
+
+ Test Files 25 passed (49)
+      Tests 326 passed (336)
+   Start at 23:45:51
+   Duration 10.53s
+ ✓ tests/game/ui/ChoiceButtons.test.ts > ChoiceButtons > showHint dims two incorrect buttons deterministically with injected rng and updates live region and showResult behavior 163ms
+ ✓ tests/ui/CurrentTimeDisplay.test.ts > CurrentTimeDisplay > mount後にDOM要素が親に追加されること 62ms
+ ✓ tests/ui/CurrentTimeDisplay.test.ts > CurrentTimeDisplay > ラベルに「いま ▶」が表示されること 8ms
+ ✓ tests/ui/CurrentTimeDisplay.test.ts > CurrentTimeDisplay > setTime()で表示テキストがformatTimeと一致すること（正時） 5ms
+ ✓ tests/ui/CurrentTimeDisplay.test.ts > CurrentTimeDisplay > setTime()で表示テキストがformatTimeと一致すること（30分） 2ms
+ ✓ tests/ui/CurrentTimeDisplay.test.ts > CurrentTimeDisplay > setTime()で表示テキストがformatTimeと一致すること（任意の分） 1ms
+ ✓ tests/ui/CurrentTimeDisplay.test.ts > CurrentTimeDisplay > mount前のsetTimeはエラーにならないこと 1ms
+ ✓ tests/ui/CurrentTimeDisplay.test.ts > CurrentTimeDisplay > unmountでDOM要素がクリーンアップされること 1ms
+ ✓ tests/ui/CurrentTimeDisplay.test.ts > CurrentTimeDisplay > unmount後のsetTimeはエラーにならないこと 1ms
+ ✓ tests/ui/CurrentTimeDisplay.test.ts > CurrentTimeDisplay > 半透明スタイルが適用されていること 1ms
+
+ ❯ tests/game/scenes/ResultSceneRendering.test.ts 1/2
+ ❯ tests/game/ui/ChoiceButtons.test.ts 1/1
+ ❯ tests/ui/CurrentTimeDisplay.test.ts 9/9
+
+ Test Files 27 passed (49)
+      Tests 337 passed (338)
+   Start at 23:45:51
+   Duration 10.73s
+ ✓ tests/game/scenes/ResultSceneRendering.test.ts > ResultScene continuous rendering > firework triggered on perfect -> needsContinuousRendering() true when effect is active 176ms
+ ✓ tests/game/scenes/ResultSceneRendering.test.ts > ResultScene continuous rendering > normal result -> needsContinuousRendering() is false 7ms
+
+ ❯ tests/game/scenes/ResultSceneRendering.test.ts 2/2
+ ❯ tests/ui/DailyProgress.test.ts 0/6
+ ❯ tests/ui/HUD.test.ts [queued]
+
+ Test Files 28 passed (49)
+      Tests 338 passed (344)
+   Start at 23:45:51
+   Duration 10.83s
+ ✓ tests/ui/DailyProgress.test.ts > DailyProgress > mount() で親要素にコンテナが追加されること 10ms
+ ✓ tests/ui/DailyProgress.test.ts > DailyProgress > setEvents() でドットが生成されること 72ms
+ ✓ tests/ui/DailyProgress.test.ts > DailyProgress > 現在のイベントのドットがハイライトされること 13ms
+ ✓ tests/ui/DailyProgress.test.ts > DailyProgress > 完了済みイベントのドットに「✅」が表示されること 4ms
+ ✓ tests/ui/DailyProgress.test.ts > DailyProgress > 未到達イベントのドットに emoji が表示されること 2ms
+ ✓ tests/ui/DailyProgress.test.ts > DailyProgress > unmount() で DOM が除去されること 1ms
+
+ ❯ tests/game/scenes/ClockDisposal.test.ts [queued]
+ ❯ tests/ui/DailyProgress.test.ts 6/6
+ ❯ tests/ui/HUD.test.ts 0/8
+
+ Test Files 29 passed (49)
+      Tests 344 passed (352)
+   Start at 23:45:51
+   Duration 10.93s
+ ✓ tests/ui/HUD.test.ts > HUD > mount() で親要素に DOM が追加されること 76ms
+ ✓ tests/ui/HUD.test.ts > HUD > mount() で questionEl と scoreEl と hintEl が生成されること 2ms
+ ✓ tests/ui/HUD.test.ts > HUD > updateQuestion(3, 5) で「もんだい 3/5」が表示されること 5ms
+ ✓ tests/ui/HUD.test.ts > HUD > updateScore(2) で「⭕ 2」が表示されること 2ms
+ ✓ tests/ui/HUD.test.ts > HUD > updateHints(1) で「💡 1」が表示されること 2ms
+ ✓ tests/ui/HUD.test.ts > HUD > unmount() で DOM が除去されること 1ms
+ ✓ tests/ui/HUD.test.ts > HUD > unmount() 後に updateQuestion/updateScore を呼んでもエラーにならないこと 14ms
+ ✓ tests/ui/HUD.test.ts > HUD > スタイルに pointer-events: none が設定されること 1ms
+
+ ❯ tests/game/entities/Clock3DSeconds.test.ts [queued]
+ ❯ tests/game/scenes/ClockDisposal.test.ts 0/1
+ ❯ tests/ui/HUD.test.ts 8/8
+
+ Test Files 30 passed (49)
+      Tests 352 passed (353)
+   Start at 23:45:51
+   Duration 11.34s
+ ✓ tests/game/scenes/ClockDisposal.test.ts > Clock disposal on scene exit > TitleScene should dispose Clock3D on exit and remove clock elements from scene 351ms
+ ✓ tests/game/entities/Clock3DSeconds.test.ts > Clock3D seconds hand update > applies -(2π/60) radians per second when seconds are shown 6ms
+ ✓ tests/game/entities/Clock3DSeconds.test.ts > Clock3D seconds hand update > accumulates properly across multiple frames and does not move when hidden 1ms
+
+ ❯ tests/game/entities/Clock3DNumbersMaterial.test.ts 0/1
+ ❯ tests/game/entities/Clock3DSeconds.test.ts 2/2
+ ❯ tests/game/scenes/ClockDisposal.test.ts 1/1
+
+ Test Files 32 passed (49)
+      Tests 355 passed (356)
+   Start at 23:45:51
+   Duration 11.44s
+ ✓ tests/game/entities/Clock3DNumbersMaterial.test.ts > Clock3D numbers material sharing > shares numbers material between instances and disposes on last dispose 7ms
+
+ ❯ tests/game/entities/Clock3DNumbersMaterial.test.ts 1/1
+ ❯ tests/game/scenes/SceneLifecycle.test.ts [queued]
+ ❯ tests/ui/CanvasUtils.test.ts [queued]
+
+ Test Files 33 passed (49)
+      Tests 356 passed (356)
+   Start at 23:45:51
+   Duration 11.64s
+stderr | tests/ui/CanvasUtils.test.ts > configureCanvasForTouch > is resilient when called on elements with missing style (best-effort)
+configureCanvasForTouch failed TypeError: Cannot set properties of undefined (setting 'touchAction')
+    at configureCanvasForTouch (/Users/shingotada/Documents/vscode/watch-game/src/ui/CanvasUtils.ts:12:18)
+    at /Users/shingotada/Documents/vscode/watch-game/tests/ui/CanvasUtils.test.ts:40:18
+    at Proxy.assertThrows (file:///Users/shingotada/Documents/vscode/watch-game/node_modules/chai/index.js:2798:5)
+    at Proxy.methodWrapper (file:///Users/shingotada/Documents/vscode/watch-game/node_modules/chai/index.js:1700:25)
+    at Proxy.<anonymous> (file:///Users/shingotada/Documents/vscode/watch-game/node_modules/@vitest/expect/dist/index.js:1216:12)
+    at Proxy.overwritingMethodWrapper (file:///Users/shingotada/Documents/vscode/watch-game/node_modules/chai/index.js:1750:33)
+    at Proxy.<anonymous> (file:///Users/shingotada/Documents/vscode/watch-game/node_modules/@vitest/expect/dist/index.js:1552:16)
+    at Proxy.<anonymous> (file:///Users/shingotada/Documents/vscode/watch-game/node_modules/@vitest/expect/dist/index.js:1156:15)
+    at Proxy.methodWrapper (file:///Users/shingotada/Documents/vscode/watch-game/node_modules/chai/index.js:1700:25)
+    at /Users/shingotada/Documents/vscode/watch-game/tests/ui/CanvasUtils.test.ts:40:52
+
+
+ ❯ tests/game/config/Config.test.ts [queued]
+ ❯ tests/game/scenes/SceneLifecycle.test.ts 3/3
+ ❯ tests/ui/CanvasUtils.test.ts 4/4
+
+ Test Files 35 passed (49)
+      Tests 363 passed (363)
+   Start at 23:45:51
+   Duration 11.75s
+ ✓ tests/ui/CanvasUtils.test.ts > configureCanvasForTouch > applies touch-action styles and sets tabIndex when not present 14ms
+ ✓ tests/ui/CanvasUtils.test.ts > configureCanvasForTouch > does not overwrite explicit tabindex when preserveTabIndex is true 1ms
+ ✓ tests/ui/CanvasUtils.test.ts > configureCanvasForTouch > does not overwrite explicit tabindex when preserveTabIndex is false 0ms
+ ✓ tests/ui/CanvasUtils.test.ts > configureCanvasForTouch > is resilient when called on elements with missing style (best-effort) 6ms
+ ✓ tests/game/scenes/SceneLifecycle.test.ts > Scene lifecycle > SetTimePlayScene.exit should call clock3D.dispose 6ms
+ ✓ tests/game/scenes/SceneLifecycle.test.ts > Scene lifecycle > QuizPlayScene.exit should call clock3D.dispose 0ms
+ ✓ tests/game/scenes/SceneLifecycle.test.ts > Scene lifecycle > DailyPlayScene.exit should call clock3D.dispose 0ms
+
+ ❯ tests/game/config/Config.test.ts [queued]
+ ❯ tests/game/scenes/SceneLifecycle.test.ts 3/3
+ ❯ tests/ui/CanvasUtils.test.ts 4/4
+
+ Test Files 35 passed (49)
+      Tests 363 passed (363)
+   Start at 23:45:51
+   Duration 11.75s
+ ✓ tests/game/config/Config.test.ts > LevelConfig > should have 4 levels 1ms
+ ✓ tests/game/config/Config.test.ts > LevelConfig > each level should have valid properties 1ms
+ ✓ tests/game/config/Config.test.ts > LevelConfig > getLevelDef should return correct level 0ms
+ ✓ tests/game/config/Config.test.ts > LevelConfig > getLevelDef should fallback for invalid level 0ms
+ ✓ tests/game/config/Config.test.ts > DailySchedule > should have 8 events 0ms
+ ✓ tests/game/config/Config.test.ts > DailySchedule > each event should have valid time 0ms
+
+ ❯ tests/game/config/Config.test.ts 6/6
+ ❯ tests/game/entities/Clock3DDispose.test.ts [queued]
+ ❯ tests/game/scenes/SceneLifecycle.test.ts 3/3
+
+ Test Files 36 passed (49)
+      Tests 369 passed (369)
+   Start at 23:45:51
+   Duration 11.95s
+ ✓ tests/game/entities/Clock3DDispose.test.ts > Clock3D disposal > disposes per-instance geometry and material and removes from parent 11ms
+
+ ❯ tests/game/config/Config.test.ts 6/6
+ ❯ tests/game/entities/Clock3DDispose.test.ts 1/1
+ ❯ tests/ui/HomeButton.test.ts [queued]
+
+ Test Files 37 passed (49)
+      Tests 370 passed (370)
+   Start at 23:45:51
+   Duration 12.26s
+
+ ❯ tests/game/entities/Clock3DDispose.test.ts 1/1
+ ❯ tests/ui/HomeButton.test.ts 1/5
+ ❯ tests/ui/TimeDisplay.test.ts 0/5
+
+ Test Files 37 passed (49)
+      Tests 371 passed (380)
+   Start at 23:45:51
+   Duration 12.36s
+ ✓ tests/ui/HomeButton.test.ts > HomeButton > mount() で親要素にボタンが追加されること 46ms
+ ✓ tests/ui/HomeButton.test.ts > HomeButton > ボタンテキストが「🏠」であること 2ms
+ ✓ tests/ui/HomeButton.test.ts > HomeButton > onClick() で登録したコールバックがクリック時に呼ばれること 6ms
+ ✓ tests/ui/HomeButton.test.ts > HomeButton > unmount() で DOM が除去されること 7ms
+ ✓ tests/ui/HomeButton.test.ts > HomeButton > unmount() 後にクリックしてもコールバックが呼ばれないこと 4ms
+ ✓ tests/ui/TimeDisplay.test.ts > TimeDisplay > mount() で親要素に DOM が追加されること 112ms
+ ✓ tests/ui/TimeDisplay.test.ts > TimeDisplay > ラベルテキストが表示されること 6ms
+ ✓ tests/ui/TimeDisplay.test.ts > TimeDisplay > setTime() で時刻が正しく表示されること 4ms
+ ✓ tests/ui/TimeDisplay.test.ts > TimeDisplay > unmount() で DOM が除去されること 4ms
+ ✓ tests/ui/TimeDisplay.test.ts > TimeDisplay > unmount() 後に setTime() を呼んでもエラーにならないこと 2ms
+
+ ❯ tests/game/audio/AudioManager.test.ts 0/2
+ ❯ tests/ui/HomeButton.test.ts 5/5
+ ❯ tests/ui/TimeDisplay.test.ts 5/5
+
+ Test Files 39 passed (49)
+      Tests 380 passed (382)
+   Start at 23:45:51
+   Duration 12.46s
+ ✓ tests/game/audio/AudioManager.test.ts > AudioManager > pauseBGM() が内部の bgmGenerator.pause() を呼ぶこと 2ms
+ ✓ tests/game/audio/AudioManager.test.ts > AudioManager > init() 前に pauseBGM() を呼んでもエラーにならないこと 0ms
+
+ ❯ tests/game/audio/AudioManager.test.ts 2/2
+ ❯ tests/game/systems/TimeValidator.test.ts [queued]
+ ❯ tests/ui/TimeDisplay.test.ts 5/5
+
+ Test Files 40 passed (49)
+      Tests 382 passed (382)
+   Start at 23:45:51
+   Duration 12.56s
+ ✓ tests/game/systems/TimeValidator.test.ts > TimeValidator > should validate exact match 1ms
+ ✓ tests/game/systems/TimeValidator.test.ts > TimeValidator > should validate within tolerance 0ms
+ ✓ tests/game/systems/TimeValidator.test.ts > TimeValidator > should reject outside tolerance 0ms
+ ✓ tests/game/systems/TimeValidator.test.ts > TimeValidator > should handle wrap-around (12:55 vs 1:05) 0ms
+ ✓ tests/game/systems/TimeValidator.test.ts > TimeValidator > should work with tight tolerance (1 minute) 0ms
+
+ ❯ tests/game/audio/AudioManager.test.ts 2/2
+ ❯ tests/game/systems/SceneManager.test.ts 0/1
+ ❯ tests/game/systems/TimeValidator.test.ts 5/5
+
+ Test Files 41 passed (49)
+      Tests 387 passed (388)
+   Start at 23:45:51
+   Duration 12.66s
+ ✓ tests/game/systems/SceneManager.test.ts > SceneManager disposal with scene-owned Clock3D > calls exit on previous scene which disposes its Clock3D 1ms
+
+ ❯ tests/game/systems/TimeValidator.test.ts 5/5
+ ❯ tests/game/ui/HintButton.test.ts 0/4
+
+ Test Files 42 passed (49)
+      Tests 388 passed (392)
+   Start at 23:45:51
+   Duration 12.87s
+ ✓ tests/game/utils/ThreeDisposer.test.ts > ThreeDisposer > calls dispose on geometry, material and texture 2ms
+
+ ❯ tests/game/ui/HintButton.test.ts 0/4
+
+ Test Files 43 passed (49)
+      Tests 389 passed (393)
+   Start at 23:45:51
+   Duration 12.97s
+ ✓ tests/game/ui/HintButton.test.ts > HintButton > mount(parent) でボタン要素が追加されること 153ms
+ ✓ tests/game/ui/HintButton.test.ts > HintButton > ラベルが「ヒント🟢」であること 2ms
+ ✓ tests/game/ui/HintButton.test.ts > HintButton > onClick(callback) でクリック時にコールバックが呼ばれること 2ms
+ ✓ tests/game/ui/HintButton.test.ts > HintButton > setRemaining(0) でバッジが 0 になりボタンが無効化されること 3ms
+
+ ❯ tests/game/systems/HintSystem.test.ts [queued]
+
+ Test Files 44 passed (49)
+      Tests 393 passed (393)
+   Start at 23:45:51
+   Duration 13.17s
+ ✓ tests/game/systems/HintSystem.test.ts > HintSystem > provides hint: highlights number, animates clock, and marks hint used 7ms
+ ✓ tests/game/systems/HintSystem.test.ts > HintSystem > does nothing if hint already used 1ms
+
+ ❯ tests/game/entities/Clock3D.animate.test.ts [queued]
+ ❯ tests/game/scenes/QuizScene.HintEffect.test.ts 0/1
+
+ Test Files 45 passed (49)
+      Tests 395 passed (396)
+   Start at 23:45:51
+   Duration 13.27s
+ ✓ tests/game/scenes/QuizScene.HintEffect.test.ts > HintEffect > trigger() でシーンにエフェクトが追加され、2秒後に自動で削除される 3ms
+ ✓ tests/game/entities/Clock3D.animate.test.ts > Clock3D.animateTo > sets final time when animateTo is called 5ms
+ ✓ tests/game/systems/QuizGenerator.Hint.test.ts > QuizGenerator hint state > startQuestion() でヒントがリセットされ、canUseHint() が true になる 1ms
+ ✓ tests/game/systems/QuizGenerator.Hint.test.ts > QuizGenerator hint state > useHint() を呼ぶと canUseHint() が false になり remainingHints() が 0 になる 0ms
+ ✓ tests/game/systems/QuizGenerator.Hint.test.ts > QuizGenerator hint state > startQuestion() は次の問題でヒントを再び有効にする 0ms
+
+ ❯ tests/game/Smoke.test.ts [queued]
+
+ Test Files 48 passed (49)
+      Tests 400 passed (400)
+   Start at 23:45:51
+   Duration 13.37s
+ ✓ tests/game/Smoke.test.ts > Smoke > test environment runs 1ms
+
+ Test Files  49 passed (49)
+      Tests  401 passed (401)
+   Start at  23:45:51
+   Duration  13.47s (transform 1.52s, setup 0ms, import 4.01s, tests 6.23s, environment 73.67s)
+
+⠙___BEGIN___COMMAND_DONE_MARKER___0
+___BEGIN___COMMAND_DONE_MARKER___0
+___BEGIN___COMMAND_DONE_MARKER___0

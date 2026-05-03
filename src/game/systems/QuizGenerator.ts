@@ -3,10 +3,56 @@ import { getLevelDef } from '@/game/config/LevelConfig';
 
 export class QuizGenerator {
   private rng: () => number;
+  private streak = 0;
+  private difficultyLevel = 1; // 1 = easy, 2 = medium, 3 = hard
+  private readonly DIFFICULTY_THRESHOLDS = [3, 6];
 
   constructor(rng?: () => number) {
     this.rng = rng ?? Math.random;
   }
+
+  // Hint state: one hint per question
+  private hintUsedForQuestion = false;
+
+  startQuestion(): void {
+    this.hintUsedForQuestion = false;
+  }
+
+  canUseHint(): boolean {
+    return !this.hintUsedForQuestion;
+  }
+
+  useHint(): void {
+    this.hintUsedForQuestion = true;
+  }
+
+  remainingHints(): number {
+    return this.canUseHint() ? 1 : 0;
+  }
+
+  onAnswerCorrect() {
+    this.streak++;
+    if (this.streak >= this.DIFFICULTY_THRESHOLDS[1]) this.difficultyLevel = 3;
+    else if (this.streak >= this.DIFFICULTY_THRESHOLDS[0]) this.difficultyLevel = 2;
+  }
+
+  onAnswerIncorrect() {
+    this.streak = 0;
+    this.difficultyLevel = 1;
+  }
+
+  generateQuestion() {
+    // Map difficultyLevel to a level number in LevelConfig
+    let levelNum = 1;
+    if (this.difficultyLevel === 1) levelNum = 1;
+    else if (this.difficultyLevel === 2) levelNum = 2;
+    else levelNum = 3;
+
+    const correct = this.generateTime(levelNum);
+    const choices = this.generateChoices(correct, levelNum);
+    return { correct, choices, level: levelNum };
+  }
+
   generateTime(level: number): ClockTime {
     const def = getLevelDef(level);
     const hours = Math.floor(this.rng() * 12) + 1;
@@ -26,7 +72,7 @@ export class QuizGenerator {
     const remaining = all.filter(c => !this.equalsTimeList(c, exclude));
 
     if (remaining.length > 0) {
-      const idx = Math.floor(Math.random() * remaining.length);
+      const idx = Math.floor(this.rng() * remaining.length);
       return remaining[idx];
     }
 

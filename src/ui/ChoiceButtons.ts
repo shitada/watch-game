@@ -6,6 +6,11 @@ export class ChoiceButtons {
   private buttons: HTMLButtonElement[] = [];
   private selectCallback: ((index: number) => void) | null = null;
   private disabled = false;
+  private rng: () => number;
+
+  constructor(rng?: () => number) {
+    this.rng = rng ?? Math.random;
+  }
 
   mount(parent: HTMLElement): void {
     this.container = document.createElement('div');
@@ -30,11 +35,14 @@ export class ChoiceButtons {
     choices.forEach((choice, i) => {
       const btn = document.createElement('button');
       btn.textContent = formatTime(choice);
+      // Add ARIA label for accessibility and increase min-height for touch targets
+      btn.setAttribute('aria-label', formatTime(choice));
       btn.style.cssText = `
         font-family: 'Zen Maru Gothic', sans-serif;
         font-size: clamp(18px, 4vw, 28px);
         font-weight: 700;
         padding: 16px 12px;
+        min-height: 64px;
         border: 3px solid #3498DB;
         border-radius: 16px;
         background: linear-gradient(180deg, #ffffff, #EBF5FB);
@@ -88,9 +96,9 @@ export class ChoiceButtons {
       .map((_, i) => i)
       .filter(i => i !== correctIndex);
 
-    // Randomly pick 2 of the 3 incorrect to dim
+    // Shuffle using injected RNG to ensure determinism in tests
     for (let i = incorrectIndices.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1));
+      const j = Math.floor(this.rng() * (i + 1));
       [incorrectIndices[i], incorrectIndices[j]] = [incorrectIndices[j], incorrectIndices[i]];
     }
     const toDim = incorrectIndices.slice(0, 2);

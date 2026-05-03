@@ -17,6 +17,14 @@ describe('showNotification', () => {
     document.getElementById('notif-anim')?.remove();
   });
 
+  it('スクリーンリーダー向け属性が設定されること', () => {
+    showNotification(parent, '読み上げ', '#000');
+    const el = parent.children[0] as HTMLElement;
+    expect(el.getAttribute('role')).toBe('status');
+    expect(el.getAttribute('aria-live')).toBe('polite');
+    expect(el.dataset.notifId).toBeDefined();
+  });
+
   it('DOM要素が親に追加されること', () => {
     showNotification(parent, 'テスト', '#2ECC71');
     expect(parent.children.length).toBe(1);

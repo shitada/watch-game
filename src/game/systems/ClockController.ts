@@ -208,6 +208,15 @@ export class ClockController {
   dispose(): void {
     this.setEnabled(false);
     this.onChangeCallback = null;
+    // Also attempt to dispose the associated Clock3D to ensure resources are freed
+    try {
+      // Clock3D.dispose is idempotent so calling it from controller is safe
+      (this.clock as any).dispose();
+    } catch (e) {
+      // swallow errors — best-effort cleanup
+      // eslint-disable-next-line no-console
+      console.warn('ClockController failed to dispose clock', e);
+    }
   }
 
   private getNDC(e: PointerEvent): THREE.Vector2 {

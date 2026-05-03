@@ -307,6 +307,13 @@ describe('Clock3D', () => {
       expect(geos.size).toBeGreaterThan(0);
       expect(mats.size).toBeGreaterThan(0);
 
+      // Exclude shared tick geometry/material from this assertion because they are managed globally
+      const sharedTicks = (Clock3D as any)._sharedTicks || {};
+      if (sharedTicks.majorGeo) geos.delete(sharedTicks.majorGeo);
+      if (sharedTicks.minorGeo) geos.delete(sharedTicks.minorGeo);
+      if (sharedTicks.majorMat) mats.delete(sharedTicks.majorMat);
+      if (sharedTicks.minorMat) mats.delete(sharedTicks.minorMat);
+
       const geoSpies = Array.from(geos).map((g) => vi.spyOn(g, 'dispose'));
       const matSpies = Array.from(mats).map((m) => vi.spyOn(m, 'dispose'));
 

@@ -21,6 +21,16 @@ export class Clock3D {
   private static _sharedNumbers: { texture?: THREE.CanvasTexture; refCount: number } = { texture: undefined, refCount: 0 };
   private _usesSharedNumbers = false;
 
+  // Shared tick geometry/material cache (major/minor) with reference counting
+  private static _sharedTicks: {
+    majorGeo?: THREE.BufferGeometry;
+    minorGeo?: THREE.BufferGeometry;
+    majorMat?: THREE.Material;
+    minorMat?: THREE.Material;
+    refCount: number;
+  } = { majorGeo: undefined, minorGeo: undefined, majorMat: undefined, minorMat: undefined, refCount: 0 };
+  private _usesSharedTicks = false;
+
   // Flag to make dispose idempotent
   private _disposed = false;
 
@@ -59,13 +69,25 @@ export class Clock3D {
   }
 
   private buildTicks(): void {
-    // Share geometry and material per tick type (major/minor) to reduce GPU resources.
-    // Note: dispose() will call dispose() on shared objects multiple times via traverse,
-    // but this is safe as Three.js handles redundant dispose calls gracefully.
-    const majorGeo = new THREE.PlaneGeometry(0.06, 0.25);
-    const majorMat = new THREE.MeshStandardMaterial({ color: S.COLORS.tickMajor, side: THREE.DoubleSide });
-    const minorGeo = new THREE.PlaneGeometry(0.02, 0.12);
-    const minorMat = new THREE.MeshStandardMaterial({ color: S.COLORS.tickMinor, side: THREE.DoubleSide });
+    // Use process-wide shared geometry/material for ticks to reduce VRAM and init cost
+    if (Clock3D._sharedTicks.majorGeo && Clock3D._sharedTicks.minorGeo && Clock3D._sharedTicks.majorMat && Clock3D._sharedTicks.minorMat) {
+      // Reuse shared resources
+      Clock3D._sharedTicks.refCount += 1;
+      this._usesSharedTicks = true;
+    } else {
+      // Create shared resources and claim ownership
+      Clock3D._sharedTicks.majorGeo = new THREE.PlaneGeometry(0.06, 0.25);
+      Clock3D._sharedTicks.majorMat = new THREE.MeshStandardMaterial({ color: S.COLORS.tickMajor, side: THREE.DoubleSide });
+      Clock3D._sharedTicks.minorGeo = new THREE.PlaneGeometry(0.02, 0.12);
+      Clock3D._sharedTicks.minorMat = new THREE.MeshStandardMaterial({ color: S.COLORS.tickMinor, side: THREE.DoubleSide });
+      Clock3D._sharedTicks.refCount = 1;
+      this._usesSharedTicks = true;
+    }
+
+    const majorGeo = Clock3D._sharedTicks.majorGeo!;
+    const majorMat = Clock3D._sharedTicks.majorMat!;
+    const minorGeo = Clock3D._sharedTicks.minorGeo!;
+    const minorMat = Clock3D._sharedTicks.minorMat!;
 
     for (let i = 0; i < 60; i++) {
       const isMajor = i % 5 === 0;
@@ -368,6 +390,58 @@ export class Clock3D {
       }
     }
 
+    // Handle shared ticks refCount and optionally dispose shared resources when last user goes away
+    const sharedGeosToSkip = new Set<THREE.BufferGeometry | undefined>();
+    const sharedMatsToSkip = new Set<THREE.Material | undefined>();
+    if (this._usesSharedTicks) {
+      const sharedSnapshot = { ...Clock3D._sharedTicks };
+      Clock3D._sharedTicks.refCount -= 1;
+      if (Clock3D._sharedTicks.refCount <= 0) {
+        // dispose and clear shared tick resources
+        try {
+          if (sharedSnapshot.majorMat) sharedSnapshot.majorMat.dispose();
+        } catch (e) {
+          // eslint-disable-next-line no-console
+          console.warn('Failed to dispose shared majorMat', e);
+        }
+        try {
+          if (sharedSnapshot.minorMat) sharedSnapshot.minorMat.dispose();
+        } catch (e) {
+          // eslint-disable-next-line no-console
+          console.warn('Failed to dispose shared minorMat', e);
+        }
+        try {
+          if (sharedSnapshot.majorGeo && typeof (sharedSnapshot.majorGeo as any).dispose === 'function') (sharedSnapshot.majorGeo as any).dispose();
+        } catch (e) {
+          // eslint-disable-next-line no-console
+          console.warn('Failed to dispose shared majorGeo', e);
+        }
+        try {
+          if (sharedSnapshot.minorGeo && typeof (sharedSnapshot.minorGeo as any).dispose === 'function') (sharedSnapshot.minorGeo as any).dispose();
+        } catch (e) {
+          // eslint-disable-next-line no-console
+          console.warn('Failed to dispose shared minorGeo', e);
+        }
+
+        // remember disposed references so we can skip them later in loops
+        if (sharedSnapshot.majorGeo) sharedGeosToSkip.add(sharedSnapshot.majorGeo);
+        if (sharedSnapshot.minorGeo) sharedGeosToSkip.add(sharedSnapshot.minorGeo);
+        if (sharedSnapshot.majorMat) sharedMatsToSkip.add(sharedSnapshot.majorMat);
+        if (sharedSnapshot.minorMat) sharedMatsToSkip.add(sharedSnapshot.minorMat);
+
+        Clock3D._sharedTicks.majorGeo = undefined;
+        Clock3D._sharedTicks.minorGeo = undefined;
+        Clock3D._sharedTicks.majorMat = undefined;
+        Clock3D._sharedTicks.minorMat = undefined;
+      } else {
+        // still in use: ensure per-instance dispose will not dispose shared refs
+        if (Clock3D._sharedTicks.majorGeo) sharedGeosToSkip.add(Clock3D._sharedTicks.majorGeo);
+        if (Clock3D._sharedTicks.minorGeo) sharedGeosToSkip.add(Clock3D._sharedTicks.minorGeo);
+        if (Clock3D._sharedTicks.majorMat) sharedMatsToSkip.add(Clock3D._sharedTicks.majorMat);
+        if (Clock3D._sharedTicks.minorMat) sharedMatsToSkip.add(Clock3D._sharedTicks.minorMat);
+      }
+    }
+
     const geos = new Set<THREE.BufferGeometry>();
     const mats = new Set<THREE.Material>();
     const texs = new Set<THREE.Texture>();
@@ -420,8 +494,9 @@ export class Clock3D {
       }
     }
 
-    // Dispose materials
+    // Dispose materials, skipping shared tick materials
     for (const m of Array.from(mats)) {
+      if (sharedMatsToSkip.has(m)) continue;
       try {
         m.dispose();
       } catch (e) {
@@ -430,8 +505,9 @@ export class Clock3D {
       }
     }
 
-    // Dispose geometries
+    // Dispose geometries, skipping shared tick geometries
     for (const g of Array.from(geos)) {
+      if (sharedGeosToSkip.has(g)) continue;
       try {
         // geometry may have dispose()
         if (typeof (g as any).dispose === 'function') (g as any).dispose();

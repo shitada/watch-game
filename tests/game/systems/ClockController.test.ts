@@ -171,6 +171,13 @@ describe('ClockController', () => {
       expect(removeSpy).toHaveBeenCalledTimes(4);
     });
 
+    it('dispose() は Clock3D.dispose() を呼び出すこと', () => {
+      const spy = vi.spyOn(clock as any, 'dispose');
+      controller.dispose();
+      expect(spy).toHaveBeenCalled();
+      spy.mockRestore();
+    });
+
     it('pointerdown で setPointerCapture が呼ばれ、setEnabled(false) ／ dispose() で releasePointerCapture が呼ばれること', () => {
       const canvas = renderer.domElement;
       // Prefer element-level spies to avoid global prototype spying [S-3]

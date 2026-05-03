@@ -9,9 +9,11 @@ import { getLevelDef } from '@/game/config/LevelConfig';
 import { GameSettings } from '@/game/config/GameSettings';
 import { CorrectEffect } from '@/game/effects/CorrectEffect';
 import { IncorrectEffect } from '@/game/effects/IncorrectEffect';
+import { HintEffect } from '@/game/effects/HintEffect';
 import { HUD } from '@/ui/HUD';
 import { ChoiceButtons } from '@/ui/ChoiceButtons';
 import { HomeButton } from '@/ui/HomeButton';
+import { HintButton } from '@/ui/HintButton';
 import { showNotification } from '@/ui/Notification';
 
 export class QuizPlayScene implements Scene {
@@ -21,9 +23,11 @@ export class QuizPlayScene implements Scene {
   private quizGen = new QuizGenerator();
   private correctEffect = new CorrectEffect();
   private incorrectEffect = new IncorrectEffect();
+  private hintEffect = new HintEffect();
   private hud = new HUD();
   private choiceButtons = new ChoiceButtons();
   private homeButton = new HomeButton();
+  private hintButton: HintButton | null = null;
   private overlay: HTMLDivElement | null = null;
 
   private sceneManager: SceneManager;
@@ -105,6 +109,7 @@ export class QuizPlayScene implements Scene {
     this.clock3D?.update(dt);
     this.correctEffect.update(dt);
     this.incorrectEffect.update(dt);
+    this.hintEffect.update(dt);
   }
 
   exit(): void {
@@ -117,10 +122,12 @@ export class QuizPlayScene implements Scene {
     }
     this.correctEffect.dispose();
     this.incorrectEffect.dispose();
+    this.hintEffect.dispose();
     this.audioManager.stopBGM();
     this.hud.unmount();
     this.choiceButtons.unmount();
     this.homeButton.unmount();
+    this.hintButton?.unmount();
     this.overlay?.remove();
     this.overlay = null;
   }
@@ -170,6 +177,11 @@ export class QuizPlayScene implements Scene {
     this.choiceButtons.mount(bottomArea);
     overlay.appendChild(bottomArea);
 
+    // Hint button container (bottom-right)
+    const hintContainer = document.createElement('div');
+    hintContainer.style.cssText = `position: absolute; right: 20px; bottom: 20px; pointer-events: auto;`;
+    overlay.appendChild(hintContainer);
+
     const uiOverlay = document.getElementById('ui-overlay')!;
     uiOverlay.appendChild(overlay);
     this.overlay = overlay;
@@ -180,6 +192,17 @@ export class QuizPlayScene implements Scene {
     this.homeButton.onClick(() => {
       this.sfx.play('buttonTap');
       this.sceneManager.requestTransition('modeSelect');
+    });
+
+    // Hint button
+    this.hintButton = new HintButton();
+    this.hintButton.mount(hintContainer);
+    this.hintButton.onClick(() => {
+      this.sfx.play('buttonTap');
+      if (!this.quizGen.canUseHint()) return;
+      this.quizGen.useHint();
+      this.triggerManualHint();
+      this.hintButton?.setRemaining(this.quizGen.remainingHints());
     });
 
     // Choice callback
@@ -202,20 +225,32 @@ export class QuizPlayScene implements Scene {
     this.hud.updateScore(this.correctCount);
     this.choiceButtons.setChoices(this.choices[this.currentQuestion]);
 
+    // Reset per-question hint state in generator
+    this.quizGen.startQuestion();
+
     // Set hint timer (W-1: added to pendingTimers for exit cleanup)
     this.pendingTimers.push(setTimeout(() => {
       this.triggerHint();
     }, GameSettings.HINT_DELAY_MS));
+
+    // update hint button remaining
+    this.hintButton?.setRemaining(this.quizGen.remainingHints());
   }
 
   private triggerHint(): void {
     if (this.hintShown || this.waitingNext) return;
+    if (!this.quizGen.canUseHint()) return;
     this.hintShown = true;
+    this.quizGen.useHint();
     this.sfx.play('hint');
+    const q = this.questions[this.currentQuestion];
+    // visual hint
+    this.hintEffect.trigger(this.scene, q, new THREE.Vector3(0, 0.8, 0));
     this.choiceButtons.showHint(this.correctIndex[this.currentQuestion]);
     this.pendingTimers.push(
       showNotification(this.overlay!, '💡 ヒント！', '#F39C12'),
     );
+    this.hintButton?.setRemaining(this.quizGen.remainingHints());
   }
 
   private handleAnswer(selectedIndex: number): void {
@@ -274,5 +309,18 @@ export class QuizPlayScene implements Scene {
         this.showQuestion();
       }
     }, 1500));
+  }
+
+  private triggerManualHint(): void {
+    if (this.hintShown || this.waitingNext) return;
+    this.hintShown = true;
+    const q = this.questions[this.currentQuestion];
+    this.sfx.play('hint');
+    this.hintEffect.trigger(this.scene, q, new THREE.Vector3(0, 0.8, 0));
+    this.choiceButtons.showHint(this.correctIndex[this.currentQuestion]);
+    this.pendingTimers.push(
+      showNotification(this.overlay!, '💡 ヒント！', '#F39C12'),
+    );
+    this.hintButton?.setRemaining(this.quizGen.remainingHints());
   }
 }

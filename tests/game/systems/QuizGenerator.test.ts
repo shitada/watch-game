@@ -175,13 +175,11 @@ describe('generateUniqueTime', () => {
       { hours: 2, minutes: 0 },
       { hours: 3, minutes: 0 },
     ];
-    // With Math.random = 0, index will be 0 -> remaining[0] should be hours 4 for level 1
-    vi.spyOn(Math, 'random').mockReturnValue(0);
+    // With rng = 0, index will be 0 -> remaining[0] should be hours 4 for level 1
+    const genDet = new QuizGenerator(() => 0);
 
-    const time = gen2.generateUniqueTime(1, exclude);
+    const time = genDet.generateUniqueTime(1, exclude);
     expect(time).toEqual({ hours: 4, minutes: 0 });
-
-    vi.restoreAllMocks();
   });
 
   it('should fallback when all candidates are excluded and return generated time', () => {
@@ -254,5 +252,29 @@ describe('QuizGenerator fallback', () => {
     expect(new Set(keys).size).toBe(4);
     const hasCorrect = choices.some(c => c.hours === 12 && c.minutes === 55);
     expect(hasCorrect).toBe(true);
+  });
+});
+
+// Streak-based difficulty tests added by auto-improve
+describe('QuizGenerator streak-based difficulty', () => {
+  it('increases difficulty after thresholds and resets on incorrect', () => {
+    const q = new QuizGenerator();
+    // simulate 3 correct answers -> difficulty becomes 2
+    q.onAnswerCorrect();
+    q.onAnswerCorrect();
+    q.onAnswerCorrect();
+    expect((q as any).difficultyLevel).toBe(2);
+    // simulate 3 more -> difficulty 3
+    q.onAnswerCorrect();
+    q.onAnswerCorrect();
+    q.onAnswerCorrect();
+    expect((q as any).difficultyLevel).toBe(3);
+    // generateQuestion should map difficultyLevel 3 to level 3
+    const generated = q.generateQuestion();
+    expect(generated.level).toBe(3);
+    // incorrect -> reset
+    q.onAnswerIncorrect();
+    expect((q as any).streak).toBe(0);
+    expect((q as any).difficultyLevel).toBe(1);
   });
 });

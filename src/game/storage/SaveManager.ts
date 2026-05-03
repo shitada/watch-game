@@ -1,20 +1,27 @@
 import type { SaveData, GameMode } from '@/types';
+import { migrations } from './saveMigrations';
 
 const STORAGE_KEY = 'kids-clock-master-save';
+export const currentVersion = 1;
 
 function defaultData(): SaveData {
   return {
+    version: currentVersion,
     completedLevels: { quiz: [], setTime: [], daily: [] },
     trophies: [],
     totalCorrect: 0,
     totalPlays: 0,
     bestScores: {},
+    streak: 0,
   };
 }
 
 function isValid(data: unknown): data is SaveData {
   if (!data || typeof data !== 'object') return false;
   const d = data as Record<string, unknown>;
+
+  // version must be a number and equal to currentVersion
+  if (typeof d.version !== 'number') return false;
 
   // completedLevels must be an object with arrays for each mode
   const cl = d.completedLevels;
@@ -24,7 +31,7 @@ function isValid(data: unknown): data is SaveData {
     const arr = (cl as Record<string, unknown>)[m];
     if (!Array.isArray(arr)) return false;
     // ensure array contains only numbers
-    if (!arr.every((v: unknown) => typeof v === 'number')) return false;
+    if (!(arr as unknown[]).every((v: unknown) => typeof v === 'number')) return false;
   }
 
   if (!Array.isArray(d.trophies)) return false;
@@ -39,7 +46,87 @@ function isValid(data: unknown): data is SaveData {
     if (typeof (bs as Record<string, unknown>)[k] !== 'number') return false;
   }
 
+  // accept older saves missing streak, or ensure it's a number when present
+  if ((d as Record<string, unknown>).streak !== undefined && typeof (d as Record<string, unknown>).streak !== 'number') return false;
+
   return true;
+}
+
+export function migrateIfNeeded(raw: unknown): SaveData {
+  try {
+    // determine source version (0 means no version)
+    const srcVersion = raw && typeof raw === 'object' && typeof (raw as Record<string, unknown>).version === 'number'
+      ? (raw as Record<string, unknown>).version as number
+      : 0;
+
+    let data: unknown = raw;
+    for (let v = srcVersion + 1; v <= currentVersion; v++) {
+      const fn = (migrations as Record<number, (r: unknown) => unknown>)[v];
+      if (typeof fn !== 'function') {
+        // missing migration path
+        return defaultData();
+      }
+      data = fn(data);
+    }
+
+    // After migration, do defensive sanitization similar to previous behaviour
+    if (data && typeof data === 'object') {
+      const p = data as Record<string, unknown>;
+
+      // trophies
+      if (Array.isArray(p.trophies)) {
+        p.trophies = p.trophies.filter((v: unknown) => typeof v === 'string');
+      } else {
+        p.trophies = [];
+      }
+
+      // completedLevels
+      const cl = p.completedLevels;
+      const modes = ['quiz', 'setTime', 'daily'] as const;
+      if (cl && typeof cl === 'object') {
+        for (const m of modes) {
+          const arr = (cl as Record<string, unknown>)[m];
+          if (Array.isArray(arr)) {
+            (cl as Record<string, unknown>)[m] = (arr as unknown[])
+              .map((v: unknown) => Number(v))
+              .filter((n) => Number.isFinite(n));
+          } else {
+            (cl as Record<string, unknown>)[m] = [];
+          }
+        }
+        p.completedLevels = cl;
+      } else {
+        p.completedLevels = { quiz: [], setTime: [], daily: [] };
+      }
+
+      // normalize bestScores
+      if (!p.bestScores || typeof p.bestScores !== 'object' || Array.isArray(p.bestScores)) {
+        p.bestScores = {};
+      } else {
+        const bs = p.bestScores as Record<string, unknown>;
+        for (const k in bs) {
+          const v = bs[k];
+          bs[k] = typeof v === 'number' && Number.isFinite(v) ? v : Number(v) || 0;
+        }
+        p.bestScores = bs;
+      }
+
+      // ensure numeric totals
+      p.totalCorrect = typeof p.totalCorrect === 'number' && Number.isFinite(p.totalCorrect) ? p.totalCorrect : 0;
+      p.totalPlays = typeof p.totalPlays === 'number' && Number.isFinite(p.totalPlays) ? p.totalPlays : 0;
+
+      // ensure version present
+      if (typeof p.version !== 'number') p.version = currentVersion;
+
+      // ensure streak
+      p.streak = typeof p.streak === 'number' && Number.isFinite(p.streak) ? p.streak : 0;
+    }
+
+    if (isValid(data)) return data as SaveData;
+    return defaultData();
+  } catch (e) {
+    return defaultData();
+  }
 }
 
 export class SaveManager {
@@ -49,31 +136,30 @@ export class SaveManager {
       if (!raw) return defaultData();
       const parsed: unknown = JSON.parse(raw);
 
-      // Sanitize trophies before validation: keep only string elements when trophies is an array
-      if (parsed && typeof parsed === 'object') {
-        const p = parsed as Record<string, unknown>;
-        if (Array.isArray(p.trophies)) {
-          p.trophies = p.trophies.filter((v: unknown) => typeof v === 'string');
-        } else {
-          p.trophies = [];
-        }
-      }
-
-      if (isValid(parsed)) return parsed;
-      return defaultData();
+      const migrated = migrateIfNeeded(parsed);
+      return migrated;
     } catch {
       return defaultData();
     }
   }
 
   save(data: SaveData): void {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+    try {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+    } catch (e) {
+      // Fail silently but log for telemetry/diagnostics
+      // eslint-disable-next-line no-console
+      console.warn('SaveManager.save: failed to write to localStorage', e);
+    }
   }
 
   addCompletedLevel(mode: GameMode, level: number): void {
     const data = this.load();
-    if (!data.completedLevels[mode].includes(level)) {
-      data.completedLevels[mode].push(level);
+    const arr = data.completedLevels[mode];
+    if (!arr.includes(level)) {
+      arr.push(level);
+      // 重複を排し、数値に正規化して昇順にソート
+      data.completedLevels[mode] = Array.from(new Set(arr.map((v) => Number(v)))).sort((a, b) => a - b);
     }
     this.save(data);
   }
@@ -103,6 +189,11 @@ export class SaveManager {
   }
 
   clear(): void {
-    localStorage.removeItem(STORAGE_KEY);
+    try {
+      localStorage.removeItem(STORAGE_KEY);
+    } catch (e) {
+      // eslint-disable-next-line no-console
+      console.warn('SaveManager.clear: failed to remove from localStorage', e);
+    }
   }
 }

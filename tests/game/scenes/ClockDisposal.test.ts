@@ -34,6 +34,10 @@ describe('Clock disposal on scene exit', () => {
     hud.id = 'hud';
     document.body.appendChild(hud);
 
+    // Reset shared caches to avoid cross-test leakage
+    (Clock3D as any)._sharedNumbers = { texture: undefined, refCount: 0 };
+    (Clock3D as any)._sharedTicks = { majorGeo: undefined, minorGeo: undefined, majorMat: undefined, minorMat: undefined, refCount: 0 };
+
     disposeSpy = vi.spyOn(Clock3D.prototype, 'dispose');
   });
 

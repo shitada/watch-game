@@ -1,5 +1,6 @@
 import type { Scene, SceneType, SceneContext, TransitionHandler } from '@/types';
 import * as THREE from 'three';
+import { safeDisposeScene } from '@/game/utils/ThreeDisposer';
 
 export class SceneManager {
   private scenes = new Map<SceneType, Scene>();
@@ -23,7 +24,32 @@ export class SceneManager {
     }
 
     if (this.currentScene) {
-      this.currentScene.exit();
+      // Null out current references before running exit to allow exit logic to fully own cleanup
+      const prev = this.currentScene;
+      this.currentScene = null;
+      this.currentType = null;
+      try {
+        prev.exit();
+      } catch (e) {
+        // swallow to keep transitions robust
+        // eslint-disable-next-line no-console
+        console.warn('Scene exit threw', e);
+      }
+
+      // Defensive fallback: even if exit() partially failed or was omitted,
+      // attempt to dispose Three.js resources held by the previous scene.
+      try {
+        // best-effort disposal using the shared utility
+        try {
+          safeDisposeScene(prev.getThreeScene());
+        } catch (e) {
+          // swallow disposal errors to keep transitions safe
+          // eslint-disable-next-line no-console
+          console.warn('safeDisposeScene failed', e);
+        }
+      } catch (e) {
+        // if disposal module is not available, ignore — disposal is best-effort
+      }
     }
 
     this.currentScene = next;

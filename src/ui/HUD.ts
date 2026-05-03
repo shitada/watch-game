@@ -2,6 +2,7 @@ export class HUD {
   private container: HTMLDivElement | null = null;
   private questionEl: HTMLSpanElement | null = null;
   private scoreEl: HTMLSpanElement | null = null;
+  private streakEl: HTMLSpanElement | null = null;
 
   mount(parent: HTMLElement): void {
     this.container = document.createElement('div');
@@ -34,6 +35,13 @@ export class HUD {
 
     this.container.appendChild(this.questionEl);
     this.container.appendChild(this.scoreEl);
+
+    // Streak display
+    this.streakEl = document.createElement('span');
+    this.streakEl.style.cssText = `background: rgba(255,255,255,0.85); border-radius: 16px; padding: 6px 18px; font-weight: 700; margin-left: 8px;`;
+    this.streakEl.textContent = '✨ 0 もようし';
+    this.container.appendChild(this.streakEl);
+
     parent.appendChild(this.container);
   }
 
@@ -46,6 +54,12 @@ export class HUD {
   updateScore(correct: number): void {
     if (this.scoreEl) {
       this.scoreEl.textContent = `⭕ ${correct}`;
+    }
+  }
+
+  updateStreak(streak: number): void {
+    if (this.streakEl) {
+      this.streakEl.textContent = `✨ ${streak} もようし`;
     }
   }
 

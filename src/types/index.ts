@@ -67,6 +67,8 @@ export interface DailyEvent {
 // ── Save Data ──
 
 export interface SaveData {
+  // Save format version. Increment when making incompatible shape changes.
+  version: number;
   completedLevels: Record<GameMode, number[]>;
   trophies: string[];
   totalCorrect: number;

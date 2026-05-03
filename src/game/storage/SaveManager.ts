@@ -1,9 +1,12 @@
 import type { SaveData, GameMode } from '@/types';
+import { migrations } from './saveMigrations';
 
 const STORAGE_KEY = 'kids-clock-master-save';
+export const currentVersion = 1;
 
 function defaultData(): SaveData {
   return {
+    version: currentVersion,
     completedLevels: { quiz: [], setTime: [], daily: [] },
     trophies: [],
     totalCorrect: 0,
@@ -17,6 +20,9 @@ function isValid(data: unknown): data is SaveData {
   if (!data || typeof data !== 'object') return false;
   const d = data as Record<string, unknown>;
 
+  // version must be a number and equal to currentVersion
+  if (typeof d.version !== 'number') return false;
+
   // completedLevels must be an object with arrays for each mode
   const cl = d.completedLevels;
   if (!cl || typeof cl !== 'object') return false;
@@ -25,7 +31,7 @@ function isValid(data: unknown): data is SaveData {
     const arr = (cl as Record<string, unknown>)[m];
     if (!Array.isArray(arr)) return false;
     // ensure array contains only numbers
-    if (!arr.every((v: unknown) => typeof v === 'number')) return false;
+    if (!(arr as unknown[]).every((v: unknown) => typeof v === 'number')) return false;
   }
 
   if (!Array.isArray(d.trophies)) return false;
@@ -46,6 +52,83 @@ function isValid(data: unknown): data is SaveData {
   return true;
 }
 
+export function migrateIfNeeded(raw: unknown): SaveData {
+  try {
+    // determine source version (0 means no version)
+    const srcVersion = raw && typeof raw === 'object' && typeof (raw as Record<string, unknown>).version === 'number'
+      ? (raw as Record<string, unknown>).version as number
+      : 0;
+
+    let data: unknown = raw;
+    for (let v = srcVersion + 1; v <= currentVersion; v++) {
+      const fn = (migrations as Record<number, (r: unknown) => unknown>)[v];
+      if (typeof fn !== 'function') {
+        // missing migration path
+        return defaultData();
+      }
+      data = fn(data);
+    }
+
+    // After migration, do defensive sanitization similar to previous behaviour
+    if (data && typeof data === 'object') {
+      const p = data as Record<string, unknown>;
+
+      // trophies
+      if (Array.isArray(p.trophies)) {
+        p.trophies = p.trophies.filter((v: unknown) => typeof v === 'string');
+      } else {
+        p.trophies = [];
+      }
+
+      // completedLevels
+      const cl = p.completedLevels;
+      const modes = ['quiz', 'setTime', 'daily'] as const;
+      if (cl && typeof cl === 'object') {
+        for (const m of modes) {
+          const arr = (cl as Record<string, unknown>)[m];
+          if (Array.isArray(arr)) {
+            (cl as Record<string, unknown>)[m] = (arr as unknown[])
+              .map((v: unknown) => Number(v))
+              .filter((n) => Number.isFinite(n));
+          } else {
+            (cl as Record<string, unknown>)[m] = [];
+          }
+        }
+        p.completedLevels = cl;
+      } else {
+        p.completedLevels = { quiz: [], setTime: [], daily: [] };
+      }
+
+      // normalize bestScores
+      if (!p.bestScores || typeof p.bestScores !== 'object' || Array.isArray(p.bestScores)) {
+        p.bestScores = {};
+      } else {
+        const bs = p.bestScores as Record<string, unknown>;
+        for (const k in bs) {
+          const v = bs[k];
+          bs[k] = typeof v === 'number' && Number.isFinite(v) ? v : Number(v) || 0;
+        }
+        p.bestScores = bs;
+      }
+
+      // ensure numeric totals
+      p.totalCorrect = typeof p.totalCorrect === 'number' && Number.isFinite(p.totalCorrect) ? p.totalCorrect : 0;
+      p.totalPlays = typeof p.totalPlays === 'number' && Number.isFinite(p.totalPlays) ? p.totalPlays : 0;
+
+      // ensure version present
+      if (typeof p.version !== 'number') p.version = currentVersion;
+
+      // ensure streak
+      p.streak = typeof p.streak === 'number' && Number.isFinite(p.streak) ? p.streak : 0;
+    }
+
+    if (isValid(data)) return data as SaveData;
+    return defaultData();
+  } catch (e) {
+    return defaultData();
+  }
+}
+
 export class SaveManager {
   load(): SaveData {
     try {
@@ -53,38 +136,8 @@ export class SaveManager {
       if (!raw) return defaultData();
       const parsed: unknown = JSON.parse(raw);
 
-      // Sanitize trophies before validation: keep only string elements when trophies is an array
-      if (parsed && typeof parsed === 'object') {
-        const p = parsed as Record<string, unknown>;
-        if (Array.isArray(p.trophies)) {
-          p.trophies = p.trophies.filter((v: unknown) => typeof v === 'string');
-        } else {
-          p.trophies = [];
-        }
-
-        // Sanitize completedLevels: normalize elements to numbers and remove non-numeric entries
-        const cl = p.completedLevels;
-        const modes = ['quiz', 'setTime', 'daily'] as const;
-        if (cl && typeof cl === 'object') {
-          for (const m of modes) {
-            const arr = (cl as Record<string, unknown>)[m];
-            if (Array.isArray(arr)) {
-              (cl as Record<string, unknown>)[m] = arr
-                .map((v: unknown) => Number(v))
-                .filter((n) => Number.isFinite(n));
-            } else {
-              (cl as Record<string, unknown>)[m] = [];
-            }
-          }
-          p.completedLevels = cl;
-        } else {
-          // ensure completedLevels exists as object with empty arrays to pass validation
-          p.completedLevels = { quiz: [], setTime: [], daily: [] };
-        }
-      }
-
-      if (isValid(parsed)) return parsed;
-      return defaultData();
+      const migrated = migrateIfNeeded(parsed);
+      return migrated;
     } catch {
       return defaultData();
     }

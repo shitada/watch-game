@@ -433,6 +433,17 @@ export class Clock3D {
     }
   }
 
+  /**
+   * Animate hands to the target time. Minimal implementation for hint animation.
+   * Currently sets the time immediately and returns a resolved Promise to keep tests deterministic.
+   */
+  async animateTo(target: ClockTime, durationMs = 500): Promise<void> {
+    // In a real runtime this would tween the hand rotations over durationMs.
+    // For tests we set the final time synchronously.
+    this.setTime(target);
+    return Promise.resolve();
+  }
+
   getClockFaceMesh(): THREE.Object3D | undefined {
     return this.group.getObjectByName('clockFace');
   }

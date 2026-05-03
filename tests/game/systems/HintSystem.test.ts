@@ -8,6 +8,7 @@ describe('HintSystem', () => {
   let clock: any;
   let hintCard: any;
   let hs: HintSystem;
+  let mockSfx: any;
   const target: ClockTime = { hours: 3, minutes: 30 };
 
   beforeEach(() => {
@@ -15,7 +16,8 @@ describe('HintSystem', () => {
     qg.startQuestion();
     clock = { animateTo: vi.fn().mockResolvedValue(undefined) };
     hintCard = { highlightNumber: vi.fn(), clearHighlight: vi.fn() };
-    hs = new HintSystem(qg, clock, hintCard);
+    mockSfx = { play: vi.fn() };
+    hs = new HintSystem(qg, clock, hintCard, mockSfx);
   });
 
   it('provides hint: highlights number, animates clock, and marks hint used', async () => {
@@ -23,6 +25,7 @@ describe('HintSystem', () => {
     expect(hintCard.highlightNumber).toHaveBeenCalledWith(3);
     expect(clock.animateTo).toHaveBeenCalledWith(target);
     expect(qg.canUseHint()).toBe(false);
+    expect(mockSfx.play).toHaveBeenCalledWith('hint');
     expect(hintCard.clearHighlight).toHaveBeenCalled();
   });
 

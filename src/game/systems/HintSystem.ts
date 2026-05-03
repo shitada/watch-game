@@ -1,5 +1,6 @@
 import type { ClockTime } from '@/types';
 import { QuizGenerator } from './QuizGenerator';
+import type { SFXGenerator } from '@/game/audio/SFXGenerator';
 
 export interface IClock3DLike {
   animateTo(target: ClockTime, durationMs?: number): Promise<void>;
@@ -15,6 +16,7 @@ export class HintSystem {
     private quizGen: QuizGenerator,
     private clock: IClock3DLike,
     private hintCard: IHintCardLike,
+    private sfx?: SFXGenerator,
   ) {}
 
   async provideHint(target: ClockTime): Promise<void> {
@@ -42,6 +44,16 @@ export class HintSystem {
         this.quizGen.useHint();
       } catch (e) {
         // swallow to avoid breaking hint flow
+      }
+
+      // Play hint SFX if provided; don't let failures or async rejections block hint flow
+      try {
+        const res = this.sfx?.play('hint');
+        if (res && typeof (res as any)?.then === 'function') {
+          (res as Promise<void>).catch(() => {});
+        }
+      } catch (e) {
+        // swallow
       }
 
       try {

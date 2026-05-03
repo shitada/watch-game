@@ -29,6 +29,8 @@ export interface Scene {
   // Optional: if provided and returns false, the engine may stop the continuous
   // render loop while the scene is active to save CPU on idle/static screens.
   // If not implemented, defaults to true (continuous rendering required).
+  // NOTE: Scene.exit() is responsible for releasing Three.js & DOM resources;
+  // the engine provides a defensive utility `safeDisposeScene` as a fallback.
   needsContinuousRendering?(): boolean;
 }
 

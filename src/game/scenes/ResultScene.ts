@@ -103,6 +103,8 @@ export class ResultScene implements Scene {
     this.isNewTrophy = false;
   }
 
+  dispose(): void { this.exit(); }
+
   getThreeScene(): THREE.Scene { return this.scene; }
   getCamera(): THREE.Camera { return this.camera; }
 

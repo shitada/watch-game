@@ -29,11 +29,16 @@ export class SceneManager {
       this.currentScene = null;
       this.currentType = null;
       try {
-        prev.exit();
+        // Prefer calling dispose() when available to ensure Three.js resources are freed.
+        if (typeof (prev as any).dispose === 'function') {
+          (prev as any).dispose();
+        } else {
+          prev.exit();
+        }
       } catch (e) {
         // swallow to keep transitions robust
         // eslint-disable-next-line no-console
-        console.warn('Scene exit threw', e);
+        console.warn('Scene dispose threw', e);
       }
 
       // Defensive fallback: even if exit() partially failed or was omitted,

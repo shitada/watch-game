@@ -8,6 +8,7 @@ function createMockScene(): Scene {
     enter: vi.fn(),
     update: vi.fn(),
     exit: vi.fn(),
+    dispose: vi.fn(),
     getThreeScene: () => new THREE.Scene(),
     getCamera: () => new THREE.PerspectiveCamera(),
   };
@@ -36,7 +37,7 @@ describe('SceneManager', () => {
     manager.transitionTo('title', {});
     manager.transitionTo('modeSelect', {});
 
-    expect(scene1.exit).toHaveBeenCalled();
+    expect(scene1.dispose).toHaveBeenCalled();
     expect(scene2.enter).toHaveBeenCalled();
   });
 

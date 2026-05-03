@@ -92,6 +92,8 @@ export class TitleScene implements Scene {
     this.overlay = null;
   }
 
+  dispose(): void { this.exit(); }
+
   getThreeScene(): THREE.Scene { return this.scene; }
   getCamera(): THREE.Camera { return this.camera; }
 

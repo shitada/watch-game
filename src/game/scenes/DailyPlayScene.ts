@@ -136,6 +136,8 @@ export class DailyPlayScene implements Scene {
     this.eventLabel = null;
   }
 
+  dispose(): void { this.exit(); }
+
   getThreeScene(): THREE.Scene { return this.scene; }
   getCamera(): THREE.Camera { return this.camera; }
 

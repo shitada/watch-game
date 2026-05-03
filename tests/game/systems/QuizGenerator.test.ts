@@ -175,13 +175,11 @@ describe('generateUniqueTime', () => {
       { hours: 2, minutes: 0 },
       { hours: 3, minutes: 0 },
     ];
-    // With Math.random = 0, index will be 0 -> remaining[0] should be hours 4 for level 1
-    vi.spyOn(Math, 'random').mockReturnValue(0);
+    // With rng = 0, index will be 0 -> remaining[0] should be hours 4 for level 1
+    const genDet = new QuizGenerator(() => 0);
 
-    const time = gen2.generateUniqueTime(1, exclude);
+    const time = genDet.generateUniqueTime(1, exclude);
     expect(time).toEqual({ hours: 4, minutes: 0 });
-
-    vi.restoreAllMocks();
   });
 
   it('should fallback when all candidates are excluded and return generated time', () => {

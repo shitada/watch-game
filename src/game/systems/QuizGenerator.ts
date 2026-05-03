@@ -26,7 +26,7 @@ export class QuizGenerator {
     const remaining = all.filter(c => !this.equalsTimeList(c, exclude));
 
     if (remaining.length > 0) {
-      const idx = Math.floor(Math.random() * remaining.length);
+      const idx = Math.floor(this.rng() * remaining.length);
       return remaining[idx];
     }
 

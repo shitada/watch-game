@@ -1,4 +1,4 @@
-import { describe, it, expect, beforeEach } from 'vitest';
+import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 import { ChoiceButtons } from '@/ui/ChoiceButtons';
 import type { ClockTime } from '@/types';
 
@@ -12,6 +12,12 @@ describe('ChoiceButtons', () => {
     choiceButtons.mount(parent);
   });
 
+  afterEach(() => {
+    // clean up DOM
+    parent.remove();
+    vi.useRealTimers();
+  });
+
   const sampleChoices: ClockTime[] = [
     { hours: 3, minutes: 0 },
     { hours: 6, minutes: 30 },
@@ -23,6 +29,15 @@ describe('ChoiceButtons', () => {
     choiceButtons.setChoices(sampleChoices);
     const buttons = parent.querySelectorAll('button');
     expect(buttons.length).toBe(4);
+  });
+
+  it('should set aria-label on buttons equal to their text', () => {
+    choiceButtons.setChoices(sampleChoices);
+    const buttons = parent.querySelectorAll('button');
+    buttons.forEach(btn => {
+      expect(btn.getAttribute('aria-label')).toBeTruthy();
+      expect(btn.getAttribute('aria-label')).toBe((btn as HTMLButtonElement).textContent);
+    });
   });
 
   it('should scale down on pointerdown', () => {
@@ -108,8 +123,11 @@ describe('ChoiceButtons', () => {
       expect(buttons[correctIndex].style.opacity).not.toBe('0.3');
     });
 
-    it('should set pointerEvents to none on dimmed buttons', () => {
+    it('should set pointerEvents to none on dimmed buttons and announce hint', () => {
       choiceButtons.setChoices(sampleChoices);
+      const live = parent.querySelector('[aria-live]') as HTMLElement | null;
+      expect(live).toBeTruthy();
+
       choiceButtons.showHint(0);
 
       const buttons = parent.querySelectorAll('button');
@@ -117,6 +135,8 @@ describe('ChoiceButtons', () => {
       dimmed.forEach(b => {
         expect(b.style.pointerEvents).toBe('none');
       });
+
+      expect(live!.textContent).toBe('ヒントを使ったよ');
     });
 
     it('should not dim the correct button', () => {
@@ -145,6 +165,34 @@ describe('ChoiceButtons', () => {
       choiceButtons.unmount();
       // Should not throw
       expect(() => choiceButtons.showHint(0)).not.toThrow();
+    });
+  });
+
+  describe('accessibility and positive feedback', () => {
+    it('shows polite aria-live messages and adds emoji on correct answer', () => {
+      vi.useFakeTimers();
+      choiceButtons.setChoices(sampleChoices.slice(0, 2));
+      const selectSpy = vi.fn();
+      choiceButtons.onSelect(selectSpy);
+
+      choiceButtons.showResult(1, 1);
+
+      const live = parent.querySelector('[aria-live]') as HTMLElement | null;
+      expect(live).toBeTruthy();
+      expect(live!.textContent).toBe('せいかい！ すごいね✨');
+
+      // Buttons should be disabled
+      const buttons = parent.querySelectorAll('button');
+      buttons.forEach(b => b.dispatchEvent(new Event('click')));
+      expect(selectSpy).not.toHaveBeenCalled();
+
+      // Emoji should be temporarily added
+      const emoji = parent.querySelector('.choice-feedback-emoji');
+      expect(emoji).toBeTruthy();
+
+      vi.advanceTimersByTime(800);
+      const emojiAfter = parent.querySelector('.choice-feedback-emoji');
+      expect(emojiAfter).toBeNull();
     });
   });
 });

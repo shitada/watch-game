@@ -9,10 +9,19 @@ on:
 
 permissions:
   contents: write
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
 
 jobs:
   cleanup:
     runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
     steps:
       - uses: actions/checkout@v4
         with:
@@ -32,6 +41,7 @@ jobs:
           echo "branch=${SAFE_BRANCH}" >> "$GITHUB_OUTPUT"
 
       - name: Remove preview directory
+        id: cleanup
         run: |
           DIR="${{ steps.preview.outputs.dir }}"
           if [ -d "${DIR}" ]; then
@@ -41,7 +51,19 @@ jobs:
             git add -A
             git commit -m "chore: remove preview for ${{ steps.preview.outputs.branch }}" || echo "Nothing to commit"
             git push origin gh-pages
+            echo "cleaned=true" >> "$GITHUB_OUTPUT"
             echo "✅ Removed ${DIR}"
           else
+            echo "cleaned=false" >> "$GITHUB_OUTPUT"
             echo "ℹ️ ${DIR} does not exist, nothing to clean up"
           fi
+
+      - uses: actions/upload-pages-artifact@v3
+        if: steps.cleanup.outputs.cleaned == 'true'
+        with:
+          path: .
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
+        if: steps.cleanup.outputs.cleaned == 'true'

@@ -9,14 +9,19 @@ on:
 permissions:
   contents: write
   pull-requests: write
+  pages: write
+  id-token: write
 
 concurrency:
-  group: preview-${{ github.head_ref || github.ref_name }}
-  cancel-in-progress: true
+  group: pages
+  cancel-in-progress: false
 
 jobs:
   build-test-deploy:
     runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
     steps:
       - uses: actions/checkout@v4
 
@@ -51,6 +56,21 @@ jobs:
           publish_dir: ./dist
           destination_dir: preview/${{ steps.preview.outputs.branch }}
           keep_files: true
+
+      # Checkout the full gh-pages content (main site + all previews)
+      - name: Checkout gh-pages for deploy
+        uses: actions/checkout@v4
+        with:
+          ref: gh-pages
+          path: gh-pages-content
+
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: ./gh-pages-content
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
 
       - name: Comment preview URL on PR
         if: github.event_name == 'pull_request'

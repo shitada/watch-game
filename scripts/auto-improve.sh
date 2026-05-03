@@ -165,19 +165,19 @@ print_summary() {
 trap 'create_pr_and_exit INT' INT
 trap 'create_pr_and_exit TERM' TERM
 
-# --- GitHub Pages 設定を gh-pages ブランチに切り替え ---
+# --- GitHub Pages 設定を GitHub Actions モードに設定 ---
 ensure_pages_config() {
   local build_type
   build_type="$(gh api repos/shitada/watch-game/pages --jq '.build_type' 2>/dev/null || echo 'unknown')"
 
-  if [[ "${build_type}" == "legacy" ]]; then
-    ok "GitHub Pages は gh-pages ブランチから配信中"
+  if [[ "${build_type}" == "workflow" ]]; then
+    ok "GitHub Pages は GitHub Actions から配信中"
     return
   fi
 
-  info "GitHub Pages を gh-pages ブランチ配信に切り替え中..."
+  info "GitHub Pages を GitHub Actions 配信に切り替え中..."
 
-  # gh-pages ブランチが存在しない場合は作成
+  # gh-pages ブランチが存在しない場合は作成（ストレージ用）
   if ! git ls-remote --heads origin gh-pages 2>/dev/null | grep -q .; then
     info "gh-pages ブランチを初期化中..."
     git checkout --orphan gh-pages --quiet
@@ -190,12 +190,11 @@ ensure_pages_config() {
     ok "gh-pages ブランチを作成しました"
   fi
 
-  # Pages 設定を変更
+  # Pages 設定を GitHub Actions モードに変更
   gh api repos/shitada/watch-game/pages \
     -X PUT \
-    -f "source[branch]=gh-pages" \
-    -f "source[path]=/" \
-    --silent 2>/dev/null || warn "Pages 設定の自動変更に失敗。GitHub Settings > Pages で gh-pages ブランチを選択してください"
+    -f "build_type=workflow" \
+    --silent 2>/dev/null || warn "Pages 設定の自動変更に失敗。GitHub Settings > Pages で Source を 'GitHub Actions' に変更してください"
 
   ok "GitHub Pages 設定を更新しました"
 }

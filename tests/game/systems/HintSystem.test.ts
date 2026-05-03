@@ -32,4 +32,16 @@ describe('HintSystem', () => {
     expect(clock.animateTo).not.toHaveBeenCalled();
     expect(hintCard.highlightNumber).not.toHaveBeenCalled();
   });
+
+  it('marks hint used and clears highlight even if clock.animateTo rejects', async () => {
+    // simulate animateTo failure
+    clock.animateTo = vi.fn().mockRejectedValue(new Error('animate failed'));
+
+    await hs.provideHint(target);
+
+    // even though animateTo failed, hint should be consumed
+    expect(qg.canUseHint()).toBe(false);
+    // and UI highlight should be cleared
+    expect(hintCard.clearHighlight).toHaveBeenCalled();
+  });
 });

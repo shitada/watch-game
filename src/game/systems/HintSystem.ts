@@ -20,24 +20,35 @@ export class HintSystem {
   async provideHint(target: ClockTime): Promise<void> {
     if (!this.quizGen.canUseHint()) return;
 
-    // Step 1: highlight the target number on a hint card
+    // Best-effort: highlight the target number
     try {
       this.hintCard.highlightNumber(target.hours);
     } catch (e) {
-      // best-effort
+      // ignore highlight failures
     }
 
-    // Step 2: animate clock hands to show the correct time
-    await this.clock.animateTo(target);
-
-    // Step 3: mark hint used so QuizGenerator knows
-    this.quizGen.useHint();
-
-    // clear UI highlight
+    // Try to animate the clock; if it fails, swallow the error but continue
     try {
-      this.hintCard.clearHighlight();
+      await this.clock.animateTo(target);
     } catch (e) {
-      // ignore
+      // best-effort: animation may fail in tests or runtime; do not let it prevent hint state updates
+      try {
+        // eslint-disable-next-line no-console
+        console.error('HintSystem: clock.animateTo failed', e);
+      } catch {}
+    } finally {
+      // Ensure hint state and UI cleanup always run
+      try {
+        this.quizGen.useHint();
+      } catch (e) {
+        // swallow to avoid breaking hint flow
+      }
+
+      try {
+        this.hintCard.clearHighlight();
+      } catch (e) {
+        // swallow
+      }
     }
   }
 }

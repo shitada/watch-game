@@ -1,0 +1,425 @@
+
+[1m[30m[46m RUN [49m[39m[22m [36mv4.1.5 [39m[90m/Users/shingotada/Documents/vscode/watch-game[39m
+
+ [32m✓[39m tests/game/scenes/TitleScene.test.ts[2m > [22mTitleScene[2m > [22mBGM[2m > [22menter() で startBGM("title") が呼ばれること[32m 88[2mms[22m[39m
+ [32m✓[39m tests/game/scenes/TitleScene.test.ts[2m > [22mTitleScene[2m > [22mBGM[2m > [22maudioManager が未初期化の場合 startBGM が呼ばれないこと[32m 7[2mms[22m[39m
+ [32m✓[39m tests/game/scenes/LevelSelectScene.test.ts[2m > [22mLevelSelectScene[2m > [22m星評価表示（ベストスコアベース）[2m > [22m未プレイのレベルは ☆☆☆ を表示する[32m 98[2mms[22m[39m
+ [32m✓[39m tests/game/scenes/ResultScene.test.ts[2m > [22mResultScene[2m > [22m進捗保存[2m > [22mratio >= 0.6 かつ quiz モードで completedLevel が保存される[32m 86[2mms[22m[39m
+ [32m✓[39m tests/game/scenes/ResultScene.test.ts[2m > [22mResultScene[2m > [22m進捗保存[2m > [22mratio >= 0.6 かつ setTime モードで completedLevel が保存される[32m 5[2mms[22m[39m
+ [32m✓[39m tests/game/scenes/ResultScene.test.ts[2m > [22mResultScene[2m > [22m進捗保存[2m > [22mratio < 0.6 かつ quiz モードで completedLevel が保存されない[32m 4[2mms[22m[39m
+ [32m✓[39m tests/game/scenes/ResultScene.test.ts[2m > [22mResultScene[2m > [22m進捗保存[2m > [22mratio >= 0.6 かつ daily モードで daily の completedLevel が保存される[32m 3[2mms[22m[39m
+ [32m✓[39m tests/game/scenes/TrophyScene.test.ts[2m > [22mTrophyScene[2m > [22mBGM[2m > [22menter() で startBGM("title") が呼ばれること[32m 62[2mms[22m[39m
+ [32m✓[39m tests/game/scenes/TrophyScene.test.ts[2m > [22mTrophyScene[2m > [22mBGM[2m > [22maudioManager が未初期化の場合 startBGM が呼ばれないこと[32m 24[2mms[22m[39m
+ [32m✓[39m tests/game/scenes/TrophyScene.test.ts[2m > [22mTrophyScene[2m > [22mBGM[2m > [22mexit() で stopBGM() が呼ばれること[32m 7[2mms[22m[39m
+ [32m✓[39m tests/game/scenes/TitleScene.test.ts[2m > [22mTitleScene[2m > [22mBGM[2m > [22mexit() で stopBGM() が呼ばれること[32m 5[2mms[22m[39m
+ [32m✓[39m tests/game/scenes/TitleScene.test.ts[2m > [22mTitleScene[2m > [22m時計表示[2m > [22menter() で Clock3D の group が scene に追加されること[32m 8[2mms[22m[39m
+ [32m✓[39m tests/game/scenes/TitleScene.test.ts[2m > [22mTitleScene[2m > [22m時計表示[2m > [22mexit() で Clock3D の group が scene から除去されること[32m 12[2mms[22m[39m
+ [32m✓[39m tests/game/scenes/TitleScene.test.ts[2m > [22mTitleScene[2m > [22m時計表示[2m > [22menter→exit→enter が可能で dispose が呼ばれること[32m 6[2mms[22m[39m
+ [32m✓[39m tests/game/scenes/TitleScene.test.ts[2m > [22mTitleScene[2m > [22mClock3D instantiation count[2m > [22menter() creates Clock3D once[32m 3[2mms[22m[39m
+ [32m✓[39m tests/game/scenes/TitleScene.test.ts[2m > [22mTitleScene[2m > [22mClock3D instantiation count[2m > [22menter->exit->enter creates one Clock3D per enter[32m 5[2mms[22m[39m
+ [32m✓[39m tests/game/scenes/TitleScene.test.ts[2m > [22mTitleScene[2m > [22m背景 stars[2m > [22menter() で stars パーティクルが scene に追加されること[32m 14[2mms[22m[39m
+ [32m✓[39m tests/game/scenes/TitleScene.test.ts[2m > [22mTitleScene[2m > [22m背景 stars[2m > [22mexit() で stars の geometry/material が dispose されること[32m 12[2mms[22m[39m
+ [32m✓[39m tests/game/scenes/TitleScene.test.ts[2m > [22mTitleScene[2m > [22mボタン操作[2m > [22m「あそぶ」ボタンクリックで modeSelect に遷移すること[32m 7[2mms[22m[39m
+ [32m✓[39m tests/game/scenes/TitleScene.test.ts[2m > [22mTitleScene[2m > [22mボタン操作[2m > [22m「トロフィー」ボタンクリックで trophy に遷移すること[32m 22[2mms[22m[39m
+ [32m✓[39m tests/game/scenes/TitleScene.test.ts[2m > [22mTitleScene[2m > [22mボタン操作[2m > [22mボタンクリック時に未初期化なら audioManager.init() が呼ばれること[32m 4[2mms[22m[39m
+ [32m✓[39m tests/game/scenes/TitleScene.test.ts[2m > [22mTitleScene[2m > [22mボタン操作[2m > [22mボタンクリック時に初期化済みなら audioManager.init() が呼ばれないこと[32m 11[2mms[22m[39m
+ [32m✓[39m tests/game/scenes/TitleScene.test.ts[2m > [22mTitleScene[2m > [22mボタン操作[2m > [22mボタンクリックで buttonTap SFX が再生されること[32m 3[2mms[22m[39m
+ [32m✓[39m tests/game/scenes/TitleScene.test.ts[2m > [22mTitleScene[2m > [22mexit()[2m > [22mexit() でオーバーレイ DOM が除去されること[32m 3[2mms[22m[39m
+ [32m✓[39m tests/game/scenes/LevelSelectScene.test.ts[2m > [22mLevelSelectScene[2m > [22m星評価表示（ベストスコアベース）[2m > [22mratio < 0.6 のとき ☆☆☆ を表示する[32m 12[2mms[22m[39m
+ [32m✓[39m tests/game/scenes/LevelSelectScene.test.ts[2m > [22mLevelSelectScene[2m > [22m星評価表示（ベストスコアベース）[2m > [22mratio >= 0.6 のとき ★☆☆ を表示する[32m 8[2mms[22m[39m
+ [32m✓[39m tests/game/scenes/LevelSelectScene.test.ts[2m > [22mLevelSelectScene[2m > [22m星評価表示（ベストスコアベース）[2m > [22mratio >= 0.8 のとき ★★☆ を表示する[32m 5[2mms[22m[39m
+ [32m✓[39m tests/game/scenes/LevelSelectScene.test.ts[2m > [22mLevelSelectScene[2m > [22m星評価表示（ベストスコアベース）[2m > [22mratio === 1.0 のとき ★★★ を表示する[32m 34[2mms[22m[39m
+ [32m✓[39m tests/game/scenes/LevelSelectScene.test.ts[2m > [22mLevelSelectScene[2m > [22m星評価表示（ベストスコアベース）[2m > [22m未プレイ（☆☆☆）はグレー(#BDC3C7)で表示される[32m 7[2mms[22m[39m
+ [32m✓[39m tests/game/scenes/LevelSelectScene.test.ts[2m > [22mLevelSelectScene[2m > [22m星評価表示（ベストスコアベース）[2m > [22m★ありはゴールド(#F39C12)で表示される[32m 5[2mms[22m[39m
+ [32m✓[39m tests/game/scenes/LevelSelectScene.test.ts[2m > [22mLevelSelectScene[2m > [22m星評価表示（ベストスコアベース）[2m > [22msetTime モードでも正しいキーでスコアを参照する[32m 13[2mms[22m[39m
+ [32m✓[39m tests/game/scenes/LevelSelectScene.test.ts[2m > [22mLevelSelectScene[2m > [22mベストスコア・トロフィー表示[2m > [22mベストスコアがある場合「🎯 3/5」のように表示される[32m 5[2mms[22m[39m
+ [32m✓[39m tests/game/scenes/LevelSelectScene.test.ts[2m > [22mLevelSelectScene[2m > [22mベストスコア・トロフィー表示[2m > [22mベストスコアがない（未プレイ）場合はスコア表示がない[32m 10[2mms[22m[39m
+ [32m✓[39m tests/game/scenes/ResultScene.test.ts[2m > [22mResultScene[2m > [22m進捗保存[2m > [22mratio < 0.6 かつ daily モードで completedLevel が保存されない[32m 3[2mms[22m[39m
+ [32m✓[39m tests/game/scenes/ResultScene.test.ts[2m > [22mResultScene[2m > [22m進捗保存[2m > [22mdaily モードでは quiz/setTime の completedLevel には追加されない[32m 3[2mms[22m[39m
+ [32m✓[39m tests/game/scenes/ResultScene.test.ts[2m > [22mResultScene[2m > [22mベストスコアと統計[2m > [22mratio 100% で bestScore と stats が更新される[32m 15[2mms[22m[39m
+ [32m✓[39m tests/game/scenes/ResultScene.test.ts[2m > [22mResultScene[2m > [22mベストスコアと統計[2m > [22mratio 40% でも bestScore と stats が更新される[32m 3[2mms[22m[39m
+ [32m✓[39m tests/game/scenes/ResultScene.test.ts[2m > [22mResultScene[2m > [22mベストスコアと統計[2m > [22m複数回プレイで totalPlays が加算される[32m 36[2mms[22m[39m
+ [32m✓[39m tests/game/scenes/ResultScene.test.ts[2m > [22mResultScene[2m > [22mトロフィー[2m > [22mratio === 1 でパーフェクトトロフィーが付与される[32m 5[2mms[22m[39m
+ [32m✓[39m tests/game/scenes/ResultScene.test.ts[2m > [22mResultScene[2m > [22mトロフィー[2m > [22mratio < 1 ではトロフィーが付与されない[32m 9[2mms[22m[39m
+ [32m✓[39m tests/game/scenes/ResultScene.test.ts[2m > [22mResultScene[2m > [22mBGM と SFX[2m > [22menter() で result BGM が開始される[32m 5[2mms[22m[39m
+ [32m✓[39m tests/game/scenes/ResultScene.test.ts[2m > [22mResultScene[2m > [22mBGM と SFX[2m > [22mratio === 1 で allClear SFX が再生される[32m 3[2mms[22m[39m
+ [32m✓[39m tests/game/scenes/ResultScene.test.ts[2m > [22mResultScene[2m > [22mBGM と SFX[2m > [22mratio >= 0.6 かつ < 1 で levelClear SFX が再生される[32m 3[2mms[22m[39m
+ [32m✓[39m tests/game/scenes/ResultScene.test.ts[2m > [22mResultScene[2m > [22mBGM と SFX[2m > [22mratio < 0.6 では SFX が再生されない[32m 2[2mms[22m[39m
+ [32m✓[39m tests/game/scenes/LevelSelectScene.test.ts[2m > [22mLevelSelectScene[2m > [22mベストスコア・トロフィー表示[2m > [22mトロフィーがある場合「🏆」が表示される[32m 4[2mms[22m[39m
+ [32m✓[39m tests/game/scenes/LevelSelectScene.test.ts[2m > [22mLevelSelectScene[2m > [22mベストスコア・トロフィー表示[2m > [22mトロフィーがない場合「🏆」は表示されない[32m 8[2mms[22m[39m
+ [32m✓[39m tests/game/scenes/LevelSelectScene.test.ts[2m > [22mLevelSelectScene[2m > [22mベストスコア・トロフィー表示[2m > [22msetTimeモードでも正しいキーでスコア・トロフィーを参照する[32m 6[2mms[22m[39m
+ [32m✓[39m tests/game/scenes/TrophyScene.test.ts[2m > [22mTrophyScene[2m > [22mトロフィー表示[2m > [22m獲得済みトロフィーが正しい emoji・ラベルで表示されること[32m 57[2mms[22m[39m
+ [32m✓[39m tests/game/scenes/TrophyScene.test.ts[2m > [22mTrophyScene[2m > [22mトロフィー表示[2m > [22m未獲得トロフィーが ❓ / ??? で表示されること[32m 7[2mms[22m[39m
+ [32m✓[39m tests/game/scenes/TrophyScene.test.ts[2m > [22mTrophyScene[2m > [22mトロフィー表示[2m > [22mトロフィー数が「earned / 9」形式で表示されること[32m 45[2mms[22m[39m
+ [32m✓[39m tests/game/scenes/TrophyScene.test.ts[2m > [22mTrophyScene[2m > [22m統計表示[2m > [22mtotalPlays と totalCorrect が表示されること[32m 56[2mms[22m[39m
+ [32m✓[39m tests/game/scenes/TrophyScene.test.ts[2m > [22mTrophyScene[2m > [22m戻るボタン[2m > [22m戻るボタンクリックで title に遷移すること[32m 18[2mms[22m[39m
+ [32m✓[39m tests/game/scenes/TrophyScene.test.ts[2m > [22mTrophyScene[2m > [22m戻るボタン[2m > [22m戻るボタンクリックで buttonTap SFX が再生されること[32m 7[2mms[22m[39m
+ [32m✓[39m tests/game/scenes/TrophyScene.test.ts[2m > [22mTrophyScene[2m > [22mexit()[2m > [22mexit() でオーバーレイ DOM が除去されること[32m 7[2mms[22m[39m
+ [32m✓[39m tests/game/scenes/ResultScene.test.ts[2m > [22mResultScene[2m > [22mBGM と SFX[2m > [22mexit() で BGM が停止される[32m 37[2mms[22m[39m
+ [32m✓[39m tests/game/scenes/ResultScene.test.ts[2m > [22mResultScene[2m > [22mUI 表示[2m > [22m100% で星3つ ★★★ とパーフェクトメッセージが表示される[32m 11[2mms[22m[39m
+ [32m✓[39m tests/game/scenes/ResultScene.test.ts[2m > [22mResultScene[2m > [22mUI 表示[2m > [22m80% で星2つ ★★☆ と「とてもよくできました」が表示される[32m 16[2mms[22m[39m
+ [32m✓[39m tests/game/scenes/ResultScene.test.ts[2m > [22mResultScene[2m > [22mUI 表示[2m > [22m60% で星1つ ★☆☆ と「よくがんばったね」が表示される[32m 3[2mms[22m[39m
+ [32m✓[39m tests/game/scenes/ResultScene.test.ts[2m > [22mResultScene[2m > [22mUI 表示[2m > [22m40% で星0個 ☆☆☆ と「もういちど チャレンジしよう」が表示される[32m 2[2mms[22m[39m
+ [32m✓[39m tests/game/scenes/ResultScene.test.ts[2m > [22mResultScene[2m > [22mUI 表示[2m > [22mスコア表示が「correct / total もん せいかい！」形式である[32m 6[2mms[22m[39m
+ [32m✓[39m tests/game/scenes/ResultScene.test.ts[2m > [22mResultScene[2m > [22mボタン遷移[2m > [22mratio < 0.6 で 3つのボタン（もういちど・モードせんたく・ホーム）が表示される[32m 11[2mms[22m[39m
+ [32m✓[39m tests/game/scenes/ResultScene.test.ts[2m > [22mResultScene[2m > [22mボタン遷移[2m > [22mホームボタンで title に遷移する[32m 4[2mms[22m[39m
+ [32m✓[39m tests/game/scenes/ResultScene.test.ts[2m > [22mResultScene[2m > [22mボタン遷移[2m > [22mモードせんたくボタンで modeSelect に遷移する[32m 13[2mms[22m[39m
+ [32m✓[39m tests/game/scenes/ResultScene.test.ts[2m > [22mResultScene[2m > [22mボタン遷移[2m > [22mもういちどボタンで quiz モードは quizPlay に遷移する[32m 12[2mms[22m[39m
+ [32m✓[39m tests/game/scenes/ResultScene.test.ts[2m > [22mResultScene[2m > [22mボタン遷移[2m > [22mもういちどボタンで setTime モードは setTimePlay に遷移する[32m 8[2mms[22m[39m
+ [32m✓[39m tests/game/scenes/ResultScene.test.ts[2m > [22mResultScene[2m > [22mボタン遷移[2m > [22mもういちどボタンで daily モードは dailyPlay に遷移する[32m 3[2mms[22m[39m
+ [32m✓[39m tests/game/scenes/ResultScene.test.ts[2m > [22mResultScene[2m > [22mexit()[2m > [22mexit() でオーバーレイが除去される[32m 3[2mms[22m[39m
+ [32m✓[39m tests/game/scenes/ResultScene.test.ts[2m > [22mResultScene — つぎのレベルへボタン[2m > [22mレベルクリア（ratio >= 0.6）かつ最終レベルでない場合にボタンが表示される[32m 3[2mms[22m[39m
+ [32m✓[39m tests/game/scenes/ResultScene.test.ts[2m > [22mResultScene — つぎのレベルへボタン[2m > [22mratio = 0.6 ちょうどでボタンが表示される（境界値）[32m 3[2mms[22m[39m
+ [32m✓[39m tests/game/scenes/ResultScene.test.ts[2m > [22mResultScene — つぎのレベルへボタン[2m > [22mratio = 0.59 でボタンが表示されない（境界値）[32m 2[2mms[22m[39m
+ [32m✓[39m tests/game/scenes/SetTimePlayScene.test.ts[2m > [22mSetTimePlayScene[2m > [22mexit() 後に setTimeout コールバックが requestTransition を呼ばないこと[32m 205[2mms[22m[39m
+ [32m✓[39m tests/game/scenes/SetTimePlayScene.test.ts[2m > [22mSetTimePlayScene[2m > [22mhandleConfirm() 後にボタンが視覚的に無効化されること[32m 33[2mms[22m[39m
+ [32m✓[39m tests/game/scenes/SetTimePlayScene.test.ts[2m > [22mSetTimePlayScene[2m > [22m次の問題表示後にボタンが再度有効化されること[32m 18[2mms[22m[39m
+ [32m✓[39m tests/game/scenes/QuizPlayScene.test.ts[2m > [22mQuizPlayScene[2m > [22mexit() 後に setTimeout コールバックが requestTransition を呼ばないこと[32m 221[2mms[22m[39m
+ [32m✓[39m tests/game/scenes/QuizPlayScene.test.ts[2m > [22mQuizPlayScene[2m > [22m質問プロンプト「なんじかな」が表示されること[32m 39[2mms[22m[39m
+ [32m✓[39m tests/game/scenes/DailyPlayScene.test.ts[2m > [22mDailyPlayScene[2m > [22mexit() 後に setTimeout コールバックが requestTransition を呼ばないこと[32m 224[2mms[22m[39m
+ [32m✓[39m tests/game/scenes/DailyPlayScene.test.ts[2m > [22mDailyPlayScene[2m > [22mhandleConfirm() 後にボタンが視覚的に無効化されること[32m 52[2mms[22m[39m
+ [32m✓[39m tests/game/scenes/SetTimePlayScene.test.ts[2m > [22mSetTimePlayScene[2m > [22menter() で pendingTimers が初期化されること（再入時の防御）[32m 24[2mms[22m[39m
+ [32m✓[39m tests/game/scenes/SetTimePlayScene.test.ts[2m > [22mSetTimePlayScene[2m > [22m不正解時に CurrentTimeDisplay が正解の時刻に更新されること[32m 24[2mms[22m[39m
+ [32m✓[39m tests/game/scenes/SetTimePlayScene.test.ts[2m > [22mSetTimePlayScene[2m > [22menter() で CurrentTimeDisplay に初期時刻 12:00 が表示されること[32m 10[2mms[22m[39m
+ [32m✓[39m tests/game/scenes/SetTimePlayScene.test.ts[2m > [22mSetTimePlayScene[2m > [22mexit() で CurrentTimeDisplay が unmount されること[32m 5[2mms[22m[39m
+ [32m✓[39m tests/game/scenes/SetTimePlayScene.test.ts[2m > [22mSetTimePlayScene[2m > [22mexit() で controller.dispose -> clock.dispose の順序で呼ばれること[32m 11[2mms[22m[39m
+ [32m✓[39m tests/game/scenes/ResultScene.test.ts[2m > [22mResultScene — つぎのレベルへボタン[2m > [22m最終レベルの場合はボタンが表示されない[32m 2[2mms[22m[39m
+ [32m✓[39m tests/game/scenes/ResultScene.test.ts[2m > [22mResultScene — つぎのレベルへボタン[2m > [22mmode === "daily" の場合はボタンが表示されない[32m 4[2mms[22m[39m
+ [32m✓[39m tests/game/scenes/ResultScene.test.ts[2m > [22mResultScene — つぎのレベルへボタン[2m > [22mquiz モードでボタンクリック時に quizPlay に level+1 で遷移する[32m 6[2mms[22m[39m
+ [32m✓[39m tests/game/scenes/ResultScene.test.ts[2m > [22mResultScene — つぎのレベルへボタン[2m > [22msetTime モードでボタンクリック時に setTimePlay に level+1 で遷移する[32m 24[2mms[22m[39m
+ [32m✓[39m tests/game/scenes/ResultScene.test.ts[2m > [22mResultScene — つぎのレベルへボタン[2m > [22mretryBtn の直後に配置される[32m 18[2mms[22m[39m
+ [32m✓[39m tests/game/scenes/ResultScene.test.ts[2m > [22mResultScene - トロフィー獲得通知[2m > [22mパーフェクト達成 + 初回トロフィー → 🏆 トロフィーゲット！が表示される[32m 3[2mms[22m[39m
+ [32m✓[39m tests/game/scenes/ResultScene.test.ts[2m > [22mResultScene - トロフィー獲得通知[2m > [22mパーフェクト達成 + 既得トロフィー → トロフィーゲット！が表示されない[32m 9[2mms[22m[39m
+ [32m✓[39m tests/game/scenes/ResultScene.test.ts[2m > [22mResultScene - トロフィー獲得通知[2m > [22mパーフェクト未達 → トロフィーゲット！が表示されない[32m 5[2mms[22m[39m
+ [32m✓[39m tests/game/scenes/ResultScene.test.ts[2m > [22mResultScene - トロフィー獲得通知[2m > [22mexit() で isNewTrophy がリセットされること[32m 4[2mms[22m[39m
+ [32m✓[39m tests/game/scenes/DailyPlayScene.test.ts[2m > [22mDailyPlayScene[2m > [22m次のイベント表示後にボタンが再度有効化されること[32m 40[2mms[22m[39m
+ [32m✓[39m tests/game/scenes/DailyPlayScene.test.ts[2m > [22mDailyPlayScene[2m > [22menter() で pendingTimers が初期化されること（再入時の防御）[32m 32[2mms[22m[39m
+ [32m✓[39m tests/game/scenes/DailyPlayScene.test.ts[2m > [22mDailyPlayScene[2m > [22m不正解時に CurrentTimeDisplay が正解の時刻に更新されること[32m 19[2mms[22m[39m
+ [32m✓[39m tests/game/scenes/DailyPlayScene.test.ts[2m > [22mDailyPlayScene[2m > [22menter() で CurrentTimeDisplay に初期時刻 12:00 が表示されること[32m 14[2mms[22m[39m
+ [32m✓[39m tests/game/scenes/QuizPlayScene.test.ts[2m > [22mQuizPlayScene[2m > [22menter() で pendingTimers が初期化されること（再入時の防御）[32m 34[2mms[22m[39m
+ [32m✓[39m tests/game/scenes/QuizPlayScene.test.ts[2m > [22mQuizPlayScene[2m > [22mヒントタイマー[2m > [22m8秒後にヒントSFXが再生されること[32m 27[2mms[22m[39m
+ [32m✓[39m tests/game/scenes/QuizPlayScene.test.ts[2m > [22mQuizPlayScene[2m > [22mヒントタイマー[2m > [22m8秒後にボタンが2つ薄くなること（2択になる）[32m 47[2mms[22m[39m
+ [32m✓[39m tests/game/scenes/DailyPlayScene.test.ts[2m > [22mDailyPlayScene[2m > [22mexit() で CurrentTimeDisplay が unmount されること[32m 15[2mms[22m[39m
+ [32m✓[39m tests/game/scenes/DailyPlayScene.test.ts[2m > [22mDailyPlayScene[2m > [22mexit() で controller.dispose -> clock.dispose の順序で呼ばれること[32m 16[2mms[22m[39m
+ [32m✓[39m tests/game/scenes/QuizPlayScene.test.ts[2m > [22mQuizPlayScene[2m > [22mヒントタイマー[2m > [22m回答するとヒントタイマーがクリアされること[32m 39[2mms[22m[39m
+ [32m✓[39m tests/game/scenes/QuizPlayScene.test.ts[2m > [22mQuizPlayScene[2m > [22mヒントタイマー[2m > [22mヒントは1問につき1回のみ発動すること[32m 18[2mms[22m[39m
+ [32m✓[39m tests/game/scenes/QuizPlayScene.test.ts[2m > [22mQuizPlayScene[2m > [22mヒントタイマー[2m > [22mexit()でヒントタイマーがクリアされること[32m 9[2mms[22m[39m
+ [32m✓[39m tests/game/scenes/QuizPlayScene.test.ts[2m > [22mQuizPlayScene[2m > [22mヒントタイマー[2m > [22m💡 ヒント！通知が表示されること[32m 27[2mms[22m[39m
+ [32m✓[39m tests/game/scenes/QuizPlayScene.test.ts[2m > [22mQuizPlayScene[2m > [22menter→exit→enter が可能で dispose が呼ばれること[32m 20[2mms[22m[39m
+ [32m✓[39m tests/ui/ChoiceButtons.test.ts[2m > [22mChoiceButtons[2m > [22mshould render buttons for each choice[32m 159[2mms[22m[39m
+ [32m✓[39m tests/ui/ChoiceButtons.test.ts[2m > [22mChoiceButtons[2m > [22mshould scale down on pointerdown[32m 15[2mms[22m[39m
+ [32m✓[39m tests/ui/ChoiceButtons.test.ts[2m > [22mChoiceButtons[2m > [22mshould reset scale on pointerup[32m 10[2mms[22m[39m
+ [32m✓[39m tests/ui/ChoiceButtons.test.ts[2m > [22mChoiceButtons[2m > [22mshould reset scale on pointerleave[32m 10[2mms[22m[39m
+ [32m✓[39m tests/ui/ChoiceButtons.test.ts[2m > [22mChoiceButtons[2m > [22mshould call onSelect callback when clicked[32m 10[2mms[22m[39m
+ [32m✓[39m tests/ui/ChoiceButtons.test.ts[2m > [22mChoiceButtons[2m > [22mshould not call onSelect when disabled after showResult[32m 19[2mms[22m[39m
+ [32m✓[39m tests/ui/ChoiceButtons.test.ts[2m > [22mChoiceButtons[2m > [22mshould not scale down on pointerdown when disabled[32m 15[2mms[22m[39m
+ [32m✓[39m tests/ui/ChoiceButtons.test.ts[2m > [22mChoiceButtons[2m > [22mshould reset scale on pointerleave even when disabled[32m 19[2mms[22m[39m
+ [32m✓[39m tests/ui/ChoiceButtons.test.ts[2m > [22mChoiceButtons[2m > [22mshould clean up on unmount[32m 9[2mms[22m[39m
+ [32m✓[39m tests/ui/ConfirmButton.test.ts[2m > [22mConfirmButton[2m > [22mmount(parent) でボタン要素が parent に追加されること[32m 152[2mms[22m[39m
+ [32m✓[39m tests/ui/ConfirmButton.test.ts[2m > [22mConfirmButton[2m > [22mデフォルトのラベルが「けってい！」であること[32m 2[2mms[22m[39m
+ [32m✓[39m tests/ui/ConfirmButton.test.ts[2m > [22mConfirmButton[2m > [22mカスタムラベルが適用されること[32m 1[2mms[22m[39m
+ [32m✓[39m tests/ui/ConfirmButton.test.ts[2m > [22mConfirmButton[2m > [22munmount() でボタン要素が削除されること[32m 2[2mms[22m[39m
+ [32m✓[39m tests/ui/ConfirmButton.test.ts[2m > [22mConfirmButton[2m > [22monClick(callback) でクリック時にコールバックが呼ばれること[32m 2[2mms[22m[39m
+ [32m✓[39m tests/ui/ConfirmButton.test.ts[2m > [22mConfirmButton[2m > [22munmount() 後にクリックしてもコールバックが呼ばれないこと[32m 4[2mms[22m[39m
+ [32m✓[39m tests/ui/ConfirmButton.test.ts[2m > [22mConfirmButton[2m > [22mdisable() で opacity が 0.5、pointerEvents が none になること[32m 4[2mms[22m[39m
+ [32m✓[39m tests/ui/ConfirmButton.test.ts[2m > [22mConfirmButton[2m > [22menable() で opacity が 1、pointerEvents が auto になること[32m 2[2mms[22m[39m
+ [32m✓[39m tests/ui/ConfirmButton.test.ts[2m > [22mConfirmButton[2m > [22mカスタムカラー（gradient）が適用されること[32m 5[2mms[22m[39m
+ [32m✓[39m tests/ui/ConfirmButton.test.ts[2m > [22mConfirmButton[2m > [22mデフォルトカラー（グリーン gradient）が適用されること[32m 2[2mms[22m[39m
+ [32m✓[39m tests/ui/ChoiceButtons.test.ts[2m > [22mChoiceButtons[2m > [22mshowHint[2m > [22mshould dim 2 incorrect buttons and keep correct + 1 incorrect visible[32m 8[2mms[22m[39m
+ [32m✓[39m tests/ui/ChoiceButtons.test.ts[2m > [22mChoiceButtons[2m > [22mshowHint[2m > [22mshould set pointerEvents to none on dimmed buttons[32m 3[2mms[22m[39m
+ [32m✓[39m tests/ui/ChoiceButtons.test.ts[2m > [22mChoiceButtons[2m > [22mshowHint[2m > [22mshould not dim the correct button[32m 24[2mms[22m[39m
+ [32m✓[39m tests/ui/ChoiceButtons.test.ts[2m > [22mChoiceButtons[2m > [22mshowHint[2m > [22mshould do nothing when disabled (after showResult)[32m 6[2mms[22m[39m
+ [32m✓[39m tests/ui/ChoiceButtons.test.ts[2m > [22mChoiceButtons[2m > [22mshowHint[2m > [22mshould not dim buttons if not mounted[32m 1[2mms[22m[39m
+ [32m✓[39m tests/ui/Notification.test.ts[2m > [22mshowNotification[2m > [22mスクリーンリーダー向け属性が設定されること[32m 68[2mms[22m[39m
+ [32m✓[39m tests/ui/Notification.test.ts[2m > [22mshowNotification[2m > [22mDOM要素が親に追加されること[32m 6[2mms[22m[39m
+ [32m✓[39m tests/ui/Notification.test.ts[2m > [22mshowNotification[2m > [22m指定されたテキストと色が反映されること[32m 12[2mms[22m[39m
+ [32m✓[39m tests/ui/Notification.test.ts[2m > [22mshowNotification[2m > [22mnotif-anim スタイル要素が document.head に1つだけ存在すること[32m 13[2mms[22m[39m
+ [32m✓[39m tests/game/scenes/ClockDisposal.test.ts[2m > [22mClock disposal on scene exit[2m > [22mTitleScene should dispose Clock3D on exit and remove clock elements from scene[33m 367[2mms[22m[39m
+ [32m✓[39m tests/game/systems/ClockController.test.ts[2m > [22mClockController[2m > [22mイベントリスナー管理[2m > [22msetEnabled(true) で canvas に4種のイベントリスナーが登録されること[32m 274[2mms[22m[39m
+ [32m✓[39m tests/game/systems/ClockController.test.ts[2m > [22mClockController[2m > [22mイベントリスナー管理[2m > [22msetEnabled(false) で全リスナーが解除されること[32m 2[2mms[22m[39m
+ [32m✓[39m tests/game/systems/ClockController.test.ts[2m > [22mClockController[2m > [22mイベントリスナー管理[2m > [22msetEnabled(true) を2回呼んでもリスナーが二重登録されないこと[32m 1[2mms[22m[39m
+ [32m✓[39m tests/game/systems/ClockController.test.ts[2m > [22mClockController[2m > [22mイベントリスナー管理[2m > [22mdispose() 後にリスナーが解除されること[32m 1[2mms[22m[39m
+ [32m✓[39m tests/game/systems/ClockController.test.ts[2m > [22mClockController[2m > [22mイベントリスナー管理[2m > [22mdispose() は Clock3D.dispose() を呼び出すこと[32m 1[2mms[22m[39m
+ [32m✓[39m tests/game/systems/ClockController.test.ts[2m > [22mClockController[2m > [22mイベントリスナー管理[2m > [22mpointerdown で setPointerCapture が呼ばれ、setEnabled(false) ／ dispose() で releasePointerCapture が呼ばれること[32m 8[2mms[22m[39m
+ [32m✓[39m tests/game/systems/ClockController.test.ts[2m > [22mClockController[2m > [22mイベントリスナー管理[2m > [22mpointerdown → pointerup のフローで pointerId を使って releasePointerCapture が呼ばれること[32m 1[2mms[22m[39m
+ [32m✓[39m tests/game/systems/ClockController.test.ts[2m > [22mClockController[2m > [22m角度ジャンプ抑制[2m > [22m小さな角度変化（< 60°）が正常に通ること[32m 1[2mms[22m[39m
+ [32m✓[39m tests/game/systems/ClockController.test.ts[2m > [22mClockController[2m > [22m角度ジャンプ抑制[2m > [22m大きな角度ジャンプ（> 60°）が棄却されること[32m 1[2mms[22m[39m
+ [32m✓[39m tests/game/systems/ClockController.test.ts[2m > [22mClockController[2m > [22m角度ジャンプ抑制[2m > [22mπ付近のラップアラウンドが正しく正規化されること[32m 1[2mms[22m[39m
+ [32m✓[39m tests/game/systems/ClockController.test.ts[2m > [22mClockController[2m > [22mドラッグフロー統合テスト[2m > [22mpointerdown → pointermove → pointerup で onChange が呼ばれること[32m 1[2mms[22m[39m
+ [32m✓[39m tests/game/systems/ClockController.test.ts[2m > [22mClockController[2m > [22mドラッグフロー統合テスト[2m > [22menabled = false のとき dragging が開始されないこと[32m 6[2mms[22m[39m
+ [32m✓[39m tests/game/systems/ClockController.test.ts[2m > [22mClockController[2m > [22mドラッグフロー統合テスト[2m > [22mドラッグ中に setEnabled(false) すると dragging 状態がリセットされること[32m 7[2mms[22m[39m
+ [32m✓[39m tests/game/systems/ClockController.test.ts[2m > [22mClockController[2m > [22mスナップ連携[2m > [22msetSnapStep(5) 設定時、pointerup で snapMinutes(5) が呼ばれること[32m 1[2mms[22m[39m
+ [32m✓[39m tests/game/systems/ClockController.test.ts[2m > [22mClockController[2m > [22monChange 時刻変化チェック[2m > [22mドラッグ中にスナップ後の時刻が変化しない pointermove ではコールバックが呼ばれないこと[32m 1[2mms[22m[39m
+ [32m✓[39m tests/game/systems/ClockController.test.ts[2m > [22mClockController[2m > [22monChange 時刻変化チェック[2m > [22mドラッグ中にスナップ後の時刻が変化する pointermove ではコールバックが呼ばれること[32m 2[2mms[22m[39m
+ [32m✓[39m tests/game/systems/ClockController.test.ts[2m > [22mClockController[2m > [22monChange 時刻変化チェック[2m > [22monPointerUp 後に時刻変化がある場合のみコールバックが呼ばれること[32m 3[2mms[22m[39m
+ [32m✓[39m tests/game/systems/ClockController.test.ts[2m > [22mClockController[2m > [22monChange 時刻変化チェック[2m > [22monPointerUp でスナップにより時刻が変化する場合はコールバックが呼ばれること[32m 1[2mms[22m[39m
+ [32m✓[39m tests/game/systems/ClockController.test.ts[2m > [22mClockController[2m > [22monChange 時刻変化チェック[2m > [22m短針ドラッグ時にも時刻変化チェックが機能すること[32m 1[2mms[22m[39m
+ [32m✓[39m tests/game/systems/ClockController.test.ts[2m > [22mClockController[2m > [22monChange 時刻変化チェック[2m > [22msetEnabled(false) → setEnabled(true) → 再ドラッグで正しく動作すること[32m 1[2mms[22m[39m
+ [32m✓[39m tests/game/systems/ClockController.test.ts[2m > [22mClockController[2m > [22m一時オブジェクト再利用[2m > [22mgetNDC が同一の Vector2 インスタンスを返すこと[32m 1[2mms[22m[39m
+ [32m✓[39m tests/game/systems/ClockController.test.ts[2m > [22mClockController[2m > [22m一時オブジェクト再利用[2m > [22mgetWorldPoint が同一の Vector3 インスタンスを返すこと[32m 0[2mms[22m[39m
+ [32m✓[39m tests/game/systems/ClockController.test.ts[2m > [22mClockController[2m > [22m一時オブジェクト再利用[2m > [22mgetWorldPoint フォールバック: intersectPlane が null の場合でも同一インスタンスを維持して平面交差を計算すること[32m 3[2mms[22m[39m
+ [32m✓[39m tests/game/systems/ClockController.test.ts[2m > [22mClockController[2m > [22m一時オブジェクト再利用[2m > [22mselectHand は getHandTipPosition に再利用ベクタを渡して呼び出すこと[32m 1[2mms[22m[39m
+ [32m✓[39m tests/game/systems/ClockController.test.ts[2m > [22mpixelsToWorldDistance (integration)[2m > [22mproduces positive distances for perspective camera[32m 0[2mms[22m[39m
+ [32m✓[39m tests/game/systems/ClockController.test.ts[2m > [22mpixelsToWorldDistance (integration)[2m > [22mreturns finite positive distance when camera is at same z as plane (perspective)[32m 0[2mms[22m[39m
+ [32m✓[39m tests/game/systems/ClockController.test.ts[2m > [22mpixelsToWorldDistance (integration)[2m > [22mproduces positive distance for orthographic camera even when camera at same z[32m 3[2mms[22m[39m
+ [32m✓[39m tests/game/systems/ClockController.test.ts[2m > [22mpixelsToWorldDistance (integration)[2m > [22mproduces different values for orthographic vs perspective[32m 4[2mms[22m[39m
+ [32m✓[39m tests/game/systems/ClockController.test.ts[2m > [22mpixelsToWorldDistance (integration)[2m > [22mreturns fallback when canvas rect is zero-sized[32m 2[2mms[22m[39m
+ [32m✓[39m tests/game/systems/ClockController.test.ts[2m > [22mpixelsToWorldDistance (integration)[2m > [22mreturns fallback when pixels is non-positive[32m 4[2mms[22m[39m
+ [32m✓[39m tests/game/ui/HintButton.test.ts[2m > [22mHintButton[2m > [22mmount(parent) でボタン要素が追加されること[32m 124[2mms[22m[39m
+ [32m✓[39m tests/ui/Notification.test.ts[2m > [22mshowNotification[2m > [22m1200ms後にDOM要素が自動削除されること[32m 9[2mms[22m[39m
+ [32m✓[39m tests/ui/Notification.test.ts[2m > [22mshowNotification[2m > [22mtopオプションでカスタム位置が設定できること[32m 3[2mms[22m[39m
+ [32m✓[39m tests/ui/Notification.test.ts[2m > [22mshowNotification[2m > [22mデフォルトのtopは40%であること[32m 2[2mms[22m[39m
+ [32m✓[39m tests/ui/Notification.test.ts[2m > [22mshowNotification[2m > [22mfontSizeオプションでフォントサイズを変更できること[32m 14[2mms[22m[39m
+ [32m✓[39m tests/ui/Notification.test.ts[2m > [22mshowNotification[2m > [22mpaddingオプションでパディングを変更できること[32m 25[2mms[22m[39m
+ [32m✓[39m tests/ui/Notification.test.ts[2m > [22mshowNotification[2m > [22mタイマーIDを返すこと[32m 16[2mms[22m[39m
+ [32m✓[39m tests/game/ui/HintButton.test.ts[2m > [22mHintButton[2m > [22mラベルが「ヒント🟢」であること[32m 5[2mms[22m[39m
+ [32m✓[39m tests/game/ui/HintButton.test.ts[2m > [22mHintButton[2m > [22monClick(callback) でクリック時にコールバックが呼ばれること[32m 7[2mms[22m[39m
+ [32m✓[39m tests/game/ui/HintButton.test.ts[2m > [22mHintButton[2m > [22msetRemaining(0) でバッジが 0 になりボタンが無効化されること[32m 6[2mms[22m[39m
+ [32m✓[39m tests/game/scenes/ModeSelectScene.test.ts[2m > [22mModeSelectScene[2m > [22m進捗バッジ表示[2m > [22m未プレイ時は quiz カードに「★ 0/4」と表示される[32m 162[2mms[22m[39m
+ [32m✓[39m tests/game/scenes/ModeSelectScene.test.ts[2m > [22mModeSelectScene[2m > [22m進捗バッジ表示[2m > [22mquiz モードでレベル1,2をクリア済みの場合「★ 2/4」と表示される[32m 7[2mms[22m[39m
+ [32m✓[39m tests/game/scenes/ModeSelectScene.test.ts[2m > [22mModeSelectScene[2m > [22m進捗バッジ表示[2m > [22msetTime モードでレベル1をクリア済みの場合「★ 1/4」と表示される[32m 4[2mms[22m[39m
+ [32m✓[39m tests/game/scenes/ModeSelectScene.test.ts[2m > [22mModeSelectScene[2m > [22m進捗バッジ表示[2m > [22mdaily モードが未クリアの場合チェックマークが表示されない[32m 18[2mms[22m[39m
+ [32m✓[39m tests/game/scenes/ModeSelectScene.test.ts[2m > [22mModeSelectScene[2m > [22m進捗バッジ表示[2m > [22mdaily モードがクリア済み（completedLevels.daily.length > 0）の場合「✅」が表示される[32m 5[2mms[22m[39m
+ [32m✓[39m tests/game/scenes/ModeSelectScene.test.ts[2m > [22mModeSelectScene[2m > [22m進捗バッジ表示[2m > [22m全レベルクリア済みの場合、分母は LEVELS.length と一致する[32m 16[2mms[22m[39m
+ [32m✓[39m tests/game/scenes/ModeSelectScene.test.ts[2m > [22mModeSelectScene[2m > [22mカード操作[2m > [22mquiz カードをクリックすると levelSelect に遷移する[32m 10[2mms[22m[39m
+ [32m✓[39m tests/game/scenes/ModeSelectScene.test.ts[2m > [22mModeSelectScene[2m > [22mカード操作[2m > [22mdaily カードをクリックすると dailyPlay に遷移する[32m 4[2mms[22m[39m
+ [32m✓[39m tests/ui/HUD.test.ts[2m > [22mHUD[2m > [22mmount() で親要素に DOM が追加されること[32m 56[2mms[22m[39m
+ [32m✓[39m tests/ui/HUD.test.ts[2m > [22mHUD[2m > [22mmount() で questionEl と scoreEl と hintEl が生成されること[32m 2[2mms[22m[39m
+ [32m✓[39m tests/ui/HUD.test.ts[2m > [22mHUD[2m > [22mupdateQuestion(3, 5) で「もんだい 3/5」が表示されること[32m 5[2mms[22m[39m
+ [32m✓[39m tests/ui/HUD.test.ts[2m > [22mHUD[2m > [22mupdateScore(2) で「⭕ 2」が表示されること[32m 2[2mms[22m[39m
+ [32m✓[39m tests/ui/HUD.test.ts[2m > [22mHUD[2m > [22mupdateHints(1) で「💡 1」が表示されること[32m 2[2mms[22m[39m
+ [32m✓[39m tests/ui/HUD.test.ts[2m > [22mHUD[2m > [22munmount() で DOM が除去されること[32m 1[2mms[22m[39m
+ [32m✓[39m tests/ui/HUD.test.ts[2m > [22mHUD[2m > [22munmount() 後に updateQuestion/updateScore を呼んでもエラーにならないこと[32m 1[2mms[22m[39m
+ [32m✓[39m tests/ui/HUD.test.ts[2m > [22mHUD[2m > [22mスタイルに pointer-events: none が設定されること[32m 1[2mms[22m[39m
+ [32m✓[39m tests/game/ui/ChoiceButtons.test.ts[2m > [22mChoiceButtons[2m > [22mshowHint dims two incorrect buttons deterministically with injected rng[32m 146[2mms[22m[39m
+ [32m✓[39m tests/ui/CurrentTimeDisplay.test.ts[2m > [22mCurrentTimeDisplay[2m > [22mmount後にDOM要素が親に追加されること[32m 89[2mms[22m[39m
+ [32m✓[39m tests/ui/CurrentTimeDisplay.test.ts[2m > [22mCurrentTimeDisplay[2m > [22mラベルに「いま ▶」が表示されること[32m 13[2mms[22m[39m
+ [32m✓[39m tests/ui/CurrentTimeDisplay.test.ts[2m > [22mCurrentTimeDisplay[2m > [22msetTime()で表示テキストがformatTimeと一致すること（正時）[32m 11[2mms[22m[39m
+ [32m✓[39m tests/ui/CurrentTimeDisplay.test.ts[2m > [22mCurrentTimeDisplay[2m > [22msetTime()で表示テキストがformatTimeと一致すること（30分）[32m 7[2mms[22m[39m
+ [32m✓[39m tests/ui/CurrentTimeDisplay.test.ts[2m > [22mCurrentTimeDisplay[2m > [22msetTime()で表示テキストがformatTimeと一致すること（任意の分）[32m 2[2mms[22m[39m
+ [32m✓[39m tests/ui/CurrentTimeDisplay.test.ts[2m > [22mCurrentTimeDisplay[2m > [22mmount前のsetTimeはエラーにならないこと[32m 7[2mms[22m[39m
+ [32m✓[39m tests/ui/CurrentTimeDisplay.test.ts[2m > [22mCurrentTimeDisplay[2m > [22munmountでDOM要素がクリーンアップされること[32m 4[2mms[22m[39m
+ [32m✓[39m tests/ui/CurrentTimeDisplay.test.ts[2m > [22mCurrentTimeDisplay[2m > [22munmount後のsetTimeはエラーにならないこと[32m 1[2mms[22m[39m
+ [32m✓[39m tests/ui/CurrentTimeDisplay.test.ts[2m > [22mCurrentTimeDisplay[2m > [22m半透明スタイルが適用されていること[32m 4[2mms[22m[39m
+ [32m✓[39m tests/ui/DailyProgress.test.ts[2m > [22mDailyProgress[2m > [22mmount() で親要素にコンテナが追加されること[32m 19[2mms[22m[39m
+ [32m✓[39m tests/ui/DailyProgress.test.ts[2m > [22mDailyProgress[2m > [22msetEvents() でドットが生成されること[32m 62[2mms[22m[39m
+ [32m✓[39m tests/ui/DailyProgress.test.ts[2m > [22mDailyProgress[2m > [22m現在のイベントのドットがハイライトされること[32m 4[2mms[22m[39m
+ [32m✓[39m tests/ui/DailyProgress.test.ts[2m > [22mDailyProgress[2m > [22m完了済みイベントのドットに「✅」が表示されること[32m 3[2mms[22m[39m
+ [32m✓[39m tests/ui/DailyProgress.test.ts[2m > [22mDailyProgress[2m > [22m未到達イベントのドットに emoji が表示されること[32m 19[2mms[22m[39m
+ [32m✓[39m tests/ui/DailyProgress.test.ts[2m > [22mDailyProgress[2m > [22munmount() で DOM が除去されること[32m 1[2mms[22m[39m
+ [32m✓[39m tests/ui/TimeDisplay.test.ts[2m > [22mTimeDisplay[2m > [22mmount() で親要素に DOM が追加されること[32m 90[2mms[22m[39m
+ [32m✓[39m tests/ui/TimeDisplay.test.ts[2m > [22mTimeDisplay[2m > [22mラベルテキストが表示されること[32m 12[2mms[22m[39m
+ [32m✓[39m tests/ui/TimeDisplay.test.ts[2m > [22mTimeDisplay[2m > [22msetTime() で時刻が正しく表示されること[32m 7[2mms[22m[39m
+ [32m✓[39m tests/ui/TimeDisplay.test.ts[2m > [22mTimeDisplay[2m > [22munmount() で DOM が除去されること[32m 3[2mms[22m[39m
+ [32m✓[39m tests/ui/TimeDisplay.test.ts[2m > [22mTimeDisplay[2m > [22munmount() 後に setTime() を呼んでもエラーにならないこと[32m 9[2mms[22m[39m
+ [32m✓[39m tests/ui/TransitionOverlay.test.ts[2m > [22mTransitionOverlay[2m > [22mmount で DOM 要素が追加されること[32m 38[2mms[22m[39m
+ [32m✓[39m tests/ui/TransitionOverlay.test.ts[2m > [22mTransitionOverlay[2m > [22m初期状態で opacity: 0, pointer-events: none であること[32m 5[2mms[22m[39m
+ [32m✓[39m tests/ui/TransitionOverlay.test.ts[2m > [22mTransitionOverlay[2m > [22mz-index が 200 であること[32m 1[2mms[22m[39m
+ [32m✓[39m tests/ui/TransitionOverlay.test.ts[2m > [22mTransitionOverlay[2m > [22mfadeOut で opacity が 1 になること[32m 1[2mms[22m[39m
+ [32m✓[39m tests/ui/TransitionOverlay.test.ts[2m > [22mTransitionOverlay[2m > [22mfadeOut 開始時に pointer-events: auto になること[32m 2[2mms[22m[39m
+ [32m✓[39m tests/ui/TransitionOverlay.test.ts[2m > [22mTransitionOverlay[2m > [22mfadeOut のコールバックが transitionend 後に呼ばれること[32m 5[2mms[22m[39m
+ [32m✓[39m tests/ui/TransitionOverlay.test.ts[2m > [22mTransitionOverlay[2m > [22mfadeOut のコールバックが propertyName !== opacity の場合は呼ばれないこと[32m 2[2mms[22m[39m
+ [32m✓[39m tests/ui/TransitionOverlay.test.ts[2m > [22mTransitionOverlay[2m > [22mfadeOut のコールバックが setTimeout フォールバックで呼ばれること[32m 2[2mms[22m[39m
+ [32m✓[39m tests/ui/TransitionOverlay.test.ts[2m > [22mTransitionOverlay[2m > [22mfadeIn で opacity が 0 に戻ること[32m 1[2mms[22m[39m
+ [32m✓[39m tests/ui/TransitionOverlay.test.ts[2m > [22mTransitionOverlay[2m > [22mfadeIn 完了後に pointer-events: none に戻ること[32m 3[2mms[22m[39m
+ [32m✓[39m tests/ui/TransitionOverlay.test.ts[2m > [22mTransitionOverlay[2m > [22mfadeIn 完了後に isTransitioning が false になること[32m 1[2mms[22m[39m
+ [32m✓[39m tests/ui/TransitionOverlay.test.ts[2m > [22mTransitionOverlay[2m > [22mfadeIn の setTimeout フォールバックで pointer-events: none に戻ること[32m 1[2mms[22m[39m
+ [32m✓[39m tests/ui/TransitionOverlay.test.ts[2m > [22mTransitionOverlay[2m > [22misTransitioning() がフェード中に true を返すこと[32m 0[2mms[22m[39m
+ [32m✓[39m tests/ui/TransitionOverlay.test.ts[2m > [22mTransitionOverlay[2m > [22m二重 fadeOut 呼び出し時にガードが機能すること[32m 1[2mms[22m[39m
+ [32m✓[39m tests/ui/TransitionOverlay.test.ts[2m > [22mTransitionOverlay[2m > [22munmount で DOM 要素が除去されること[32m 0[2mms[22m[39m
+ [32m✓[39m tests/ui/TransitionOverlay.test.ts[2m > [22mTransitionOverlay[2m > [22munmount で setTimeout タイマーがクリアされること[32m 1[2mms[22m[39m
+ [32m✓[39m tests/ui/HomeButton.test.ts[2m > [22mHomeButton[2m > [22mmount() で親要素にボタンが追加されること[32m 101[2mms[22m[39m
+ [32m✓[39m tests/ui/HomeButton.test.ts[2m > [22mHomeButton[2m > [22mボタンテキストが「🏠」であること[32m 2[2mms[22m[39m
+ [32m✓[39m tests/ui/HomeButton.test.ts[2m > [22mHomeButton[2m > [22monClick() で登録したコールバックがクリック時に呼ばれること[32m 2[2mms[22m[39m
+ [32m✓[39m tests/ui/HomeButton.test.ts[2m > [22mHomeButton[2m > [22munmount() で DOM が除去されること[32m 2[2mms[22m[39m
+ [32m✓[39m tests/ui/HomeButton.test.ts[2m > [22mHomeButton[2m > [22munmount() 後にクリックしてもコールバックが呼ばれないこと[32m 1[2mms[22m[39m
+ [32m✓[39m tests/game/audio/SFXGenerator.test.ts[2m > [22mSFXGenerator[2m > [22minit()[2m > [22minit() で context と destination が設定されること[32m 3[2mms[22m[39m
+ [32m✓[39m tests/game/audio/SFXGenerator.test.ts[2m > [22mSFXGenerator[2m > [22minit() 前の安全性[2m > [22minit() 前に play() を呼んでもエラーにならないこと[32m 1[2mms[22m[39m
+ [32m✓[39m tests/game/audio/SFXGenerator.test.ts[2m > [22mSFXGenerator[2m > [22minit() 前の安全性[2m > [22minit() 前は createOscillator が呼ばれないこと[32m 0[2mms[22m[39m
+ [32m✓[39m tests/game/audio/SFXGenerator.test.ts[2m > [22mSFXGenerator[2m > [22m全 SFX タイプの再生[2m > [22mplay("correct") が createOscillator を呼ぶこと[32m 1[2mms[22m[39m
+ [32m✓[39m tests/game/audio/SFXGenerator.test.ts[2m > [22mSFXGenerator[2m > [22m全 SFX タイプの再生[2m > [22mplay("incorrect") が createOscillator を呼ぶこと[32m 0[2mms[22m[39m
+ [32m✓[39m tests/game/audio/SFXGenerator.test.ts[2m > [22mSFXGenerator[2m > [22m全 SFX タイプの再生[2m > [22mplay("hint") が createOscillator を呼ぶこと[32m 0[2mms[22m[39m
+ [32m✓[39m tests/game/audio/SFXGenerator.test.ts[2m > [22mSFXGenerator[2m > [22m全 SFX タイプの再生[2m > [22mplay("levelClear") が createOscillator を呼ぶこと[32m 0[2mms[22m[39m
+ [32m✓[39m tests/game/audio/SFXGenerator.test.ts[2m > [22mSFXGenerator[2m > [22m全 SFX タイプの再生[2m > [22mplay("allClear") が createOscillator を呼ぶこと[32m 0[2mms[22m[39m
+ [32m✓[39m tests/game/audio/SFXGenerator.test.ts[2m > [22mSFXGenerator[2m > [22m全 SFX タイプの再生[2m > [22mplay("buttonTap") が createOscillator を呼ぶこと[32m 0[2mms[22m[39m
+ [32m✓[39m tests/game/audio/SFXGenerator.test.ts[2m > [22mSFXGenerator[2m > [22m全 SFX タイプの再生[2m > [22mplay("tick") が createOscillator を呼ぶこと[32m 0[2mms[22m[39m
+ [32m✓[39m tests/game/audio/SFXGenerator.test.ts[2m > [22mSFXGenerator[2m > [22m全 SFX タイプの再生[2m > [22mplay("clockSet") が createOscillator を呼ぶこと[32m 0[2mms[22m[39m
+ [32m✓[39m tests/game/audio/SFXGenerator.test.ts[2m > [22mSFXGenerator[2m > [22mplayNote 検証（buttonTap / tick 経由）[2m > [22mbuttonTap で createOscillator が 1 回呼ばれること[32m 0[2mms[22m[39m
+ [32m✓[39m tests/game/audio/SFXGenerator.test.ts[2m > [22mSFXGenerator[2m > [22mplayNote 検証（buttonTap / tick 経由）[2m > [22mtick で createOscillator が 1 回呼ばれること[32m 0[2mms[22m[39m
+ [32m✓[39m tests/game/audio/SFXGenerator.test.ts[2m > [22mSFXGenerator[2m > [22mplayNote 検証（buttonTap / tick 経由）[2m > [22mbuttonTap でオシレーターの start と stop が呼ばれること[32m 0[2mms[22m[39m
+ [32m✓[39m tests/game/audio/SFXGenerator.test.ts[2m > [22mSFXGenerator[2m > [22mplayNote 検証（buttonTap / tick 経由）[2m > [22mbuttonTap で gain の setValueAtTime と exponentialRampToValueAtTime が呼ばれること[32m 3[2mms[22m[39m
+ [32m✓[39m tests/game/audio/SFXGenerator.test.ts[2m > [22mSFXGenerator[2m > [22mplayFanfare 検証（correct / levelClear / allClear 経由）[2m > [22mcorrect で setTimeout 経由で 3 ノート再生されること[32m 3[2mms[22m[39m
+ [32m✓[39m tests/game/audio/SFXGenerator.test.ts[2m > [22mSFXGenerator[2m > [22mplayFanfare 検証（correct / levelClear / allClear 経由）[2m > [22mlevelClear で setTimeout 経由で 4 ノート再生されること[32m 0[2mms[22m[39m
+ [32m✓[39m tests/game/audio/SFXGenerator.test.ts[2m > [22mSFXGenerator[2m > [22mplayFanfare 検証（correct / levelClear / allClear 経由）[2m > [22mallClear で setTimeout 経由で 6 ノート再生されること[32m 0[2mms[22m[39m
+ [32m✓[39m tests/game/audio/SFXGenerator.test.ts[2m > [22mSFXGenerator[2m > [22mplayFanfare 検証（correct / levelClear / allClear 経由）[2m > [22mcorrect の最初のノートは delay=0 で再生されること[32m 0[2mms[22m[39m
+ [32m✓[39m tests/game/audio/SFXGenerator.test.ts[2m > [22mSFXGenerator[2m > [22mplayTone 検証（incorrect / hint 経由）[2m > [22mincorrect で setTimeout 経由で 2 ノート再生されること[32m 0[2mms[22m[39m
+ [32m✓[39m tests/game/audio/SFXGenerator.test.ts[2m > [22mSFXGenerator[2m > [22mplayTone 検証（incorrect / hint 経由）[2m > [22mhint で setTimeout 経由で 2 ノート再生されること[32m 0[2mms[22m[39m
+ [32m✓[39m tests/game/audio/SFXGenerator.test.ts[2m > [22mSFXGenerator[2m > [22mplayTone 検証（incorrect / hint 経由）[2m > [22mincorrect の最初のノートは delay=0 で再生されること[32m 0[2mms[22m[39m
+ [32m✓[39m tests/game/audio/SFXGenerator.test.ts[2m > [22mSFXGenerator[2m > [22mplayChord 検証（clockSet 経由）[2m > [22mclockSet で 3 つの音が同時に再生されること[32m 0[2mms[22m[39m
+ [32m✓[39m tests/game/audio/SFXGenerator.test.ts[2m > [22mSFXGenerator[2m > [22mplayChord 検証（clockSet 経由）[2m > [22mclockSet で各オシレーターが connect → start → stop されること[32m 24[2mms[22m[39m
+ [32m✓[39m tests/game/storage/SaveManager.test.ts[2m > [22mSaveManager[2m > [22mshould return default data when no save exists[32m 9[2mms[22m[39m
+ [32m✓[39m tests/game/storage/SaveManager.test.ts[2m > [22mSaveManager[2m > [22mshould save and load data[32m 0[2mms[22m[39m
+ [32m✓[39m tests/game/storage/SaveManager.test.ts[2m > [22mSaveManager[2m > [22mshould add completed level without duplicates[32m 0[2mms[22m[39m
+ [32m✓[39m tests/game/storage/SaveManager.test.ts[2m > [22mSaveManager[2m > [22mshould keep completed levels sorted[32m 0[2mms[22m[39m
+ [32m✓[39m tests/game/storage/SaveManager.test.ts[2m > [22mSaveManager[2m > [22mshould add trophies without duplicates[32m 0[2mms[22m[39m
+ [32m✓[39m tests/game/storage/SaveManager.test.ts[2m > [22mSaveManager[2m > [22mshould sanitize trophies array elements when loading[32m 0[2mms[22m[39m
+ [32m✓[39m tests/game/storage/SaveManager.test.ts[2m > [22mSaveManager[2m > [22mshould sanitize completedLevels elements when loading (string numbers -> numbers)[32m 0[2mms[22m[39m
+ [32m✓[39m tests/game/storage/SaveManager.test.ts[2m > [22mSaveManager[2m > [22mshould update best score only if higher[32m 0[2mms[22m[39m
+ [32m✓[39m tests/game/storage/SaveManager.test.ts[2m > [22mSaveManager[2m > [22mshould increment stats[32m 0[2mms[22m[39m
+ [32m✓[39m tests/game/storage/SaveManager.test.ts[2m > [22mSaveManager[2m > [22mshould clear data[32m 0[2mms[22m[39m
+ [32m✓[39m tests/game/storage/SaveManager.test.ts[2m > [22mSaveManager[2m > [22mshould handle corrupted data gracefully (non-json)[32m 0[2mms[22m[39m
+ [32m✓[39m tests/game/storage/SaveManager.test.ts[2m > [22mSaveManager[2m > [22mshould fallback to default for structurally corrupted data and allow recovery[32m 1[2mms[22m[39m
+ [32m✓[39m tests/game/storage/SaveManager.test.ts[2m > [22mSaveManager[2m > [22mshould not throw when localStorage.setItem throws[32m 0[2mms[22m[39m
+ [32m✓[39m tests/game/storage/SaveManager.test.ts[2m > [22mSaveManager[2m > [22mshould not throw when localStorage.removeItem throws[32m 0[2mms[22m[39m
+ [32m✓[39m tests/game/storage/SaveManager.test.ts[2m > [22mSaveManager[2m > [22mshould migrate v0 (no version) data to v1[32m 0[2mms[22m[39m
+ [32m✓[39m tests/game/storage/SaveManager.test.ts[2m > [22mSaveManager[2m > [22mshould accept valid v1 data as-is[32m 0[2mms[22m[39m
+ [32m✓[39m tests/game/storage/SaveManager.test.ts[2m > [22mSaveManager[2m > [22mshould fallback to default if migrated data is invalid[32m 0[2mms[22m[39m
+[90mstderr[2m | tests/ui/CanvasUtils.test.ts[2m > [22m[2mconfigureCanvasForTouch[2m > [22m[2mis resilient when called on elements with missing style (best-effort)
+[22m[39mconfigureCanvasForTouch failed TypeError: Cannot set properties of undefined (setting 'touchAction')
+    at configureCanvasForTouch [90m(/Users/shingotada/Documents/vscode/watch-game/[39msrc/ui/CanvasUtils.ts:12:18[90m)[39m
+    at [90m/Users/shingotada/Documents/vscode/watch-game/[39mtests/ui/CanvasUtils.test.ts:40:18
+    at Proxy.assertThrows [90m(file:///Users/shingotada/Documents/vscode/watch-game/[39mnode_modules/[4mchai[24m/index.js:2798:5[90m)[39m
+    at Proxy.methodWrapper [90m(file:///Users/shingotada/Documents/vscode/watch-game/[39mnode_modules/[4mchai[24m/index.js:1700:25[90m)[39m
+    at Proxy.<anonymous> [90m(file:///Users/shingotada/Documents/vscode/watch-game/[39mnode_modules/[4m@vitest/expect[24m/dist/index.js:1216:12[90m)[39m
+    at Proxy.overwritingMethodWrapper [90m(file:///Users/shingotada/Documents/vscode/watch-game/[39mnode_modules/[4mchai[24m/index.js:1750:33[90m)[39m
+    at Proxy.<anonymous> [90m(file:///Users/shingotada/Documents/vscode/watch-game/[39mnode_modules/[4m@vitest/expect[24m/dist/index.js:1552:16[90m)[39m
+    at Proxy.<anonymous> [90m(file:///Users/shingotada/Documents/vscode/watch-game/[39mnode_modules/[4m@vitest/expect[24m/dist/index.js:1156:15[90m)[39m
+    at Proxy.methodWrapper [90m(file:///Users/shingotada/Documents/vscode/watch-game/[39mnode_modules/[4mchai[24m/index.js:1700:25[90m)[39m
+    at [90m/Users/shingotada/Documents/vscode/watch-game/[39mtests/ui/CanvasUtils.test.ts:40:52
+
+ [32m✓[39m tests/ui/CanvasUtils.test.ts[2m > [22mconfigureCanvasForTouch[2m > [22mapplies touch-action styles and sets tabIndex when not present[32m 41[2mms[22m[39m
+ [32m✓[39m tests/ui/CanvasUtils.test.ts[2m > [22mconfigureCanvasForTouch[2m > [22mdoes not overwrite explicit tabindex when preserveTabIndex is true[32m 2[2mms[22m[39m
+ [32m✓[39m tests/ui/CanvasUtils.test.ts[2m > [22mconfigureCanvasForTouch[2m > [22mdoes not overwrite explicit tabindex when preserveTabIndex is false[32m 1[2mms[22m[39m
+ [32m✓[39m tests/ui/CanvasUtils.test.ts[2m > [22mconfigureCanvasForTouch[2m > [22mis resilient when called on elements with missing style (best-effort)[32m 27[2mms[22m[39m
+ [32m✓[39m tests/game/entities/Clock3D.test.ts[2m > [22mClock3D[2m > [22mshould initialize at 12:00[32m 80[2mms[22m[39m
+ [32m✓[39m tests/game/entities/Clock3D.test.ts[2m > [22mClock3D[2m > [22mshould set and get time correctly[32m 4[2mms[22m[39m
+ [32m✓[39m tests/game/entities/Clock3D.test.ts[2m > [22mClock3D[2m > [22mshould snap minutes to step[32m 3[2mms[22m[39m
+ [32m✓[39m tests/game/entities/Clock3D.test.ts[2m > [22mClock3D[2m > [22mshould snap minutes to 30-min step[32m 3[2mms[22m[39m
+ [32m✓[39m tests/game/entities/Clock3D.test.ts[2m > [22mClock3D[2m > [22mshould convert angles to minutes (12 oclock = 0 min)[32m 11[2mms[22m[39m
+ [32m✓[39m tests/game/entities/Clock3D.test.ts[2m > [22mClock3D[2m > [22mshould convert angles to minutes (3 oclock = 15 min)[32m 2[2mms[22m[39m
+ [32m✓[39m tests/game/entities/Clock3D.test.ts[2m > [22mClock3D[2m > [22mshould convert angles to minutes (6 oclock = 30 min)[32m 1[2mms[22m[39m
+ [32m✓[39m tests/game/entities/Clock3D.test.ts[2m > [22mClock3D[2m > [22mangleToMinutes round-trip for common minutes[32m 10[2mms[22m[39m
+ [32m✓[39m tests/game/entities/Clock3D.test.ts[2m > [22mClock3D[2m > [22mshould have a clock face mesh[32m 20[2mms[22m[39m
+ [32m✓[39m tests/game/entities/Clock3D.test.ts[2m > [22mClock3D[2m > [22mshould set hour angle to 3 oclock[32m 1[2mms[22m[39m
+ [32m✓[39m tests/game/entities/Clock3D.test.ts[2m > [22mClock3D[2m > [22mshould set hour angle to 12 oclock[32m 1[2mms[22m[39m
+ [32m✓[39m tests/game/entities/Clock3D.test.ts[2m > [22mClock3D[2m > [22mshould set hour angle to 6 oclock[32m 2[2mms[22m[39m
+ [32m✓[39m tests/game/entities/Clock3D.test.ts[2m > [22mClock3D[2m > [22msetMinuteAngle should wrap forward (prev 50 -> target 5 increments hour)[32m 1[2mms[22m[39m
+ [32m✓[39m tests/game/entities/Clock3D.test.ts[2m > [22mClock3D[2m > [22msetMinuteAngle should wrap backward (prev 5 -> target 50 decrements hour)[32m 1[2mms[22m[39m
+ [32m✓[39m tests/game/entities/Clock3D.test.ts[2m > [22mClock3D[2m > [22mshould return hand tip positions[32m 1[2mms[22m[39m
+ [32m✓[39m tests/game/entities/Clock3D.test.ts[2m > [22mClock3D[2m > [22mgetHandTipPosition should reuse provided target instance[32m 1[2mms[22m[39m
+ [32m✓[39m tests/game/entities/Clock3D.test.ts[2m > [22mClock3D[2m > [22mgetHandTipPosition without target should return a new Vector3 each call[32m 35[2mms[22m[39m
+ [32m✓[39m tests/game/entities/Clock3D.test.ts[2m > [22mClock3D[2m > [22mshould increment hours when snapMinutes rounds to 60 (step=30, min=45)[32m 9[2mms[22m[39m
+ [32m✓[39m tests/game/entities/Clock3D.test.ts[2m > [22mClock3D[2m > [22mshould increment hours when snapMinutes rounds to 60 (step=5, min=58)[32m 1[2mms[22m[39m
+ [32m✓[39m tests/game/entities/Clock3D.test.ts[2m > [22mClock3D[2m > [22mshould wrap hours from 12 to 1 when snapMinutes rounds to 60[32m 0[2mms[22m[39m
+ [32m✓[39m tests/game/entities/Clock3D.test.ts[2m > [22mClock3D[2m > [22mshould not change hours when snapMinutes does not reach 60 (step=30, min=14)[32m 0[2mms[22m[39m
+ [32m✓[39m tests/game/entities/Clock3D.test.ts[2m > [22mClock3D[2m > [22mshould snap correctly for step=15 near lower boundary (min=7 -> 0)[32m 22[2mms[22m[39m
+ [32m✓[39m tests/game/entities/Clock3D.test.ts[2m > [22mClock3D[2m > [22mshould snap correctly for step=15 near upper boundary (min=8 -> 15)[32m 2[2mms[22m[39m
+ [32m✓[39m tests/game/entities/Clock3D.test.ts[2m > [22mClock3D[2m > [22mshould highlight and clear hand[32m 26[2mms[22m[39m
+ [32m✓[39m tests/game/entities/Clock3D.test.ts[2m > [22mClock3D[2m > [22mtick geometry and material sharing[2m > [22mshould share geometry among same type ticks (major/minor)[32m 11[2mms[22m[39m
+ [32m✓[39m tests/game/entities/Clock3D.test.ts[2m > [22mClock3D[2m > [22mdispose[2m > [22mshould not throw when called[32m 3[2mms[22m[39m
+ [32m✓[39m tests/game/entities/Clock3D.test.ts[2m > [22mClock3D[2m > [22mdispose[2m > [22mshould remove all children from group[32m 1[2mms[22m[39m
+ [32m✓[39m tests/game/entities/Clock3D.test.ts[2m > [22mClock3D[2m > [22mdispose[2m > [22mshould not throw when called twice (idempotent)[32m 1[2mms[22m[39m
+ [32m✓[39m tests/game/entities/Clock3D.test.ts[2m > [22mClock3D[2m > [22mdispose[2m > [22mshould dispose unique geometries and materials once[32m 1[2mms[22m[39m
+ [32m✓[39m tests/game/entities/Clock3D.test.ts[2m > [22mClock3D[2m > [22mdispose[2m > [22mshould dispose unique textures on materials[32m 1[2mms[22m[39m
+ [32m✓[39m tests/game/entities/Clock3D.test.ts[2m > [22mClock3D[2m > [22mshared numbers texture[2m > [22mshould reuse same texture across instances[32m 1[2mms[22m[39m
+ [32m✓[39m tests/game/entities/Clock3D.test.ts[2m > [22mClock3D[2m > [22mshared numbers texture[2m > [22mshould call shared texture.dispose only once when disposing multiple instances[32m 1[2mms[22m[39m
+ [32m✓[39m tests/game/SceneManager.test.ts[2m > [22mSceneManager[2m > [22mshould register and transition to a scene[32m 2[2mms[22m[39m
+ [32m✓[39m tests/game/SceneManager.test.ts[2m > [22mSceneManager[2m > [22mshould call exit on previous scene when transitioning[32m 2[2mms[22m[39m
+ [32m✓[39m tests/game/SceneManager.test.ts[2m > [22mSceneManager[2m > [22mshould delegate update to current scene[32m 1[2mms[22m[39m
+ [32m✓[39m tests/game/SceneManager.test.ts[2m > [22mSceneManager[2m > [22mshould use transition handler if set[32m 1[2mms[22m[39m
+ [32m✓[39m tests/game/SceneManager.test.ts[2m > [22mSceneManager[2m > [22mshould warn on unregistered scene[32m 1[2mms[22m[39m
+ [32m✓[39m tests/game/SceneManager.test.ts[2m > [22mSceneManager[2m > [22mcurrentSceneNeedsContinuousRendering respects scene opt-out[32m 0[2mms[22m[39m
+ [32m✓[39m tests/game/effects/EffectDispose.test.ts[2m > [22mCorrectEffect[2m > [22mdispose() で geometry と material が解放されること[32m 6[2mms[22m[39m
+ [32m✓[39m tests/game/effects/EffectDispose.test.ts[2m > [22mCorrectEffect[2m > [22mdispose() 後に update() を呼んでもエラーにならないこと[32m 2[2mms[22m[39m
+ [32m✓[39m tests/game/effects/EffectDispose.test.ts[2m > [22mCorrectEffect[2m > [22mdispose() を2回呼んでもエラーにならないこと（冪等性）[32m 1[2mms[22m[39m
+ [32m✓[39m tests/game/effects/EffectDispose.test.ts[2m > [22mCorrectEffect[2m > [22mtrigger() 前に dispose() を呼んでもエラーにならないこと[32m 0[2mms[22m[39m
+ [32m✓[39m tests/game/effects/EffectDispose.test.ts[2m > [22mIncorrectEffect[2m > [22mdispose() で geometry と material が解放されること[32m 0[2mms[22m[39m
+ [32m✓[39m tests/game/effects/EffectDispose.test.ts[2m > [22mIncorrectEffect[2m > [22mdispose() 後に update() を呼んでもエラーにならないこと[32m 0[2mms[22m[39m
+ [32m✓[39m tests/game/effects/EffectDispose.test.ts[2m > [22mIncorrectEffect[2m > [22mdispose() を2回呼んでもエラーにならないこと（冪等性）[32m 0[2mms[22m[39m
+ [32m✓[39m tests/game/effects/EffectDispose.test.ts[2m > [22mIncorrectEffect[2m > [22mtrigger() 前に dispose() を呼んでもエラーにならないこと[32m 0[2mms[22m[39m
+ [32m✓[39m tests/game/effects/EffectDispose.test.ts[2m > [22mFireworkEffect[2m > [22mdispose() でロケットがシーンから除去されること[32m 26[2mms[22m[39m
+ [32m✓[39m tests/game/effects/EffectDispose.test.ts[2m > [22mFireworkEffect[2m > [22mdispose() 後に update() を呼んでもエラーにならないこと[32m 3[2mms[22m[39m
+ [32m✓[39m tests/game/effects/EffectDispose.test.ts[2m > [22mFireworkEffect[2m > [22mdispose() を2回呼んでもエラーにならないこと（冪等性）[32m 5[2mms[22m[39m
+ [32m✓[39m tests/game/effects/EffectDispose.test.ts[2m > [22mFireworkEffect[2m > [22mtrigger() 前に dispose() を呼んでもエラーにならないこと[32m 0[2mms[22m[39m
+ [32m✓[39m tests/game/entities/Clock3DSeconds.test.ts[2m > [22mClock3D seconds hand update[2m > [22mapplies -(2π/60) radians per second when seconds are shown[32m 7[2mms[22m[39m
+ [32m✓[39m tests/game/entities/Clock3DSeconds.test.ts[2m > [22mClock3D seconds hand update[2m > [22maccumulates properly across multiple frames and does not move when hidden[32m 1[2mms[22m[39m
+ [32m✓[39m tests/game/systems/QuizGenerator.test.ts[2m > [22mQuizGenerator[2m > [22mshould generate times within level 1 constraints (hours only)[32m 6[2mms[22m[39m
+ [32m✓[39m tests/game/systems/QuizGenerator.test.ts[2m > [22mQuizGenerator[2m > [22mshould generate times within level 2 constraints (30-min steps)[32m 2[2mms[22m[39m
+ [32m✓[39m tests/game/systems/QuizGenerator.test.ts[2m > [22mQuizGenerator[2m > [22mshould generate times within level 3 constraints (5-min steps)[32m 0[2mms[22m[39m
+ [32m✓[39m tests/game/systems/QuizGenerator.test.ts[2m > [22mQuizGenerator[2m > [22mshould generate times within level 4 constraints (1-min steps)[32m 0[2mms[22m[39m
+ [32m✓[39m tests/game/systems/QuizGenerator.test.ts[2m > [22mQuizGenerator[2m > [22mshould generate 4 unique choices[32m 0[2mms[22m[39m
+ [32m✓[39m tests/game/systems/QuizGenerator.test.ts[2m > [22mQuizGenerator[2m > [22mshould respect optionCount parameter when smaller than default[32m 6[2mms[22m[39m
+ [32m✓[39m tests/game/systems/QuizGenerator.test.ts[2m > [22mQuizGenerator[2m > [22mshould throw when provided correct time is out of range for the level[32m 0[2mms[22m[39m
+ [32m✓[39m tests/game/systems/QuizGenerator.test.ts[2m > [22mQuizGenerator[2m > [22mshould filter wrap-around close choices (correct=12:55, wrong=1:00)[32m 3[2mms[22m[39m
+ [32m✓[39m tests/game/systems/QuizGenerator.test.ts[2m > [22mQuizGenerator[2m > [22mshould filter wrap-around close choices (correct=1:00, wrong=12:55)[32m 1[2mms[22m[39m
+ [32m✓[39m tests/game/systems/QuizGenerator.test.ts[2m > [22mQuizGenerator[2m > [22mshould fallback to enumerated candidates when attempts exhausted[32m 1[2mms[22m[39m
+ [32m✓[39m tests/game/systems/QuizGenerator.test.ts[2m > [22mgenerateUniqueTime[2m > [22mshould return a time not in exclude list[32m 1[2mms[22m[39m
+ [32m✓[39m tests/game/systems/QuizGenerator.test.ts[2m > [22mgenerateUniqueTime[2m > [22mshould generate all unique times for level 1 with 5 questions[32m 0[2mms[22m[39m
+ [32m✓[39m tests/game/systems/QuizGenerator.test.ts[2m > [22mgenerateUniqueTime[2m > [22mshould pick from remaining candidates when some are excluded (deterministic)[32m 1[2mms[22m[39m
+ [32m✓[39m tests/game/systems/QuizGenerator.test.ts[2m > [22mgenerateUniqueTime[2m > [22mshould fallback when all candidates are excluded and return generated time[32m 0[2mms[22m[39m
+ [32m✓[39m tests/game/systems/QuizGenerator.test.ts[2m > [22mgenerateUniqueTime[2m > [22mshould not crash when exclude covers all candidates (fallback)[32m 0[2mms[22m[39m
+ [32m✓[39m tests/game/systems/QuizGenerator.test.ts[2m > [22mformatTime[2m > [22mshould format exact hours[32m 0[2mms[22m[39m
+ [32m✓[39m tests/game/systems/QuizGenerator.test.ts[2m > [22mformatTime[2m > [22mshould format half hours[32m 0[2mms[22m[39m
+ [32m✓[39m tests/game/systems/QuizGenerator.test.ts[2m > [22mformatTime[2m > [22mshould format other minutes[32m 0[2mms[22m[39m
+ [32m✓[39m tests/game/systems/QuizGenerator.test.ts[2m > [22mQuizGenerator fallback[2m > [22mshould return 4 unique choices when generateTime repeatedly returns filtered candidates[32m 2[2mms[22m[39m
+ [32m✓[39m tests/game/systems/QuizGenerator.test.ts[2m > [22mQuizGenerator streak-based difficulty[2m > [22mincreases difficulty after thresholds and resets on incorrect[32m 0[2mms[22m[39m
+ [32m✓[39m tests/game/systems/PerformanceManager.test.ts[2m > [22mPerformanceManager[2m > [22mapplies initial pixel ratio and size on applyInitial[32m 8[2mms[22m[39m
+ [32m✓[39m tests/game/systems/PerformanceManager.test.ts[2m > [22mPerformanceManager[2m > [22mdowngrades quality when frame times are high[32m 0[2mms[22m[39m
+ [32m✓[39m tests/game/systems/PerformanceManager.test.ts[2m > [22mPerformanceManager[2m > [22mupgrades quality when frame times are low[32m 0[2mms[22m[39m
+ [32m✓[39m tests/game/systems/PerformanceManager.test.ts[2m > [22mPerformanceManager[2m > [22mclamps pixel ratio to window.devicePixelRatio when device DPR is smaller[32m 0[2mms[22m[39m
+ [32m✓[39m tests/game/systems/PerformanceManager.test.ts[2m > [22mPerformanceManager[2m > [22muses requested pixel ratio when device DPR is larger[32m 0[2mms[22m[39m
+ [32m✓[39m tests/game/systems/PerformanceManager.test.ts[2m > [22mPerformanceManager[2m > [22mfalls back to requested when device DPR is NaN or undefined[32m 0[2mms[22m[39m
+ [32m✓[39m tests/game/entities/Clock3DSharedResources.test.ts[2m > [22mClock3D shared tick resources[2m > [22mshould share tick geometry and material across instances[32m 6[2mms[22m[39m
+ [32m✓[39m tests/game/entities/Clock3DSharedResources.test.ts[2m > [22mClock3D shared tick resources[2m > [22mshould dispose shared tick resources only after last instance disposed[32m 3[2mms[22m[39m
+ [32m✓[39m tests/game/audio/BGMGenerator.test.ts[2m > [22mBGMGenerator[2m > [22mpause()[2m > [22mpause() 後に currentMode が保持されること[32m 4[2mms[22m[39m
+ [32m✓[39m tests/game/audio/BGMGenerator.test.ts[2m > [22mBGMGenerator[2m > [22mpause()[2m > [22mpause() で playing が false になること[32m 0[2mms[22m[39m
+ [32m✓[39m tests/game/audio/BGMGenerator.test.ts[2m > [22mBGMGenerator[2m > [22mpause()[2m > [22mpause() → resume() で playing が true に復帰すること[32m 0[2mms[22m[39m
+ [32m✓[39m tests/game/audio/BGMGenerator.test.ts[2m > [22mBGMGenerator[2m > [22mstop() 後の resume()[2m > [22mstop() 後に resume() が何もしないこと[32m 0[2mms[22m[39m
+ [32m✓[39m tests/game/audio/BGMGenerator.test.ts[2m > [22mBGMGenerator[2m > [22mpause() vs stop() の違い[2m > [22mpause() 後は resume() で再開できるが stop() 後はできない[32m 0[2mms[22m[39m
+ [32m✓[39m tests/game/scenes/QuizScene.HintEffect.test.ts[2m > [22mHintEffect[2m > [22mtrigger() でシーンにエフェクトが追加され、2秒後に自動で削除される[32m 3[2mms[22m[39m
+ [32m✓[39m tests/game/audio/AudioManager.test.ts[2m > [22mAudioManager[2m > [22mpauseBGM() が内部の bgmGenerator.pause() を呼ぶこと[32m 2[2mms[22m[39m
+ [32m✓[39m tests/game/audio/AudioManager.test.ts[2m > [22mAudioManager[2m > [22minit() 前に pauseBGM() を呼んでもエラーにならないこと[32m 0[2mms[22m[39m
+[90mstderr[2m | tests/game/scenes/SceneDisposal.test.ts[2m > [22m[2mSceneManager disposal fallback[2m > [22m[2mcalls disposer when exit() throws
+[22m[39mScene dispose threw Error: exit boom
+    at PrevScene.exit [90m(/Users/shingotada/Documents/vscode/watch-game/[39mtests/game/scenes/SceneDisposal.test.ts:39:28[90m)[39m
+    at SceneManager.transitionTo [90m(/Users/shingotada/Documents/vscode/watch-game/[39msrc/game/SceneManager.ts:36:16[90m)[39m
+    at [90m/Users/shingotada/Documents/vscode/watch-game/[39mtests/game/scenes/SceneDisposal.test.ts:68:26
+    at Proxy.assertThrows [90m(file:///Users/shingotada/Documents/vscode/watch-game/[39mnode_modules/[4mchai[24m/index.js:2798:5[90m)[39m
+    at Proxy.methodWrapper [90m(file:///Users/shingotada/Documents/vscode/watch-game/[39mnode_modules/[4mchai[24m/index.js:1700:25[90m)[39m
+    at Proxy.<anonymous> [90m(file:///Users/shingotada/Documents/vscode/watch-game/[39mnode_modules/[4m@vitest/expect[24m/dist/index.js:1216:12[90m)[39m
+    at Proxy.overwritingMethodWrapper [90m(file:///Users/shingotada/Documents/vscode/watch-game/[39mnode_modules/[4mchai[24m/index.js:1750:33[90m)[39m
+    at Proxy.<anonymous> [90m(file:///Users/shingotada/Documents/vscode/watch-game/[39mnode_modules/[4m@vitest/expect[24m/dist/index.js:1552:16[90m)[39m
+    at Proxy.<anonymous> [90m(file:///Users/shingotada/Documents/vscode/watch-game/[39mnode_modules/[4m@vitest/expect[24m/dist/index.js:1156:15[90m)[39m
+    at Proxy.methodWrapper [90m(file:///Users/shingotada/Documents/vscode/watch-game/[39mnode_modules/[4mchai[24m/index.js:1700:25[90m)[39m
+
+ [32m✓[39m tests/game/scenes/SceneDisposal.test.ts[2m > [22mSceneManager disposal fallback[2m > [22mcalls disposer when exit() throws[32m 48[2mms[22m[39m
+ [32m✓[39m tests/game/scenes/SceneDisposal.test.ts[2m > [22mSceneManager disposal fallback[2m > [22mcalls disposer when exit() is noop[32m 0[2mms[22m[39m
+ [32m✓[39m tests/game/scenes/SceneLifecycle.test.ts[2m > [22mScene lifecycle[2m > [22mSetTimePlayScene.exit should call clock3D.dispose[32m 7[2mms[22m[39m
+ [32m✓[39m tests/game/scenes/SceneLifecycle.test.ts[2m > [22mScene lifecycle[2m > [22mQuizPlayScene.exit should call clock3D.dispose[32m 1[2mms[22m[39m
+ [32m✓[39m tests/game/scenes/SceneLifecycle.test.ts[2m > [22mScene lifecycle[2m > [22mDailyPlayScene.exit should call clock3D.dispose[32m 0[2mms[22m[39m
+ [32m✓[39m tests/game/Smoke.test.ts[2m > [22mSmoke[2m > [22mtest environment runs[32m 1[2mms[22m[39m
+ [32m✓[39m tests/game/GameLoop.test.ts[2m > [22mGameLoop[2m > [22mshould start and call update/render[32m 4[2mms[22m[39m
+ [32m✓[39m tests/game/GameLoop.test.ts[2m > [22mGameLoop[2m > [22mshould cap delta time at 0.1s[32m 1[2mms[22m[39m
+ [32m✓[39m tests/game/GameLoop.test.ts[2m > [22mGameLoop[2m > [22mshould pause and stop[32m 2[2mms[22m[39m
+ [32m✓[39m tests/game/GameLoop.test.ts[2m > [22mRenderLoopPerformanceIntegration (simulated)[2m > [22mcalls recordFrame with measured dt in ms between renders[32m 1[2mms[22m[39m
+ [32m✓[39m tests/game/config/Config.test.ts[2m > [22mLevelConfig[2m > [22mshould have 4 levels[32m 1[2mms[22m[39m
+ [32m✓[39m tests/game/config/Config.test.ts[2m > [22mLevelConfig[2m > [22meach level should have valid properties[32m 1[2mms[22m[39m
+ [32m✓[39m tests/game/config/Config.test.ts[2m > [22mLevelConfig[2m > [22mgetLevelDef should return correct level[32m 0[2mms[22m[39m
+ [32m✓[39m tests/game/config/Config.test.ts[2m > [22mLevelConfig[2m > [22mgetLevelDef should fallback for invalid level[32m 0[2mms[22m[39m
+ [32m✓[39m tests/game/config/Config.test.ts[2m > [22mDailySchedule[2m > [22mshould have 8 events[32m 0[2mms[22m[39m
+ [32m✓[39m tests/game/config/Config.test.ts[2m > [22mDailySchedule[2m > [22meach event should have valid time[32m 1[2mms[22m[39m
+ [32m✓[39m tests/game/systems/QuizGenerator.Hint.test.ts[2m > [22mQuizGenerator hint state[2m > [22mstartQuestion() でヒントがリセットされ、canUseHint() が true になる[32m 4[2mms[22m[39m
+ [32m✓[39m tests/game/systems/QuizGenerator.Hint.test.ts[2m > [22mQuizGenerator hint state[2m > [22museHint() を呼ぶと canUseHint() が false になり remainingHints() が 0 になる[32m 0[2mms[22m[39m
+ [32m✓[39m tests/game/systems/QuizGenerator.Hint.test.ts[2m > [22mQuizGenerator hint state[2m > [22mstartQuestion() は次の問題でヒントを再び有効にする[32m 0[2mms[22m[39m
+ [32m✓[39m tests/game/systems/TimeValidator.test.ts[2m > [22mTimeValidator[2m > [22mshould validate exact match[32m 1[2mms[22m[39m
+ [32m✓[39m tests/game/systems/TimeValidator.test.ts[2m > [22mTimeValidator[2m > [22mshould validate within tolerance[32m 0[2mms[22m[39m
+ [32m✓[39m tests/game/systems/TimeValidator.test.ts[2m > [22mTimeValidator[2m > [22mshould reject outside tolerance[32m 0[2mms[22m[39m
+ [32m✓[39m tests/game/systems/TimeValidator.test.ts[2m > [22mTimeValidator[2m > [22mshould handle wrap-around (12:55 vs 1:05)[32m 0[2mms[22m[39m
+ [32m✓[39m tests/game/systems/TimeValidator.test.ts[2m > [22mTimeValidator[2m > [22mshould work with tight tolerance (1 minute)[32m 0[2mms[22m[39m
+ [32m✓[39m tests/game/utils/ThreeDisposer.test.ts[2m > [22mThreeDisposer[2m > [22mcalls dispose on geometry, material and texture[32m 2[2mms[22m[39m
+
+[2m Test Files [22m [1m[32m42 passed[39m[22m[90m (42)[39m
+[2m      Tests [22m [1m[32m390 passed[39m[22m[90m (390)[39m
+[2m   Start at [22m 21:04:49
+[2m   Duration [22m 10.82s[2m (transform 1.57s, setup 0ms, import 4.18s, tests 5.45s, environment 55.64s)[22m
+

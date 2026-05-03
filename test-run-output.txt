@@ -1,0 +1,52 @@
+
+[1m[30m[46m RUN [49m[39m[22m [36mv4.1.5 [39m[90m/Users/shingotada/Documents/vscode/watch-game[39m
+
+ [32m✓[39m tests/game/scenes/TrophyScene.test.ts [2m([22m[2m10 tests[22m[2m)[22m[32m 254[2mms[22m[39m
+ [32m✓[39m tests/game/systems/ClockController.test.ts [2m([22m[2m30 tests[22m[2m)[22m[33m 387[2mms[22m[39m
+       [33m[2m✓[22m[39m setEnabled(true) で canvas に4種のイベントリスナーが登録されること [33m 317[2mms[22m[39m
+ [32m✓[39m tests/game/scenes/SetTimePlayScene.test.ts [2m([22m[2m8 tests[22m[2m)[22m[33m 337[2mms[22m[39m
+ [32m✓[39m tests/game/scenes/ResultScene.test.ts [2m([22m[2m40 tests[22m[2m)[22m[33m 420[2mms[22m[39m
+ [32m✓[39m tests/game/scenes/ClockDisposal.test.ts [2m([22m[2m1 test[22m[2m)[22m[33m 434[2mms[22m[39m
+     [33m[2m✓[22m[39m TitleScene should dispose Clock3D on exit and remove clock elements from scene [33m 434[2mms[22m[39m
+ [32m✓[39m tests/game/scenes/DailyPlayScene.test.ts [2m([22m[2m8 tests[22m[2m)[22m[33m 403[2mms[22m[39m
+ [32m✓[39m tests/game/scenes/QuizPlayScene.test.ts [2m([22m[2m10 tests[22m[2m)[22m[33m 438[2mms[22m[39m
+ [32m✓[39m tests/ui/Notification.test.ts [2m([22m[2m10 tests[22m[2m)[22m[32m 71[2mms[22m[39m
+ [32m✓[39m tests/ui/ConfirmButton.test.ts [2m([22m[2m10 tests[22m[2m)[22m[32m 124[2mms[22m[39m
+ [32m✓[39m tests/game/ui/HintButton.test.ts [2m([22m[2m4 tests[22m[2m)[22m[32m 123[2mms[22m[39m
+ [32m✓[39m tests/game/scenes/LevelSelectScene.test.ts [2m([22m[2m13 tests[22m[2m)[22m[32m 230[2mms[22m[39m
+ [32m✓[39m tests/ui/ChoiceButtons.test.ts [2m([22m[2m14 tests[22m[2m)[22m[32m 222[2mms[22m[39m
+ [32m✓[39m tests/game/scenes/TitleScene.test.ts [2m([22m[2m14 tests[22m[2m)[22m[32m 220[2mms[22m[39m
+ [32m✓[39m tests/game/scenes/ModeSelectScene.test.ts [2m([22m[2m8 tests[22m[2m)[22m[32m 259[2mms[22m[39m
+ [32m✓[39m tests/ui/HUD.test.ts [2m([22m[2m7 tests[22m[2m)[22m[32m 55[2mms[22m[39m
+ [32m✓[39m tests/ui/DailyProgress.test.ts [2m([22m[2m6 tests[22m[2m)[22m[32m 73[2mms[22m[39m
+ [32m✓[39m tests/game/ui/ChoiceButtons.test.ts [2m([22m[2m1 test[22m[2m)[22m[32m 124[2mms[22m[39m
+ [32m✓[39m tests/ui/TimeDisplay.test.ts [2m([22m[2m5 tests[22m[2m)[22m[32m 119[2mms[22m[39m
+ [32m✓[39m tests/ui/HomeButton.test.ts [2m([22m[2m5 tests[22m[2m)[22m[32m 60[2mms[22m[39m
+ [32m✓[39m tests/game/entities/Clock3D.test.ts [2m([22m[2m32 tests[22m[2m)[22m[32m 50[2mms[22m[39m
+ [32m✓[39m tests/ui/CurrentTimeDisplay.test.ts [2m([22m[2m9 tests[22m[2m)[22m[32m 132[2mms[22m[39m
+ [32m✓[39m tests/ui/CanvasUtils.test.ts [2m([22m[2m4 tests[22m[2m)[22m[32m 12[2mms[22m[39m
+ [32m✓[39m tests/game/storage/SaveManager.test.ts [2m([22m[2m17 tests[22m[2m)[22m[32m 12[2mms[22m[39m
+ [32m✓[39m tests/ui/TransitionOverlay.test.ts [2m([22m[2m16 tests[22m[2m)[22m[32m 96[2mms[22m[39m
+ [32m✓[39m tests/game/audio/SFXGenerator.test.ts [2m([22m[2m24 tests[22m[2m)[22m[32m 18[2mms[22m[39m
+ [32m✓[39m tests/game/GameLoop.test.ts [2m([22m[2m4 tests[22m[2m)[22m[32m 9[2mms[22m[39m
+ [32m✓[39m tests/game/scenes/SceneLifecycle.test.ts [2m([22m[2m3 tests[22m[2m)[22m[32m 38[2mms[22m[39m
+ [32m✓[39m tests/game/audio/BGMGenerator.test.ts [2m([22m[2m5 tests[22m[2m)[22m[32m 4[2mms[22m[39m
+ [32m✓[39m tests/game/systems/QuizGenerator.test.ts [2m([22m[2m20 tests[22m[2m)[22m[32m 25[2mms[22m[39m
+ [32m✓[39m tests/game/entities/Clock3DSharedResources.test.ts [2m([22m[2m2 tests[22m[2m)[22m[32m 10[2mms[22m[39m
+ [32m✓[39m tests/game/systems/QuizGenerator.Hint.test.ts [2m([22m[2m3 tests[22m[2m)[22m[32m 6[2mms[22m[39m
+ [32m✓[39m tests/game/effects/EffectDispose.test.ts [2m([22m[2m12 tests[22m[2m)[22m[32m 5[2mms[22m[39m
+ [32m✓[39m tests/game/scenes/SceneDisposal.test.ts [2m([22m[2m2 tests[22m[2m)[22m[32m 16[2mms[22m[39m
+ [32m✓[39m tests/game/SceneManager.test.ts [2m([22m[2m6 tests[22m[2m)[22m[32m 4[2mms[22m[39m
+ [32m✓[39m tests/game/scenes/QuizScene.HintEffect.test.ts [2m([22m[2m1 test[22m[2m)[22m[32m 10[2mms[22m[39m
+ [32m✓[39m tests/game/systems/PerformanceManager.test.ts [2m([22m[2m6 tests[22m[2m)[22m[32m 7[2mms[22m[39m
+ [32m✓[39m tests/game/utils/ThreeDisposer.test.ts [2m([22m[2m1 test[22m[2m)[22m[32m 3[2mms[22m[39m
+ [32m✓[39m tests/game/config/Config.test.ts [2m([22m[2m6 tests[22m[2m)[22m[32m 3[2mms[22m[39m
+ [32m✓[39m tests/game/systems/TimeValidator.test.ts [2m([22m[2m5 tests[22m[2m)[22m[32m 2[2mms[22m[39m
+ [32m✓[39m tests/game/audio/AudioManager.test.ts [2m([22m[2m2 tests[22m[2m)[22m[32m 2[2mms[22m[39m
+ [32m✓[39m tests/game/Smoke.test.ts [2m([22m[2m1 test[22m[2m)[22m[32m 2[2mms[22m[39m
+
+[2m Test Files [22m [1m[32m41 passed[39m[22m[90m (41)[39m
+[2m      Tests [22m [1m[32m385 passed[39m[22m[90m (385)[39m
+[2m   Start at [22m 20:32:56
+[2m   Duration [22m 6.65s[2m (transform 1.36s, setup 0ms, import 3.19s, tests 4.82s, environment 28.35s)[22m
+

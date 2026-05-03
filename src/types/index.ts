@@ -24,13 +24,17 @@ export interface Scene {
   enter(context: SceneContext): void;
   update(deltaTime: number): void;
   exit(): void;
+  // Dispose releases Three.js GPU resources and any heavy references. Implementations
+  // should ensure calling dispose multiple times is safe (idempotent).
+  dispose(): void;
   getThreeScene(): THREE.Scene;
   getCamera(): THREE.Camera;
   // Optional: if provided and returns false, the engine may stop the continuous
   // render loop while the scene is active to save CPU on idle/static screens.
   // If not implemented, defaults to true (continuous rendering required).
-  // NOTE: Scene.exit() is responsible for releasing Three.js & DOM resources;
-  // the engine provides a defensive utility `safeDisposeScene` as a fallback.
+  // NOTE: Scene.exit() is responsible for releasing DOM-level resources; dispose()
+  // is for Three.js / GPU resource cleanup. The engine also provides a defensive
+  // utility `safeDisposeScene` as a fallback.
   needsContinuousRendering?(): boolean;
 }
 

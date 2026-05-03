@@ -1,0 +1,440 @@
+⠙⠹⠸⠼⠴⠦⠧⠇⠏⠋npm warn deprecated prebuild-install@7.1.3: No longer maintained. Please contact the author of the relevant native addon; alternatives are available.
+⠋⠙⠹⠸⠼⠴⠦⠧⠇⠏⠋⠙⠹⠸⠼⠴⠦⠧⠇⠏⠋⠙⠹⠸⠼⠴⠦⠧⠇⠏⠋⠙⠹
+added 158 packages in 5s
+⠹
+> kids-clock-master@1.0.0 test
+> vitest run --run --reporter=verbose
+
+
+ RUN  v4.1.5 /Users/shingotada/Documents/vscode/watch-game
+
+
+ Test Files 0 passed (49)
+      Tests 0 passed (0)
+   Start at 23:45:51
+   Duration 912ms
+
+ Test Files 0 passed (49)
+      Tests 0 passed (0)
+   Start at 23:45:51
+   Duration 1.92s
+
+ Test Files 0 passed (49)
+      Tests 0 passed (0)
+   Start at 23:45:51
+   Duration 2.94s
+
+ Test Files 0 passed (49)
+      Tests 0 passed (0)
+   Start at 23:45:51
+   Duration 3.96s
+
+ Test Files 0 passed (49)
+      Tests 0 passed (0)
+   Start at 23:45:51
+   Duration 4.97s
+
+ ❯ tests/game/audio/SFXGenerator.test.ts [queued]
+
+ Test Files 0 passed (49)
+      Tests 0 passed (0)
+   Start at 23:45:51
+   Duration 5.81s
+
+ ❯ tests/game/audio/SFXGenerator.test.ts 0/24
+ ❯ tests/game/entities/Clock3D.test.ts [queued]
+ ❯ tests/game/scenes/LevelSelectScene.test.ts [queued]
+ ❯ tests/game/scenes/ResultScene.test.ts [queued]
+ ❯ tests/game/scenes/TitleScene.test.ts [queued]
+ ❯ tests/game/systems/ClockController.test.ts [queued]
+ ❯ tests/game/systems/QuizGenerator.test.ts [queued]
+
+ Test Files 0 passed (49)
+      Tests 0 passed (24)
+   Start at 23:45:51
+   Duration 5.92s
+ ✓ tests/game/audio/SFXGenerator.test.ts > SFXGenerator > init() > init() で context と destination が設定されること 4ms
+ ✓ tests/game/audio/SFXGenerator.test.ts > SFXGenerator > init() 前の安全性 > init() 前に play() を呼んでもエラーにならないこと 3ms
+ ✓ tests/game/audio/SFXGenerator.test.ts > SFXGenerator > init() 前の安全性 > init() 前は createOscillator が呼ばれないこと 0ms
+ ✓ tests/game/audio/SFXGenerator.test.ts > SFXGenerator > 全 SFX タイプの再生 > play("correct") が createOscillator を呼ぶこと 1ms
+ ✓ tests/game/audio/SFXGenerator.test.ts > SFXGenerator > 全 SFX タイプの再生 > play("incorrect") が createOscillator を呼ぶこと 0ms
+ ✓ tests/game/audio/SFXGenerator.test.ts > SFXGenerator > 全 SFX タイプの再生 > play("hint") が createOscillator を呼ぶこと 0ms
+ ✓ tests/game/audio/SFXGenerator.test.ts > SFXGenerator > 全 SFX タイプの再生 > play("levelClear") が createOscillator を呼ぶこと 2ms
+ ✓ tests/game/audio/SFXGenerator.test.ts > SFXGenerator > 全 SFX タイプの再生 > play("allClear") が createOscillator を呼ぶこと 1ms
+ ✓ tests/game/audio/SFXGenerator.test.ts > SFXGenerator > 全 SFX タイプの再生 > play("buttonTap") が createOscillator を呼ぶこと 0ms
+ ✓ tests/game/audio/SFXGenerator.test.ts > SFXGenerator > 全 SFX タイプの再生 > play("tick") が createOscillator を呼ぶこと 0ms
+ ✓ tests/game/audio/SFXGenerator.test.ts > SFXGenerator > 全 SFX タイプの再生 > play("clockSet") が createOscillator を呼ぶこと 0ms
+ ✓ tests/game/audio/SFXGenerator.test.ts > SFXGenerator > playNote 検証（buttonTap / tick 経由） > buttonTap で createOscillator が 1 回呼ばれること 0ms
+ ✓ tests/game/audio/SFXGenerator.test.ts > SFXGenerator > playNote 検証（buttonTap / tick 経由） > tick で createOscillator が 1 回呼ばれること 0ms
+ ✓ tests/game/audio/SFXGenerator.test.ts > SFXGenerator > playNote 検証（buttonTap / tick 経由） > buttonTap でオシレーターの start と stop が呼ばれること 0ms
+ ✓ tests/game/audio/SFXGenerator.test.ts > SFXGenerator > playNote 検証（buttonTap / tick 経由） > buttonTap で gain の setValueAtTime と exponentialRampToValueAtTime が呼ばれること 0ms
+ ✓ tests/game/audio/SFXGenerator.test.ts > SFXGenerator > playFanfare 検証（correct / levelClear / allClear 経由） > correct で setTimeout 経由で 3 ノート再生されること 1ms
+ ✓ tests/game/audio/SFXGenerator.test.ts > SFXGenerator > playFanfare 検証（correct / levelClear / allClear 経由） > levelClear で setTimeout 経由で 4 ノート再生されること 0ms
+ ✓ tests/game/audio/SFXGenerator.test.ts > SFXGenerator > playFanfare 検証（correct / levelClear / allClear 経由） > allClear で setTimeout 経由で 6 ノート再生されること 0ms
+ ✓ tests/game/audio/SFXGenerator.test.ts > SFXGenerator > playFanfare 検証（correct / levelClear / allClear 経由） > correct の最初のノートは delay=0 で再生されること 0ms
+ ✓ tests/game/audio/SFXGenerator.test.ts > SFXGenerator > playTone 検証（incorrect / hint 経由） > incorrect で setTimeout 経由で 2 ノート再生されること 0ms
+ ✓ tests/game/audio/SFXGenerator.test.ts > SFXGenerator > playTone 検証（incorrect / hint 経由） > hint で setTimeout 経由で 2 ノート再生されること 0ms
+ ✓ tests/game/audio/SFXGenerator.test.ts > SFXGenerator > playTone 検証（incorrect / hint 経由） > incorrect の最初のノートは delay=0 で再生されること 0ms
+ ✓ tests/game/audio/SFXGenerator.test.ts > SFXGenerator > playChord 検証（clockSet 経由） > clockSet で 3 つの音が同時に再生されること 0ms
+ 2m✓ tests/game/audio/SFXGenerator.test.ts > SFXGenerator > playChord 検証（clockSet 経由） > clockSet で各オシレーターが connect → start → stop されること 1ms
+ ✓ tests/game/systems/QuizGenerator.test.ts > QuizGenerator > should generate times within level 1 constraints (hours only) 2ms
+ ✓ tests/game/systems/QuizGenerator.test.ts > QuizGenerator > should generate times within level 2 constraints (30-min steps) 1ms
+ ✓ tests/game/systems/QuizGenerator.test.ts > QuizGenerator > should generate times within level 3 constraints (5-min steps) 0ms
+ ✓ tests/game/systems/QuizGenerator.test.ts > QuizGenerator > should generate times within level 4 constraints (1-min steps) 0ms
+ ✓ tests/game/systems/QuizGenerator.test.ts > QuizGenerator > should generate 4 unique choices 0ms
+ ✓ tests/game/systems/QuizGenerator.test.ts > QuizGenerator > should respect optionCount parameter when smaller than default 0ms
+ ✓ tests/game/systems/QuizGenerator.test.ts > QuizGenerator > should throw when provided correct time is out of range for the level 0ms
+ ✓ tests/game/systems/QuizGenerator.test.ts > QuizGenerator > should filter wrap-around close choices (correct=12:55, wrong=1:00) 1ms
+ ✓ tests/game/systems/QuizGenerator.test.ts > QuizGenerator > should filter wrap-around close choices (correct=1:00, wrong=12:55) 0ms
+ ✓ tests/game/systems/QuizGenerator.test.ts > QuizGenerator > should fallback to enumerated candidates when attempts exhausted 0ms
+ ✓ tests/game/systems/QuizGenerator.test.ts > generateUniqueTime > should return a time not in exclude list 1ms
+ ✓ tests/game/systems/QuizGenerator.test.ts > generateUniqueTime > should generate all unique times for level 1 with 5 questions 0ms
+ ✓ tests/game/systems/QuizGenerator.test.ts > generateUniqueTime > should pick from remaining candidates when some are excluded (deterministic) 0ms
+ ✓ tests/game/systems/QuizGenerator.test.ts > generateUniqueTime > should fallback when all candidates are excluded and return generated time 0ms
+ ✓ tests/game/systems/QuizGenerator.test.ts > generateUniqueTime > should not crash when exclude covers all candidates (fallback) 0ms
+ ✓ tests/game/systems/QuizGenerator.test.ts > formatTime > should format exact hours 0ms
+ ✓ tests/game/systems/QuizGenerator.test.ts > formatTime > should format half hours 0ms
+ ✓ tests/game/systems/QuizGenerator.test.ts > formatTime > should format other minutes 0ms
+ ✓ tests/game/systems/QuizGenerator.test.ts > QuizGenerator fallback > should return 4 unique choices when generateTime repeatedly returns filtered candidates 1ms
+ ✓ tests/game/systems/QuizGenerator.test.ts > QuizGenerator streak-based difficulty > increases difficulty after thresholds and resets on incorrect 0ms
+
+ ❯ tests/game/audio/SFXGenerator.test.ts 24/24
+ ❯ tests/game/entities/Clock3D.test.ts 1/32
+ ❯ tests/game/scenes/LevelSelectScene.test.ts 0/13
+ ❯ tests/game/scenes/ResultScene.test.ts 0/40
+ ❯ tests/game/scenes/TitleScene.test.ts 0/16
+ ❯ tests/game/systems/ClockController.test.ts 0/30
+ ❯ tests/game/systems/QuizGenerator.test.ts 20/20
+
+ Test Files 2 passed (49)
+      Tests 45 passed (175)
+   Start at 23:45:51
+   Duration 6.02s
+ ✓ tests/game/entities/Clock3D.test.ts > Clock3D > should initialize at 12:00 6ms
+ ✓ tests/game/entities/Clock3D.test.ts > Clock3D > should set and get time correctly 1ms
+ ✓ tests/game/entities/Clock3D.test.ts > Clock3D > should snap minutes to step 1ms
+ ✓ tests/game/entities/Clock3D.test.ts > Clock3D > should snap minutes to 30-min step 1ms
+ ✓ tests/game/entities/Clock3D.test.ts > Clock3D > should convert angles to minutes (12 oclock = 0 min) 1ms
+ ✓ tests/game/entities/Clock3D.test.ts > Clock3D > should convert angles to minutes (3 oclock = 15 min) 1ms
+ ✓ tests/game/entities/Clock3D.test.ts > Clock3D > should convert angles to minutes (6 oclock = 30 min) 1ms
+ ✓ tests/game/entities/Clock3D.test.ts > Clock3D > angleToMinutes round-trip for common minutes 1ms
+ ✓ tests/game/entities/Clock3D.test.ts > Clock3D > should have a clock face mesh 1ms
+ ✓ tests/game/entities/Clock3D.test.ts > Clock3D > should set hour angle to 3 oclock 1ms
+ ✓ tests/game/entities/Clock3D.test.ts > Clock3D > should set hour angle to 12 oclock 1ms
+ ✓ tests/game/entities/Clock3D.test.ts > Clock3D > should set hour angle to 6 oclock 1ms
+ ✓ tests/game/entities/Clock3D.test.ts > Clock3D > setMinuteAngle should wrap forward (prev 50 -> target 5 increments hour) 1ms
+ ✓ tests/game/entities/Clock3D.test.ts > Clock3D > setMinuteAngle should wrap backward (prev 5 -> target 50 decrements hour) 1ms
+ ✓ tests/game/entities/Clock3D.test.ts > Clock3D > should return hand tip positions 1ms
+ ✓ tests/game/entities/Clock3D.test.ts > Clock3D > getHandTipPosition should reuse provided target instance 1ms
+ ✓ tests/game/entities/Clock3D.test.ts > Clock3D > getHandTipPosition without target should return a new Vector3 each call 1ms
+ ✓ tests/game/entities/Clock3D.test.ts > Clock3D > should increment hours when snapMinutes rounds to 60 (step=30, min=45) 1ms
+ ✓ tests/game/entities/Clock3D.test.ts > Clock3D > should increment hours when snapMinutes rounds to 60 (step=5, min=58) 1ms
+ ✓ tests/game/entities/Clock3D.test.ts > Clock3D > should wrap hours from 12 to 1 when snapMinutes rounds to 60 2ms
+ ✓ tests/game/entities/Clock3D.test.ts > Clock3D > should not change hours when snapMinutes does not reach 60 (step=30, min=14) 1ms
+ ✓ tests/game/entities/Clock3D.test.ts > Clock3D > should snap correctly for step=15 near lower boundary (min=7 -> 0) 2ms
+ ✓ tests/game/entities/Clock3D.test.ts > Clock3D > should snap correctly for step=15 near upper boundary (min=8 -> 15) 1ms
+ ✓ tests/game/entities/Clock3D.test.ts > Clock3D > should highlight and clear hand 1ms
+ ✓ tests/game/entities/Clock3D.test.ts > Clock3D > tick geometry and material sharing > should share geometry among same type ticks (major/minor) 12ms
+ ✓ tests/game/entities/Clock3D.test.ts > Clock3D > dispose > should not throw when called 8ms
+ ✓ tests/game/entities/Clock3D.test.ts > Clock3D > dispose > should remove all children from group 1ms
+ ✓ tests/game/entities/Clock3D.test.ts > Clock3D > dispose > should not throw when called twice (idempotent) 1ms
+ ✓ tests/game/entities/Clock3D.test.ts > Clock3D > dispose > should dispose unique geometries and materials once 4ms
+ ✓ tests/game/entities/Clock3D.test.ts > Clock3D > dispose > should dispose unique textures on materials 1ms
+ ✓ tests/game/entities/Clock3D.test.ts > Clock3D > shared numbers texture > should reuse same texture across instances 2ms
+ ✓ tests/game/entities/Clock3D.test.ts > Clock3D > shared numbers texture > should call shared texture.dispose only once when disposing multiple instances 6ms
+
+ ❯ tests/game/audio/SFXGenerator.test.ts 24/24
+ ❯ tests/game/entities/Clock3D.test.ts 32/32
+ ❯ tests/game/scenes/LevelSelectScene.test.ts 0/13
+ ❯ tests/game/scenes/ResultScene.test.ts 0/40
+ ❯ tests/game/scenes/TitleScene.test.ts 1/16
+ ❯ tests/game/systems/ClockController.test.ts 0/30
+ ❯ tests/game/systems/QuizGenerator.test.ts 20/20
+
+ Test Files 3 passed (49)
+      Tests 77 passed (175)
+   Start at 23:45:51
+   Duration 6.34s
+ ✓ tests/game/scenes/TitleScene.test.ts > TitleScene > BGM > enter() で startBGM("title") が呼ばれること 150ms
+ ✓ tests/game/scenes/LevelSelectScene.test.ts > LevelSelectScene > 星評価表示（ベストスコアベース） > 未プレイのレベルは ☆☆☆ を表示する 150ms
+ ✓ tests/game/scenes/LevelSelectScene.test.ts > LevelSelectScene > 星評価表示（ベストスコアベース） > ratio < 0.6 のとき ☆☆☆ を表示する 9ms
+ ✓ tests/game/scenes/LevelSelectScene.test.ts > LevelSelectScene > 星評価表示（ベストスコアベース） > ratio >= 0.6 のとき ★☆☆ を表示する 7ms
+ ✓ tests/game/scenes/TitleScene.test.ts > TitleScene > BGM > audioManager が未初期化の場合 startBGM が呼ばれないこと 144ms
+ ✓ tests/game/scenes/TitleScene.test.ts > TitleScene > BGM > exit() で stopBGM() が呼ばれること 34ms
+ ✓ tests/game/scenes/TitleScene.test.ts > TitleScene > 時計表示 > enter() で Clock3D の group が scene に追加されること 19ms
+ ✓ tests/game/scenes/ResultScene.test.ts > ResultScene > 進捗保存 > ratio >= 0.6 かつ quiz モードで completedLevel が保存される 119ms
+ ✓ tests/game/scenes/ResultScene.test.ts > ResultScene > 進捗保存 > ratio >= 0.6 かつ setTime モードで completedLevel が保存される 5ms
+ ✓ tests/game/scenes/ResultScene.test.ts > ResultScene > 進捗保存 > ratio < 0.6 かつ quiz モードで completedLevel が保存されない 4ms
+ ✓ tests/game/scenes/ResultScene.test.ts > ResultScene > 進捗保存 > ratio >= 0.6 かつ daily モードで daily の completedLevel が保存される 21ms
+ ✓ tests/game/scenes/ResultScene.test.ts > ResultScene > 進捗保存 > ratio < 0.6 かつ daily モードで completedLevel が保存されない 3ms
+ ✓ tests/game/scenes/ResultScene.test.ts > ResultScene > 進捗保存 > daily モードでは quiz/setTime の completedLevel には追加されない 14ms
+
+ ❯ tests/game/audio/SFXGenerator.test.ts 24/24
+ ❯ tests/game/entities/Clock3D.test.ts 32/32
+ ❯ tests/game/scenes/LevelSelectScene.test.ts 4/13
+ ❯ tests/game/scenes/ResultScene.test.ts 6/40
+ ❯ tests/game/scenes/TitleScene.test.ts 4/16
+ ❯ tests/game/systems/ClockController.test.ts 0/30
+ ❯ tests/game/systems/QuizGenerator.test.ts 20/20
+
+ Test Files 3 passed (49)
+      Tests 90 passed (175)
+   Start at 23:45:51
+   Duration 6.44s
+ ✓ tests/game/scenes/LevelSelectScene.test.ts > LevelSelectScene > 星評価表示（ベストスコアベース） > ratio >= 0.8 のとき ★★☆ を表示する 197ms
+ ✓ tests/game/scenes/LevelSelectScene.test.ts > LevelSelectScene > 星評価表示（ベストスコアベース） > ratio === 1.0 のとき ★★★ を表示する 82ms
+ ✓ tests/game/scenes/LevelSelectScene.test.ts > LevelSelectScene > 星評価表示（ベストスコアベース） > 未プレイ（☆☆☆）はグレー(#BDC3C7)で表示される 8ms
+ ✓ tests/game/scenes/LevelSelectScene.test.ts > LevelSelectScene > 星評価表示（ベストスコアベース） > ★ありはゴールド(#F39C12)で表示される 5mms
+ ✓ tests/game/scenes/LevelSelectScene.test.ts > LevelSelectScene > 星評価表示（ベストスコアベース） > setTime モードでも正しいキーでスコアを参照する 5ms
+ ✓ tests/game/scenes/LevelSelectScene.test.ts > LevelSelectScene > ベストスコア・トロフィー表示 > ベストスコアがある場合「🎯 3/5」のように表示される 10ms
+ ✓ tests/game/scenes/LevelSelectScene.test.ts > LevelSelectScene > ベストスコア・トロフィー表示 > ベストスコアがない（未プレイ）場合はスコア表示がない 9ms
+ ✓ tests/game/scenes/LevelSelectScene.test.ts > LevelSelectScene > ベストスコア・トロフィー表示 > トロフィーがある場合「🏆」が表示される 4ms
+ ✓ tests/game/scenes/LevelSelectScene.test.ts > LevelSelectScene > ベストスコア・トロフィー表示 > トロフィーがない場合「🏆」は表示されない 11ms
+ ✓ tests/game/scenes/LevelSelectScene.test.ts > LevelSelectScene > ベストスコア・トロフィー表示 > setTimeモードでも正しいキーでスコア・トロフィーを参照する 16ms
+ ✓ tests/game/scenes/TitleScene.test.ts > TitleScene > 時計表示 > exit() で Clock3D の group が scene から除去されること 98ms
+ ✓ tests/game/scenes/TitleScene.test.ts > TitleScene > 時計表示 > enter→exit→enter が可能で dispose が呼ばれること 18ms
+ ✓ tests/game/scenes/TitleScene.test.ts > TitleScene > Clock3D instantiation count > enter() creates Clock3D once 8ms
+ ✓ tests/game/scenes/TitleScene.test.ts > TitleScene > Clock3D instantiation count > enter->exit->enter creates one Clock3D per enter 5ms
+ ✓ tests/game/scenes/TitleScene.test.ts > TitleScene > 背景 stars > enter() で stars パーティクルが scene に追加されること 6ms
+ ✓ tests/game/scenes/TitleScene.test.ts > TitleScene > 背景 stars > exit() で stars の geometry/material が dispose されること 9ms
+ ✓ tests/game/scenes/TitleScene.test.ts > TitleScene > ボタン操作 > 「あそぶ」ボタンクリックで modeSelect に遷移すること 10ms
+ ✓ tests/game/scenes/TitleScene.test.ts > TitleScene > ボタン操作 > 「トロフィー」ボタンクリックで trophy に遷移すること 7ms
+ ✓ tests/game/scenes/TitleScene.test.ts > TitleScene > ボタン操作 > ボタンクリック時に未初期化なら audioManager.init() が呼ばれること 10ms
+ ✓ tests/game/scenes/TitleScene.test.ts > TitleScene > ボタン操作 > ボタンクリック時に初期化済みなら audioManager.init() が呼ばれないこと 6ms
+ ✓ tests/game/scenes/TitleScene.test.ts > TitleScene > ボタン操作 > ボタンクリックで buttonTap SFX が再生されること 6ms
+ ✓ tests/game/scenes/ResultScene.test.ts > ResultScene > ベストスコアと統計 > ratio 100% で bestScore と stats が更新される 267ms
+ ✓ tests/game/scenes/ResultScene.test.ts > ResultScene > ベストスコアと統計 > ratio 40% でも bestScore と stats が更新される 17ms
+ ✓ tests/game/scenes/ResultScene.test.ts > ResultScene > ベストスコアと統計 > 複数回プレイで totalPlays が加算される 9ms
+ ✓ tests/game/scenes/ResultScene.test.ts > ResultScene > トロフィー > ratio === 1 でパーフェクトトロフィーが付与される 3ms
+ ✓ tests/game/scenes/ResultScene.test.ts > ResultScene > トロフィー > ratio < 1 ではトロフィーが付与されない 3ms
+ ✓ tests/game/scenes/ResultScene.test.ts > ResultScene > BGM と SFX > enter() で result BGM が開始される 13ms
+ ✓ tests/game/scenes/ResultScene.test.ts > ResultScene > BGM と SFX > ratio === 1 で allClear SFX が再生される 3ms
+ ✓ tests/game/scenes/ResultScene.test.ts > ResultScene > BGM と SFX > ratio >= 0.6 かつ < 1 で levelClear SFX が再生される 9ms
+ ✓ tests/game/scenes/ResultScene.test.ts > ResultScene > BGM と SFX > ratio < 0.6 では SFX が再生されない 6ms
+ ✓ tests/game/scenes/ResultScene.test.ts > ResultScene > BGM と SFX > exit() で BGM が停止される 5ms
+ ✓ tests/game/scenes/ResultScene.test.ts > ResultScene > UI 表示 > 100% で星3つ ★★★ とパーフェクトメッセージが表示される 4ms
+ ✓ tests/game/scenes/ResultScene.test.ts > ResultScene > UI 表示 > 80% で星2つ ★★☆ と「とてもよくできました」が表示される 6ms
+ ✓ tests/game/scenes/ResultScene.test.ts > ResultScene > UI 表示 > 60% で星1つ ★☆☆ と「よくがんばったね」が表示される 3ms
+ ✓ tests/game/scenes/ResultScene.test.ts > ResultScene > UI 表示 > 40% で星0個 ☆☆☆ と「もういちど チャレンジしよう」が表示される 4ms
+ ✓ tests/game/scenes/ResultScene.test.ts > ResultScene > UI 表示 > スコア表示が「correct / total もん せいかい！」形式である 3ms
+ ✓ tests/game/scenes/TitleScene.test.ts > TitleScene > exit() > exit() でオーバーレイ DOM が除去されること 5ms
+
+ ❯ tests/game/audio/SFXGenerator.test.ts 24/24
+ ❯ tests/game/entities/Clock3D.test.ts 32/32
+ ❯ tests/game/scenes/LevelSelectScene.test.ts 13/13
+ ❯ tests/game/scenes/ResultScene.test.ts 22/40
+ ❯ tests/game/scenes/TitleScene.test.ts 16/16
+ ❯ tests/game/systems/ClockController.test.ts 0/30
+ ❯ tests/game/systems/QuizGenerator.test.ts 20/20
+
+ Test Files 5 passed (49)
+      Tests 127 passed (175)
+   Start at 23:45:51
+   Duration 6.64s
+ ✓ tests/game/scenes/ResultScene.test.ts > ResultScene > ボタン遷移 > ratio < 0.6 で 3つのボタン（もういちど・モードせんたく・ホーム）が表示される 13ms
+ ✓ tests/game/scenes/ResultScene.test.ts > ResultScene > ボタン遷移 > ホームボタンで title に遷移する 7ms
+ ✓ tests/game/scenes/ResultScene.test.ts > ResultScene > ボタン遷移 > モードせんたくボタンで modeSelect に遷移する 5ms
+ ✓ tests/game/scenes/ResultScene.test.ts > ResultScene > ボタン遷移 > もういちどボタンで quiz モードは quizPlay に遷移する 4ms
+ ✓ tests/game/scenes/ResultScene.test.ts > ResultScene > 2mボタン遷移 > もういちどボタンで setTime モードは setTimePlay に遷移する 3ms
+ ✓ tests/game/scenes/ResultScene.test.ts > ResultScene > ボタン遷移 > もういちどボタンで daily モードは dailyPlay に遷移する 2ms
+ ✓ tests/game/scenes/ResultScene.test.ts > ResultScene > exit() > exit() でオーバーレイが除去される 7ms
+ ✓ tests/game/scenes/ResultScene.test.ts > ResultScene — つぎのレベルへボタン > レベルクリア（ratio >= 0.6）かつ最終レベルでない場合にボタンが表示される 6ms
+ ✓ tests/game/scenes/ResultScene.test.ts > ResultScene — つぎのレベルへボタン > ratio = 0.6 ちょうどでボタンが表示される（境界値） 3ms
+ ✓ tests/game/scenes/ResultScene.test.ts > ResultScene — つぎのレベルへボタン > ratio = 0.59 でボタンが表示されない（境界値） 7ms
+ ✓ tests/game/scenes/ResultScene.test.ts > ResultScene — つぎのレベルへボタン > 最終レベルの場合はボタンが表示されない 4ms
+ ✓ tests/game/scenes/ResultScene.test.ts > ResultScene — つぎのレベルへボタン > mode === "daily" の場合はボタンが表示されない 4ms
+ ✓ tests/game/scenes/ResultScene.test.ts > ResultScene — つぎのレベルへボタン > quiz モードでボタンクリック時に quizPlay に level+1 で遷移する 7ms
+ ✓ tests/game/scenes/ResultScene.test.ts > ResultScene — つぎのレベルへボタン > setTime モードでボタンクリック時に setTimePlay に level+1 で遷移する 8ms
+ ✓ tests/game/scenes/ResultScene.test.ts > ResultScene — つぎのレベルへボタン > retryBtn の直後に配置される 9ms
+ ✓ tests/game/scenes/ResultScene.test.ts > ResultScene - トロフィー獲得通知 > パーフェクト達成 + 初回トロフィー → 🏆 トロフィーゲット！が表示される 4ms
+ ✓ tests/game/scenes/ResultScene.test.ts > ResultScene - トロフィー獲得通知 > パーフェクト達成 + 既得トロフィー → トロフィーゲット！が表示されない 3ms
+ ✓ tests/game/scenes/ResultScene.test.ts > ResultScene - トロフィー獲得通知 > パーフェクト未達 → トロフィーゲット！が表示されない 3ms
+ ✓ tests/game/scenes/ResultScene.test.ts > ResultScene - トロフィー獲得通知 > exit() で isNewTrophy がリセットされること 5ms
+
+ ❯ tests/game/audio/SFXGenerator.test.ts 24/24
+ ❯ tests/game/entities/Clock3D.test.ts 32/32
+ ❯ tests/game/scenes/LevelSelectScene.test.ts 13/13
+ ❯ tests/game/scenes/ResultScene.test.ts 40/40
+ ❯ tests/game/scenes/TitleScene.test.ts 16/16
+ ❯ tests/game/systems/ClockController.test.ts 1/30
+ ❯ tests/game/systems/QuizGenerator.test.ts 20/20
+
+ Test Files 6 passed (49)
+      Tests 146 passed (175)
+   Start at 23:45:51
+   Duration 6.74s
+ ✓ tests/game/systems/ClockController.test.ts > ClockController > イベントリスナー管理 > setEnabled(true) で canvas に4種のイベントリスナーが登録されること 716ms
+ ✓ tests/game/systems/ClockController.test.ts > ClockController > イベントリスナー管理 > setEnabled(false) で全リスナーが解除されること 2ms
+ ✓ tests/game/systems/ClockController.test.ts > ClockController > イベントリスナー管理 > setEnabled(true) を2回呼んでもリスナーが二重登録されないこと 1ms
+ ✓ tests/game/systems/ClockController.test.ts > ClockController > イベントリスナー管理 > dispose() 後にリスナーが解除されること 1ms
+ ✓ tests/game/systems/ClockController.test.ts > ClockController > イベントリスナー管理 > dispose() は Clock3D.dispose() を呼び出すこと 1ms
+ ✓ tests/game/systems/ClockController.test.ts > ClockController > イベントリスナー管理 > pointerdown で setPointerCapture が呼ばれ、setEnabled(false) ／ dispose() で releasePointerCapture が呼ばれること 5ms
+ ✓ tests/game/systems/ClockController.test.ts > ClockController > イベントリスナー管理 > pointerdown → pointerup のフローで pointerId を使って releasePointerCapture が呼ばれること 2ms
+ ✓ tests/game/systems/ClockController.test.ts > ClockController > 角度ジャンプ抑制 > 小さな角度変化（< 60°）が正常に通ること 1ms
+ ✓ tests/game/systems/ClockController.test.tsm > ClockController > 角度ジャンプ抑制 > 大きな角度ジャンプ（> 60°）が棄却されること 1ms
+ ✓ tests/game/systems/ClockController.test.ts > ClockController > 角度ジャンプ抑制 > π付近のラップアラウンドが正しく正規化されること 2ms
+ ✓ tests/game/systems/ClockController.test.ts > ClockController > ドラッグフロー統合テスト > pointerdown → pointermove → pointerup で onChange が呼ばれること 1ms
+ ✓ tests/game/systems/ClockController.test.ts > ClockController > ドラッグフロー統合テスト > enabled = false のとき dragging が開始されないこと 1ms
+ ✓ tests/game/systems/ClockController.test.ts > ClockController > ドラッグフロー統合テスト > ドラッグ中に setEnabled(false) すると dragging 状態がリセットされること 1ms
+ ✓ tests/game/systems/ClockController.test.ts > ClockController > スナップ連携 > setSnapStep(5) 設定時、pointerup で snapMinutes(5) が呼ばれること 2ms
+ ✓ tests/game/systems/ClockController.test.ts > ClockController > onChange 時刻変化チェック > ドラッグ中にスナップ後の時刻が変化しない pointermove ではコールバックが呼ばれないこと 3ms
+ ✓ tests/game/systems/ClockController.test.ts > ClockController > onChange 時刻変化チェック > ドラッグ中にスナップ後の時刻が変化する pointermove ではコールバックが呼ばれること 2ms
+ ✓ tests/game/systems/ClockController.test.ts > ClockController > onChange 時刻変化チェック > onPointerUp 後に時刻変化がある場合のみコールバックが呼ばれること 3ms
+ ✓ tests/game/systems/ClockController.test.ts > ClockController > onChange 時刻変化チェック > onPointerUp でスナップにより時刻が変化する場合はコールバックが呼ばれること 2ms
+ ✓ tests/game/systems/ClockController.test.ts > ClockController > onChange 時刻変化チェック > 短針ドラッグ時にも時刻変化チェックが機能すること 1ms
+ ✓ tests/game/systems/ClockController.test.ts > ClockController > onChange 時刻変化チェック > setEnabled(false) → setEnabled(true) → 再ドラッグで正しく動作すること 2ms
+ ✓ tests/game/systems/ClockController.test.ts > ClockController > 一時オブジェクト再利用m > getNDC が同一の Vector2 インスタンスを返すこと 7ms
+ ✓ tests/game/systems/ClockController.test.ts > ClockController > 一時オブジェクト再利用 > getWorldPoint が同一の Vector3 インスタンスを返すこと 2ms
+ ✓ tests/game/systems/ClockController.test.ts > ClockController > 一時オブジェクト再利用 > getWorldPoint フォールバック: intersectPlane が null の場合でも同一インスタンスを維持して平面交差を計算すること 3ms
+ ✓ tests/game/systems/ClockController.test.ts > ClockController > 一時オブジェクト再利用 > selectHand は getHandTipPosition に再利用ベクタを渡して呼び出すこと 3ms
+ ✓ tests/game/systems/ClockController.test.ts > pixelsToWorldDistance (integration) > produces positive distances for perspective camera 1ms
+ ✓ tests/game/systems/ClockController.test.ts > pixelsToWorldDistance (integration) > returns finite positive distance when camera is at same z as plane (perspective) 0ms
+ ✓ tests/game/systems/ClockController.test.ts > pixelsToWorldDistance (integration) > produces positive distance for orthographic camera even when camera at same z 0ms
+ ✓ tests/game/systems/ClockController.test.ts > pixelsToWorldDistance (integration) > produces different values for orthographic vs perspective 0ms
+ ✓ tests/game/systems/ClockController.test.ts > pixelsToWorldDistance (integration) > returns fallback when canvas rect is zero-sized 0ms
+ ✓ tests/game/systems/ClockController.test.ts > pixelsToWorldDistance (integration) > returns fallback when pixels is non-positive 0ms
+
+ ❯ tests/game/entities/Clock3D.test.ts 32/32
+ ❯ tests/game/scenes/LevelSelectScene.test.ts 13/13
+ ❯ tests/game/scenes/ResultScene.test.ts 40/40
+ ❯ tests/game/scenes/TitleScene.test.ts 16/16
+ ❯ tests/game/systems/ClockController.test.ts 30/30
+
+ Test Files 7 passed (49)
+      Tests 175 passed (175)
+   Start at 23:45:51
+   Duration 6.95s
+
+
+ ❯ tests/game/scenes/ResultScene.test.ts 40/40
+ ❯ tests/game/storage/SaveManager.test.ts [queued]
+ ❯ tests/game/systems/ClockController.test.ts 30/30
+ ❯ tests/ui/ChoiceButtons.test.ts [queued]
+
+ Test Files 7 passed (49)
+      Tests 175 passed (175)
+   Start at 23:45:51
+   Duration 7.05s
+ ✓ tests/game/storage/SaveManager.test.ts > SaveManager > should return default data when no save exists 3ms
+ ✓ tests/game/storage/SaveManager.test.ts > SaveManager > should save and load data 1ms
+ ✓ tests/game/storage/SaveManager.test.ts > SaveManager > should add completed level without duplicates 0ms
+ ✓ tests/game/storage/SaveManager.test.ts > SaveManager > should keep completed levels sorted 0ms
+ ✓ tests/game/storage/SaveManager.test.ts > SaveManager > should add trophies without duplicates 0ms
+ ✓ tests/game/storage/SaveManager.test.ts > SaveManager > should sanitize trophies array elements when loading 0ms
+ ✓ tests/game/storage/SaveManager.test.ts > SaveManager > should sanitize completedLevels elements when loading (string numbers -> numbers) 0ms
+ ✓ tests/game/storage/SaveManager.test.ts > SaveManager > should update best score only if higher 0ms
+ ✓ tests/game/storage/SaveManager.test.ts > SaveManager > should increment stats 0ms
+ ✓ tests/game/storage/SaveManager.test.ts > SaveManager > should clear data 0ms
+ ✓ tests/game/storage/SaveManager.test.ts > SaveManager > should handle corrupted data gracefully (non-json) 0ms
+ ✓ tests/game/storage/SaveManager.test.ts > SaveManager > should fallback to default for structurally corrupted data and allow recovery 1ms
+ ✓ tests/game/storage/SaveManager.test.ts > SaveManager > should not throw when localStorage.setItem throws 0ms
+ ✓ tests/game/storage/SaveManager.test.ts > SaveManager > should not throw when localStorage.removeItem throws 0ms
+ ✓ tests/game/storage/SaveManager.test.ts > SaveManager > should migrate v0 (no version) data to v1 0ms
+ ✓ tests/game/storage/SaveManager.test.ts > SaveManager > should accept valid v1 data as-is 0ms
+ ✓ tests/game/storage/SaveManager.test.ts > SaveManager > should fallback to default if migrated data is invalid 0ms
+
+ ❯ tests/game/scenes/QuizPlayScene.test.ts [queued]
+ ❯ tests/game/storage/SaveManager.test.ts 17/17
+ ❯ tests/game/systems/ClockController.test.ts 30/30
+ ❯ tests/ui/ChoiceButtons.test.ts 0/16
+
+ Test Files 8 passed (49)
+      Tests 192 passed (208)
+   Start at 23:45:51
+   Duration 7.25s
+
+ ❯ tests/game/scenes/QuizPlayScene.test.ts [queued]
+ ❯ tests/game/storage/SaveManager.test.ts 17/17
+ ❯ tests/game/systems/ClockController.test.ts 30/30
+ ❯ tests/ui/ChoiceButtons.test.ts 1/16
+
+ Test Files 8 passed (49)
+      Tests 193 passed (208)
+   Start at 23:45:51
+   Duration 7.35s
+ ✓ tests/ui/ChoiceButtons.test.ts > ChoiceButtons > should render buttons for each choice 132ms
+ ✓ tests/ui/ChoiceButtons.test.ts > ChoiceButtons > should set aria-label on buttons equal to their text 9ms
+ ✓ tests/ui/ChoiceButtons.test.ts > ChoiceButtons > should scale down on pointerdown 9ms
+ ✓ tests/ui/ChoiceButtons.test.ts > ChoiceButtons > should reset scale on pointerup 10ms
+ ✓ tests/ui/ChoiceButtons.test.ts > ChoiceButtons > should reset scale on pointerleave 7ms
+ ✓ tests/ui/ChoiceButtons.test.ts > ChoiceButtons > should call onSelect callback when clicked 6ms
+ ✓ tests/ui/ChoiceButtons.test.ts > ChoiceButtons > should not call onSelect when disabled after showResult 30ms
+ ✓ tests/ui/ChoiceButtons.test.ts > ChoiceButtons > should not scale down on pointerdown when disabled 10ms
+ ✓ tests/ui/ChoiceButtons.test.ts > ChoiceButtons > should reset scale on pointerleave even when disabled 6ms
+ ✓ tests/ui/ChoiceButtons.test.ts > ChoiceButtons > should clean up on unmount 8ms
+ ✓ tests/ui/ChoiceButtons.test.ts > ChoiceButtons > showHint > should dim 2 incorrect buttons and keep correct + 1 incorrect visible 13ms
+ ✓ tests/ui/ChoiceButtons.test.ts > ChoiceButtons > showHint > should set pointerEvents to none on dimmed buttons and announce hint 8ms
+ ✓ tests/ui/ChoiceButtons.test.ts > ChoiceButtons > showHint > should not dim the correct button 42ms
+ ✓ tests/ui/ChoiceButtons.test.ts > ChoiceButtons > showHint > should do nothing when disabled (after showResult) 6ms
+ ✓ tests/ui/ChoiceButtons.test.ts > ChoiceButtons > showHint > should not dim buttons if not mounted 5ms
+ ✓ tests/ui/ChoiceButtons.test.ts > ChoiceButtons > accessibility and positive feedback > shows polite aria-live messages and adds emoji on correct answer 9ms
+
+ ❯ tests/game/scenes/QuizPlayScene.test.ts 0/10
+ ❯ tests/game/scenes/SetTimePlayScene.test.ts [queued]
+ ❯ tests/game/storage/SaveManager.test.ts 17/17
+ ❯ tests/ui/ChoiceButtons.test.ts 16/16
+
+ Test Files 9 passed (49)
+      Tests 208 passed (218)
+   Start at 23:45:51
+   Duration 7.46s
+
+ ❯ tests/game/scenes/DailyPlayScene.test.ts [queued]
+ ❯ tests/game/scenes/QuizPlayScene.test.ts 0/10
+ ❯ tests/game/scenes/SetTimePlayScene.test.ts 0/8
+ ❯ tests/ui/TransitionOverlay.test.ts 0/16
+
+ Test Files 9 passed (49)
+      Tests 208 passed (242)
+   Start at 23:45:51
+   Duration 7.66s
+ ✓ tests/ui/TransitionOverlay.test.ts > TransitionOverlay > mount で DOM 要素が追加されること 20ms
+ ✓ tests/ui/TransitionOverlay.test.ts > TransitionOverlay > 初期状態で opacity: 0, pointer-events: none であること 1ms
+ ✓ tests/ui/TransitionOverlay.test.ts > TransitionOverlay > z-index が 200 であること 1ms
+ ✓ tests/ui/TransitionOverlay.test.ts > TransitionOverlay > fadeOut で opacity が 1 になること 1ms
+ ✓ tests/ui/TransitionOverlay.test.ts > TransitionOverlay > fadeOut 開始時に pointer-events: auto になること 1ms
+ ✓ tests/ui/TransitionOverlay.test.ts > TransitionOverlay > fadeOut のコールバックが transitionend 後に呼ばれること 1ms
+ ✓ tests/ui/TransitionOverlay.test.ts > TransitionOverlay > fadeOut のコールバックが propertyName !== opacity の場合は呼ばれないこと 1ms
+ ✓ tests/ui/TransitionOverlay.test.ts > TransitionOverlay > fadeOut のコールバックが setTimeout フォールバックで呼ばれること 1ms
+ ✓ tests/ui/TransitionOverlay.test.ts > TransitionOverlay > fadeIn で opacity が 0 に戻ること 1ms
+ ✓ tests/ui/TransitionOverlay.test.ts > TransitionOverlay > fadeIn 完了後に pointer-events: none に戻ること 2ms
+ ✓ tests/ui/TransitionOverlay.test.ts > TransitionOverlay > fadeIn 完了後に isTransitioning が false になること 1ms
+ ✓ tests/ui/TransitionOverlay.test.ts > TransitionOverlay > fadeIn の setTimeout フォールバックで pointer-events: none に戻ること 1ms
+ ✓ tests/ui/TransitionOverlay.test.ts > TransitionOverlay > isTransitioning() がフェード中に true を返すこと 0ms
+ ✓ tests/ui/TransitionOverlay.test.ts > TransitionOverlay > 二重 fadeOut 呼び出し時にガードが機能すること 1ms
+ ✓ tests/ui/TransitionOverlay.test.ts > TransitionOverlay > unmount で DOM 要素が除去されること 3ms
+ ✓ tests/ui/TransitionOverlay.test.ts > TransitionOverlay > unmount で setTimeout タイマーがクリアされること 5ms
+
+ ❯ tests/game/scenes/DailyPlayScene.test.ts 0/8
+ ❯ tests/game/scenes/ModeSelectScene.test.ts [queued]
+ ❯ tests/game/scenes/QuizPlayScene.test.ts 1/10
+ ❯ tests/game/scenes/SetTimePlayScene.test.ts 0/8
+ ❯ tests/ui/TransitionOverlay.test.ts 16/16
+
+ Test Files 10 passed (49)
+      Tests 225 passed (250)
+   Start at 23:45:51
+   Duration 7.76s
+ ✓ tests/game/scenes/QuizPlayScene.test.ts > QuizPlayScene > exit() 後に setTimeout コールバックが requestTransition を呼ばないこと 177ms
+ ✓ tests/game/scenes/QuizPlayScene.test.ts > QuizPlayScene > 質問プロンプト「なんじかな」が表示されること 26ms
+ ✓ tests/game/scenes/QuizPlayScene.test.ts > QuizPlayScene > enter() で pendingTimers が初期化されること（再入時の防御） 26ms
+ ✓ tests/game/scenes/SetTimePlayScene.test.ts > SetTimePlayScene > exit() 後に setTimeout コールバックが requestTransition を呼ばないこと 172ms
+ ✓ tests/game/scenes/SetTimePlayScene.test.ts > SetTimePlayScene > handleConfirm() 後にボタンが視覚的に無効化されること 9ms
+ ✓ tests/game/scenes/SetTimePlayScene.test.ts > SetTimePlayScene > 次の問題表示後にボタンが再度有効化されること 8ms
+ ✓ tests/game/scenes/SetTimePlayScene.test.ts > SetTimePlayScene > enter() で pendingTimers が初期化されること（再入時の防御） 47ms
+
+ ❯ tests/game/scenes/DailyPlayScene.test.ts 0/8
+ ❯ tests/game/scenes/ModeSelectScene.test.ts 0/8
+ ❯ tests/game/scenes/QuizPlayScene.test.ts 4/10
+ ❯ tests/game/scenes/SetTimePlayScene.test.ts 4/8
+ ❯ tests/ui/TransitionOverlay.test.ts 16/16
+
+ Test Files 10 passed (49)
+      Tests 232 passed (258)
+   Start at 23:45:51
+   Duration 7.86s
+ ✓ tests/game/scenes/QuizPlayScene.test.ts > QuizPlayScene > ヒントタイマー > 8秒後にヒントSFXが再生されること 10ms
+ ✓ tests/game/scenes/QuizPlayScene.test.ts > QuizPlayScene > ヒントタイマー > 8秒後にボタンが2つ薄くなること（2択になる） 8ms
+ ✓ tests/game/scenes/QuizPlayScene.test.ts > QuizPlayScene > ヒントタイマー > 回答するとヒントタイマーがクリアされること 14ms
+ ✓ tests/game/scenes/QuizPlayScene.test.ts > QuizPlayScene > ヒントタイマー > ヒントは1問につき1回のみ発動すること 49ms
+ ✓ 

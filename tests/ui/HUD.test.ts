@@ -15,10 +15,10 @@ describe('HUD', () => {
     expect(parent.children.length).toBe(1);
   });
 
-  it('mount() で questionEl と scoreEl が生成されること', () => {
+  it('mount() で questionEl と scoreEl と hintEl が生成されること', () => {
     hud.mount(parent);
     const container = parent.children[0];
-    expect(container.children.length).toBe(3);
+    expect(container.children.length).toBe(4);
   });
 
   it('updateQuestion(3, 5) で「もんだい 3/5」が表示されること', () => {
@@ -33,6 +33,13 @@ describe('HUD', () => {
     hud.updateScore(2);
     const spans = parent.querySelectorAll('span');
     expect(spans[1].textContent).toBe('⭕ 2');
+  });
+
+  it('updateHints(1) で「💡 1」が表示されること', () => {
+    hud.mount(parent);
+    hud.updateHints(1);
+    const spans = parent.querySelectorAll('span');
+    expect(spans[2].textContent).toBe('💡 1');
   });
 
   it('unmount() で DOM が除去されること', () => {

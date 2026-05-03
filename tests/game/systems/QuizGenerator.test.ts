@@ -53,6 +53,25 @@ describe('QuizGenerator', () => {
     );
     expect(hasCorrect).toBe(true);
   });
+
+  it('should respect optionCount parameter when smaller than default', () => {
+    const gen2 = new QuizGenerator(() => 0.3);
+    const correct = { hours: 4, minutes: 0 };
+    const choices = gen2.generateChoices(correct, 1, 3);
+    expect(choices.length).toBe(3);
+    const keys = choices.map(c => `${c.hours}:${c.minutes}`);
+    expect(new Set(keys).size).toBe(3);
+    expect(choices.some(c => c.hours === 4 && c.minutes === 0)).toBe(true);
+  });
+
+  it('should throw when provided correct time is out of range for the level', () => {
+    const gen2 = new QuizGenerator();
+    // hours out of range
+    expect(() => gen2.generateChoices({ hours: 13, minutes: 0 }, 1)).toThrow(RangeError);
+    // minutes not aligned to level step (level 2 expects 30-min steps)
+    expect(() => gen2.generateChoices({ hours: 3, minutes: 15 }, 2)).toThrow(RangeError);
+  });
+
   it('should filter wrap-around close choices (correct=12:55, wrong=1:00)', () => {
     const gen2 = new QuizGenerator(() => 0.5);
     const correct = { hours: 12, minutes: 55 };
@@ -214,15 +233,15 @@ describe('generateUniqueTime', () => {
 
 describe('formatTime', () => {
   it('should format exact hours', () => {
-    expect(formatTime({ hours: 3, minutes: 0 })).toBe('3時');
+    expect(formatTime({ hours: 3, minutes: 0 })).toBe('⏰ 3じ');
   });
 
   it('should format half hours', () => {
-    expect(formatTime({ hours: 7, minutes: 30 })).toBe('7時半');
+    expect(formatTime({ hours: 7, minutes: 30 })).toBe('⏰ 7じはん');
   });
 
   it('should format other minutes', () => {
-    expect(formatTime({ hours: 2, minutes: 15 })).toBe('2時15分');
+    expect(formatTime({ hours: 2, minutes: 15 })).toBe('⏰ 2じ15ふん');
   });
 });
 

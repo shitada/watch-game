@@ -26,8 +26,10 @@ export function safeDisposeScene(scene: THREE.Scene | null): DisposeResult {
       if (obj.material) {
         const m = obj.material;
         if (Array.isArray(m)) {
-          for (const mm of m) materials.add(mm);
-        } else {
+          for (const mm of m) {
+            if (mm && typeof mm === 'object') materials.add(mm);
+          }
+        } else if (m && typeof m === 'object') {
           materials.add(m);
         }
       }
@@ -39,6 +41,7 @@ export function safeDisposeScene(scene: THREE.Scene | null): DisposeResult {
   // Scan materials for textures (common properties like map, alphaMap, envMap, etc.)
   for (const mat of Array.from(materials)) {
     try {
+      if (!mat || typeof mat !== 'object') continue;
       for (const key of Object.keys(mat)) {
         const val = (mat as any)[key];
         if (!val) continue;
@@ -59,7 +62,7 @@ export function safeDisposeScene(scene: THREE.Scene | null): DisposeResult {
   // dispose textures first
   for (const t of textures) {
     try {
-      if (typeof t.dispose === 'function') t.dispose();
+      if (t && typeof t.dispose === 'function') t.dispose();
     } catch (e) {
       // swallow
     }
@@ -68,7 +71,7 @@ export function safeDisposeScene(scene: THREE.Scene | null): DisposeResult {
 
   for (const g of geometries) {
     try {
-      if (typeof g.dispose === 'function') g.dispose();
+      if (g && typeof g.dispose === 'function') g.dispose();
     } catch (e) {
       // swallow
     }
@@ -77,7 +80,7 @@ export function safeDisposeScene(scene: THREE.Scene | null): DisposeResult {
 
   for (const m of materials) {
     try {
-      if (typeof m.dispose === 'function') m.dispose();
+      if (m && typeof m.dispose === 'function') m.dispose();
     } catch (e) {
       // swallow
     }

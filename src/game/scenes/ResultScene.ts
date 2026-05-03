@@ -103,8 +103,16 @@ export class ResultScene implements Scene {
     this.isNewTrophy = false;
   }
 
+  dispose(): void { this.exit(); }
+
   getThreeScene(): THREE.Scene { return this.scene; }
   getCamera(): THREE.Camera { return this.camera; }
+
+  // Returns whether this scene requires continuous rendering (e.g., active particle effects).
+  // SceneManager can call this to decide whether to keep the render loop running.
+  needsContinuousRendering(): boolean {
+    return this.fireworkEffect.isActive();
+  }
 
   private buildOverlay(correct: number, total: number, ratio: number): void {
     const overlay = document.createElement('div');

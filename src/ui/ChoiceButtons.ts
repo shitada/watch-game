@@ -7,6 +7,7 @@ export class ChoiceButtons {
   private selectCallback: ((index: number) => void) | null = null;
   private disabled = false;
   private rng: () => number;
+  private liveRegion: HTMLDivElement | null = null;
 
   constructor(rng?: () => number) {
     this.rng = rng ?? Math.random;
@@ -22,13 +23,33 @@ export class ChoiceButtons {
       pointer-events: auto;
       max-width: 500px;
       margin: 0 auto;
+      position: relative;
     `;
+
+    // Invisible aria-live region for screen readers
+    this.liveRegion = document.createElement('div');
+    this.liveRegion.setAttribute('aria-live', 'polite');
+    this.liveRegion.setAttribute('aria-atomic', 'true');
+    this.liveRegion.style.cssText = `
+      position: absolute;
+      left: -9999px;
+      width: 1px;
+      height: 1px;
+      overflow: hidden;
+      clip: rect(0 0 0 0);
+    `;
+    this.container.appendChild(this.liveRegion);
+
     parent.appendChild(this.container);
   }
 
   setChoices(choices: ClockTime[]): void {
     if (!this.container) return;
+    // Remove all children but keep liveRegion if present
+    const live = this.liveRegion;
     this.container.innerHTML = '';
+    if (live) this.container.appendChild(live);
+
     this.buttons = [];
     this.disabled = false;
 
@@ -73,6 +94,12 @@ export class ChoiceButtons {
 
   showResult(correctIndex: number, selectedIndex: number): void {
     this.disabled = true;
+    // Disable each button interactively
+    this.buttons.forEach((btn) => {
+      btn.disabled = true;
+      btn.style.pointerEvents = 'none';
+    });
+
     this.buttons.forEach((btn, i) => {
       if (i === correctIndex) {
         btn.style.background = 'linear-gradient(180deg, #A9DFBF, #2ECC71)';
@@ -86,10 +113,52 @@ export class ChoiceButtons {
         btn.style.opacity = '0.5';
       }
     });
+
+    // Update live region with a positive message
+    if (this.liveRegion) {
+      if (selectedIndex === correctIndex) {
+        this.liveRegion.textContent = 'せいかい！ すごいね✨';
+      } else {
+        this.liveRegion.textContent = 'ざんねん。つぎがんばろう！';
+      }
+    }
+
+    // If correct, show a small emoji celebration visual that auto-removes
+    if (selectedIndex === correctIndex && this.container) {
+      const emoji = document.createElement('span');
+      emoji.className = 'choice-feedback-emoji';
+      emoji.textContent = '✨';
+      emoji.style.cssText = `
+        position: absolute;
+        left: 50%;
+        top: 10px;
+        transform: translateX(-50%) scale(0.6);
+        font-size: 32px;
+        pointer-events: none;
+        transition: transform 600ms ease, opacity 600ms ease;
+        opacity: 1;
+      `;
+      this.container.appendChild(emoji);
+
+      // Trigger transform for animation (in browsers this would animate)
+      // Use setTimeout to schedule the scale+fade and eventual removal
+      setTimeout(() => {
+        emoji.style.transform = 'translateX(-50%) scale(1.4)';
+        emoji.style.opacity = '0';
+      }, 20);
+
+      // Remove after animation duration
+      setTimeout(() => {
+        emoji.remove();
+      }, 700);
+    }
   }
 
   showHint(correctIndex: number): void {
     if (this.disabled || this.buttons.length === 0) return;
+
+    // Announce hint usage for screen reader
+    if (this.liveRegion) this.liveRegion.textContent = 'ヒントを使ったよ';
 
     // Collect incorrect indices
     const incorrectIndices = this.buttons
@@ -116,6 +185,7 @@ export class ChoiceButtons {
   unmount(): void {
     this.container?.remove();
     this.container = null;
+    this.liveRegion = null;
     this.buttons = [];
     this.selectCallback = null;
   }

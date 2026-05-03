@@ -151,7 +151,7 @@ describe('SetTimePlayScene', () => {
 
     const currentTimeEl = document.querySelector('[data-testid="current-time"]') as HTMLElement;
     // Initially 12:00
-    expect(currentTimeEl.textContent).toBe('12時');
+    expect(currentTimeEl.textContent).toBe('⏰ 12じ');
 
     // Confirm without moving clock → answer is 12:00, target is 3:00 → incorrect
     const confirmBtn = Array.from(document.querySelectorAll('button')).find(
@@ -159,8 +159,8 @@ describe('SetTimePlayScene', () => {
     )!;
     confirmBtn.click();
 
-    // CurrentTimeDisplay should now show the correct answer "3時"
-    expect(currentTimeEl.textContent).toBe('3時');
+    // CurrentTimeDisplay should now show the correct answer "⏰ 3じ"
+    expect(currentTimeEl.textContent).toBe('⏰ 3じ');
 
     scene2.exit();
   });
@@ -168,7 +168,7 @@ describe('SetTimePlayScene', () => {
   it('enter() で CurrentTimeDisplay に初期時刻 12:00 が表示されること', () => {
     const currentTimeEl = document.querySelector('[data-testid="current-time"]') as HTMLElement;
     expect(currentTimeEl).not.toBeNull();
-    expect(currentTimeEl.textContent).toBe('12時');
+    expect(currentTimeEl.textContent).toBe('⏰ 12じ');
   });
 
   it('exit() で CurrentTimeDisplay が unmount されること', () => {

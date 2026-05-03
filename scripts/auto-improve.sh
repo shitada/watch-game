@@ -312,16 +312,25 @@ $(cat "${log_dir}/copilot-output.log")
 MDEOF
   rm -f "${log_dir}/copilot-output.log"
 
-  # 変更があればコミット & プッシュ
+  # 未コミットの変更があればコミット
   if ! git diff --quiet 2>/dev/null || ! git diff --cached --quiet 2>/dev/null; then
-    info "変更をコミット & プッシュ中..."
+    info "未コミットの変更をコミット中..."
     git add -A
     git commit -m "feat: auto-improve iteration #${iteration_num}
 
 Co-authored-by: Copilot <223556219+Copilot@users.noreply.github.com>" --quiet 2>/dev/null || true
+    HAS_COMMITS=true
+  fi
+
+  # 未プッシュのコミットがあればプッシュ（Coder が直接コミットした分も含む）
+  local unpushed
+  unpushed="$(git log "origin/${BRANCH_NAME}..HEAD" --oneline 2>/dev/null || echo "")"
+  if [[ -n "${unpushed}" ]]; then
+    info "変更をプッシュ中..."
     git push origin "${BRANCH_NAME}" --quiet 2>/dev/null || true
     HAS_COMMITS=true
-    ok "プッシュ完了"
+    ok "プッシュ完了 — Actions でプレビューデプロイ開始"
+    url "プレビュー: $(get_preview_url)"
   else
     info "このイテレーションでは変更なし"
   fi

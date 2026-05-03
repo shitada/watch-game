@@ -67,7 +67,13 @@ export class SaveManager {
   }
 
   save(data: SaveData): void {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+    try {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+    } catch (e) {
+      // Fail silently but log for telemetry/diagnostics
+      // eslint-disable-next-line no-console
+      console.warn('SaveManager.save: failed to write to localStorage', e);
+    }
   }
 
   addCompletedLevel(mode: GameMode, level: number): void {
@@ -106,6 +112,11 @@ export class SaveManager {
   }
 
   clear(): void {
-    localStorage.removeItem(STORAGE_KEY);
+    try {
+      localStorage.removeItem(STORAGE_KEY);
+    } catch (e) {
+      // eslint-disable-next-line no-console
+      console.warn('SaveManager.clear: failed to remove from localStorage', e);
+    }
   }
 }

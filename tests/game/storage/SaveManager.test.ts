@@ -133,4 +133,38 @@ describe('SaveManager', () => {
     const after = sm.load();
     expect(after.completedLevels.quiz).toContain(3);
   });
+
+  it('should not throw when localStorage.setItem throws', () => {
+    const sm = new SaveManager();
+    const originalSet = localStorage.setItem;
+    try {
+      // mock setItem to throw
+      // @ts-ignore
+      localStorage.setItem = () => { throw new Error('QuotaExceededError'); };
+
+      // operations that trigger save should not throw
+      expect(() => sm.addTrophy('x')).not.toThrow();
+      expect(() => sm.addCompletedLevel('quiz', 1)).not.toThrow();
+
+      // calling save directly should also not throw
+      const data = sm.load();
+      expect(() => sm.save(data)).not.toThrow();
+    } finally {
+      localStorage.setItem = originalSet;
+    }
+  });
+
+  it('should not throw when localStorage.removeItem throws', () => {
+    const sm = new SaveManager();
+    const originalRemove = localStorage.removeItem;
+    try {
+      // mock removeItem to throw
+      // @ts-ignore
+      localStorage.removeItem = () => { throw new Error('SomeError'); };
+
+      expect(() => sm.clear()).not.toThrow();
+    } finally {
+      localStorage.removeItem = originalRemove;
+    }
+  });
 });

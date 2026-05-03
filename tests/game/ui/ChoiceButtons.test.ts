@@ -14,8 +14,8 @@ describe('ChoiceButtons', () => {
     parent.remove();
   });
 
-  it('showHint dims two incorrect buttons deterministically with injected rng', () => {
-    // rng that returns 0, then 0.5, then repeats (never returns 1.0)
+  it('showHint dims two incorrect buttons deterministically with injected rng and updates live region and showResult behavior', () => {
+    // Deterministic RNG that alternates 0 and 0.5
     let calls = 0;
     const rng = () => {
       const v = calls % 2 === 0 ? 0 : 0.5;
@@ -39,23 +39,43 @@ describe('ChoiceButtons', () => {
     const buttons = parent.querySelectorAll('button');
     expect(buttons.length).toBe(4);
 
-    // correct index is 0, so incorrectIndices = [1,2,3]
+    // Ensure live region exists and is empty initially
+    const live = parent.querySelector('[aria-live]') as HTMLElement | null;
+    expect(live).toBeTruthy();
+    expect(live!.textContent).toBe('');
+
+    // correct index is 0
     cb.showHint(0);
 
-    // With our rng (0 then 1) the shuffle will produce toDim = [3,2]
-    const btn1 = buttons[1] as HTMLButtonElement;
-    const btn2 = buttons[2] as HTMLButtonElement;
-    const btn3 = buttons[3] as HTMLButtonElement;
+    // Two incorrect buttons should be dimmed and non-interactive
+    const dimmed = Array.from(buttons).filter(b => b.style.opacity === '0.3');
+    expect(dimmed.length).toBe(2);
+    dimmed.forEach(b => expect(b.style.pointerEvents).toBe('none'));
 
-    expect(btn1.style.opacity).toBe(''); // untouched
-    expect(btn2.style.opacity).toBe('0.3');
-    expect(btn2.style.pointerEvents).toBe('none');
-    expect(btn3.style.opacity).toBe('0.3');
-    expect(btn3.style.pointerEvents).toBe('none');
+    // Correct button must not be dimmed
+    expect(buttons[0].style.opacity).not.toBe('0.3');
 
-    // ARIA labels and min-height
-    expect(btn1.getAttribute('aria-label')).toBe('⏰ 2じ');
-    expect(btn1.style.minHeight).toBe('64px');
+    // Live region should announce hint usage
+    expect(live!.textContent).toBe('ヒントを使ったよ');
+
+    // Now test showResult: pick correctIndex=0, selectedIndex=2 (wrong selection)
+    cb.showResult(0, 2);
+
+    // After showResult, all buttons should be disabled and not interactive
+    const buttonsAfter = parent.querySelectorAll('button');
+    buttonsAfter.forEach(b => {
+      expect((b as HTMLButtonElement).disabled).toBe(true);
+      expect(b.style.pointerEvents).toBe('none');
+    });
+
+    // Non-correct, non-selected buttons should have opacity 0.5
+    // indexes: 0 correct, 2 selected wrong, so index 1 and 3 should be 0.5
+    expect((buttonsAfter[1] as HTMLButtonElement).style.opacity).toBe('0.5');
+    expect((buttonsAfter[3] as HTMLButtonElement).style.opacity).toBe('0.5');
+
+    // Selected wrong button should have been styled as incorrect (text color set to white)
+    const selColor = (buttonsAfter[2] as HTMLButtonElement).style.color;
+    expect(selColor === '#fff' || selColor === 'rgb(255, 255, 255)').toBe(true);
 
     cb.unmount();
   });

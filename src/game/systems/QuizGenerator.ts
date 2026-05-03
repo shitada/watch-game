@@ -3,10 +3,37 @@ import { getLevelDef } from '@/game/config/LevelConfig';
 
 export class QuizGenerator {
   private rng: () => number;
+  private streak = 0;
+  private difficultyLevel = 1; // 1 = easy, 2 = medium, 3 = hard
+  private readonly DIFFICULTY_THRESHOLDS = [3, 6];
 
   constructor(rng?: () => number) {
     this.rng = rng ?? Math.random;
   }
+
+  onAnswerCorrect() {
+    this.streak++;
+    if (this.streak >= this.DIFFICULTY_THRESHOLDS[1]) this.difficultyLevel = 3;
+    else if (this.streak >= this.DIFFICULTY_THRESHOLDS[0]) this.difficultyLevel = 2;
+  }
+
+  onAnswerIncorrect() {
+    this.streak = 0;
+    this.difficultyLevel = 1;
+  }
+
+  generateQuestion() {
+    // Map difficultyLevel to a level number in LevelConfig
+    let levelNum = 1;
+    if (this.difficultyLevel === 1) levelNum = 1;
+    else if (this.difficultyLevel === 2) levelNum = 2;
+    else levelNum = 4;
+
+    const correct = this.generateTime(levelNum);
+    const choices = this.generateChoices(correct, levelNum);
+    return { correct, choices, level: levelNum };
+  }
+
   generateTime(level: number): ClockTime {
     const def = getLevelDef(level);
     const hours = Math.floor(this.rng() * 12) + 1;

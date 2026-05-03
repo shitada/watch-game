@@ -72,6 +72,7 @@ export interface SaveData {
   totalCorrect: number;
   totalPlays: number;
   bestScores: Record<string, number>; // "quiz-1" → best correct count
+  streak?: number;
 }
 
 // ── SFX Types ──

@@ -9,6 +9,7 @@ function defaultData(): SaveData {
     totalCorrect: 0,
     totalPlays: 0,
     bestScores: {},
+    streak: 0,
   };
 }
 
@@ -38,6 +39,9 @@ function isValid(data: unknown): data is SaveData {
   for (const k in bs as Record<string, unknown>) {
     if (typeof (bs as Record<string, unknown>)[k] !== 'number') return false;
   }
+
+  // accept older saves missing streak, or ensure it's a number when present
+  if ((d as Record<string, unknown>).streak !== undefined && typeof (d as Record<string, unknown>).streak !== 'number') return false;
 
   return true;
 }

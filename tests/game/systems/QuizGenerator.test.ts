@@ -254,3 +254,24 @@ describe('QuizGenerator fallback', () => {
     expect(hasCorrect).toBe(true);
   });
 });
+
+// Streak-based difficulty tests added by auto-improve
+describe('QuizGenerator streak-based difficulty', () => {
+  it('increases difficulty after thresholds and resets on incorrect', () => {
+    const q = new QuizGenerator();
+    // simulate 3 correct answers -> difficulty becomes 2
+    q.onAnswerCorrect();
+    q.onAnswerCorrect();
+    q.onAnswerCorrect();
+    expect((q as any).difficultyLevel).toBe(2);
+    // simulate 3 more -> difficulty 3
+    q.onAnswerCorrect();
+    q.onAnswerCorrect();
+    q.onAnswerCorrect();
+    expect((q as any).difficultyLevel).toBe(3);
+    // incorrect -> reset
+    q.onAnswerIncorrect();
+    expect((q as any).streak).toBe(0);
+    expect((q as any).difficultyLevel).toBe(1);
+  });
+});

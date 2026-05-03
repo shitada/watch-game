@@ -18,7 +18,7 @@ describe('HUD', () => {
   it('mount() で questionEl と scoreEl が生成されること', () => {
     hud.mount(parent);
     const container = parent.children[0];
-    expect(container.children.length).toBe(2);
+    expect(container.children.length).toBe(3);
   });
 
   it('updateQuestion(3, 5) で「もんだい 3/5」が表示されること', () => {

@@ -269,6 +269,9 @@ describe('QuizGenerator streak-based difficulty', () => {
     q.onAnswerCorrect();
     q.onAnswerCorrect();
     expect((q as any).difficultyLevel).toBe(3);
+    // generateQuestion should map difficultyLevel 3 to level 3
+    const generated = q.generateQuestion();
+    expect(generated.level).toBe(3);
     // incorrect -> reset
     q.onAnswerIncorrect();
     expect((q as any).streak).toBe(0);

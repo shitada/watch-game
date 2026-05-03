@@ -27,7 +27,7 @@ export class QuizGenerator {
     let levelNum = 1;
     if (this.difficultyLevel === 1) levelNum = 1;
     else if (this.difficultyLevel === 2) levelNum = 2;
-    else levelNum = 4;
+    else levelNum = 3;
 
     const correct = this.generateTime(levelNum);
     const choices = this.generateChoices(correct, levelNum);

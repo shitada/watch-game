@@ -538,6 +538,16 @@ export class Clock3D {
       }
     }
 
+    // Remove this group from any parent to avoid lingering references
+    if (this.group.parent) {
+      try {
+        this.group.parent.remove(this.group);
+      } catch (e) {
+        // eslint-disable-next-line no-console
+        console.warn('Failed to remove from parent', e);
+      }
+    }
+
     // Clear group children
     try {
       this.group.clear();

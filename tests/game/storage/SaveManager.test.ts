@@ -182,4 +182,59 @@ describe('SaveManager', () => {
       localStorage.removeItem = originalRemove;
     }
   });
+
+  // Migration tests
+  it('should migrate v0 (no version) data to v1', () => {
+    const rawV0 = {
+      trophies: ['ok', 123],
+      completedLevels: { quiz: ['1', '2'], setTime: [], daily: [] },
+      totalCorrect: 4,
+      totalPlays: 2,
+      bestScores: { 'quiz-1': '3' },
+    };
+    localStorage.setItem('kids-clock-master-save', JSON.stringify(rawV0));
+
+    const sm = new SaveManager();
+    const data = sm.load();
+
+    expect(data.version).toBe(1);
+    expect(data.completedLevels.quiz).toEqual([1, 2]);
+    expect(data.trophies).toEqual(['ok']);
+    expect(data.bestScores['quiz-1']).toBe(3);
+  });
+
+  it('should accept valid v1 data as-is', () => {
+    const validV1 = {
+      version: 1,
+      trophies: ['x'],
+      completedLevels: { quiz: [1], setTime: [], daily: [] },
+      totalCorrect: 1,
+      totalPlays: 1,
+      bestScores: { 'quiz-1': 1 },
+      streak: 2,
+    };
+    localStorage.setItem('kids-clock-master-save', JSON.stringify(validV1));
+
+    const sm = new SaveManager();
+    const data = sm.load();
+    expect(data.version).toBe(1);
+    expect(data.trophies).toEqual(['x']);
+  });
+
+  it('should fallback to default if migrated data is invalid', () => {
+    const bad = {
+      version: 1,
+      trophies: null,
+      completedLevels: null,
+      totalCorrect: 'NaN',
+      totalPlays: null,
+      bestScores: null,
+    };
+    localStorage.setItem('kids-clock-master-save', JSON.stringify(bad));
+
+    const sm = new SaveManager();
+    const data = sm.load();
+    expect(data.totalPlays).toBe(0);
+    expect(data.completedLevels.quiz).toEqual([]);
+  });
 });

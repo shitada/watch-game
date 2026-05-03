@@ -72,8 +72,11 @@ export class SaveManager {
 
   addCompletedLevel(mode: GameMode, level: number): void {
     const data = this.load();
-    if (!data.completedLevels[mode].includes(level)) {
-      data.completedLevels[mode].push(level);
+    const arr = data.completedLevels[mode];
+    if (!arr.includes(level)) {
+      arr.push(level);
+      // 重複を排し、数値に正規化して昇順にソート
+      data.completedLevels[mode] = Array.from(new Set(arr.map((v) => Number(v)))).sort((a, b) => a - b);
     }
     this.save(data);
   }

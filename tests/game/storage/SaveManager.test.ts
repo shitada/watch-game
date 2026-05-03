@@ -38,6 +38,16 @@ describe('SaveManager', () => {
     expect(data.completedLevels.quiz).toEqual([1, 2]);
   });
 
+  it('should keep completed levels sorted', () => {
+    const sm = new SaveManager();
+    sm.addCompletedLevel('quiz', 10);
+    sm.addCompletedLevel('quiz', 2);
+    sm.addCompletedLevel('quiz', 5);
+
+    const data = sm.load();
+    expect(data.completedLevels.quiz).toEqual([2, 5, 10]);
+  });
+
   it('should add trophies without duplicates', () => {
     const sm = new SaveManager();
     sm.addTrophy('quiz-1-perfect');

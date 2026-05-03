@@ -23,7 +23,17 @@ export class SceneManager {
     }
 
     if (this.currentScene) {
-      this.currentScene.exit();
+      // Null out current references before running exit to allow exit logic to fully own cleanup
+      const prev = this.currentScene;
+      this.currentScene = null;
+      this.currentType = null;
+      try {
+        prev.exit();
+      } catch (e) {
+        // swallow to keep transitions robust
+        // eslint-disable-next-line no-console
+        console.warn('Scene exit threw', e);
+      }
     }
 
     this.currentScene = next;

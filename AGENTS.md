@@ -59,19 +59,22 @@ tests/game/         — src/game/ のミラー構造
 ### 使い方
 
 ```bash
-./scripts/auto-improve.sh       # 1回実行
-./scripts/auto-improve.sh 3     # 3回ループ
+./scripts/auto-improve.sh       # 無限ループ開始（Ctrl+C で PR 作成して終了）
 ```
 
 ### パイプライン構成
 
 ```
-auto-improve.sh → Orchestrator
-  → Proposer (コード分析・改善提案)
-  → Reviewer (提案の批評・フィルタリング)
-  → Coder (TDD実装・ビルド・コミット)
-  → Tester (全テスト実行・結果報告)
-  → Evaluator (品質ゲート・PR作成)
+auto-improve.sh（単一ブランチ方式）
+  ├── ブランチ作成（1回だけ）
+  ├── 無限ループ:
+  │   └── Orchestrator
+  │       → Proposer (コード分析・改善提案)
+  │       → Coder (TDD実装・ビルド・コミット)
+  │       → Tester (全テスト実行・結果報告)
+  │       → Evaluator (品質ゲート判定)
+  │   └── コミット & プッシュ
+  └── Ctrl+C → PR 作成 → 終了
 ```
 
 ### エージェント一覧
@@ -80,10 +83,9 @@ auto-improve.sh → Orchestrator
 |---|---|---|
 | Orchestrator | `.github/agents/orchestrator.agent.md` | チームリーダー。サブエージェントの呼び出しと検証 |
 | Proposer | `.github/agents/proposer.agent.md` | コードベース分析 → 1件の改善提案 |
-| Reviewer | `.github/agents/reviewer.agent.md` | 提案の批評。blocker/warning/suggestion で品質フィルタ |
 | Coder | `.github/agents/coder.agent.md` | TDD で実装、ビルド+テスト検証、コミット |
 | Tester | `.github/agents/tester.agent.md` | 全テスト実行、リスク別テスト分類 |
-| Evaluator | `.github/agents/evaluator.agent.md` | ハードゲート判定、セキュリティチェック、PR作成 |
+| Evaluator | `.github/agents/evaluator.agent.md` | ハードゲート判定、keep/discard 判定 |
 
 ### スキル
 

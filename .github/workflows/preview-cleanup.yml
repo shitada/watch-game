@@ -1,0 +1,47 @@
+name: Preview Cleanup
+
+on:
+  pull_request:
+    types: [closed]
+    branches: [main]
+  delete:
+    branches: ['improve/**']
+
+permissions:
+  contents: write
+
+jobs:
+  cleanup:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: gh-pages
+          fetch-depth: 1
+
+      - name: Determine preview directory
+        id: preview
+        run: |
+          if [ "${{ github.event_name }}" = "pull_request" ]; then
+            BRANCH="${{ github.event.pull_request.head.ref }}"
+          else
+            BRANCH="${{ github.event.ref }}"
+          fi
+          SAFE_BRANCH="$(echo "${BRANCH}" | sed 's|/|-|g')"
+          echo "dir=preview/${SAFE_BRANCH}" >> "$GITHUB_OUTPUT"
+          echo "branch=${SAFE_BRANCH}" >> "$GITHUB_OUTPUT"
+
+      - name: Remove preview directory
+        run: |
+          DIR="${{ steps.preview.outputs.dir }}"
+          if [ -d "${DIR}" ]; then
+            rm -rf "${DIR}"
+            git config user.name "github-actions[bot]"
+            git config user.email "github-actions[bot]@users.noreply.github.com"
+            git add -A
+            git commit -m "chore: remove preview for ${{ steps.preview.outputs.branch }}" || echo "Nothing to commit"
+            git push origin gh-pages
+            echo "✅ Removed ${DIR}"
+          else
+            echo "ℹ️ ${DIR} does not exist, nothing to clean up"
+          fi

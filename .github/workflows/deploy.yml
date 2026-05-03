@@ -3,12 +3,9 @@ name: Deploy to GitHub Pages
 on:
   push:
     branches: [main]
-  workflow_dispatch:
 
 permissions:
-  contents: read
-  pages: write
-  id-token: write
+  contents: write
 
 concurrency:
   group: pages
@@ -17,9 +14,6 @@ concurrency:
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
     steps:
       - uses: actions/checkout@v4
 
@@ -34,11 +28,17 @@ jobs:
 
       - run: npm run build
 
-      - uses: actions/configure-pages@v5
+      # Preserve existing preview/ directories on gh-pages so that
+      # PR preview deployments survive production deploys.
+      - name: Restore preview directories
+        run: |
+          git fetch origin gh-pages --depth=1 2>/dev/null || true
+          if git show origin/gh-pages:preview 2>/dev/null; then
+            git checkout origin/gh-pages -- preview/
+            cp -r preview dist/preview
+          fi
 
-      - uses: actions/upload-pages-artifact@v3
+      - uses: peaceiris/actions-gh-pages@v4
         with:
-          path: dist
-
-      - id: deployment
-        uses: actions/deploy-pages@v4
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./dist

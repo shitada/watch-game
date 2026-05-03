@@ -61,6 +61,26 @@ export class SaveManager {
         } else {
           p.trophies = [];
         }
+
+        // Sanitize completedLevels: normalize elements to numbers and remove non-numeric entries
+        const cl = p.completedLevels;
+        const modes = ['quiz', 'setTime', 'daily'] as const;
+        if (cl && typeof cl === 'object') {
+          for (const m of modes) {
+            const arr = (cl as Record<string, unknown>)[m];
+            if (Array.isArray(arr)) {
+              (cl as Record<string, unknown>)[m] = arr
+                .map((v: unknown) => Number(v))
+                .filter((n) => Number.isFinite(n));
+            } else {
+              (cl as Record<string, unknown>)[m] = [];
+            }
+          }
+          p.completedLevels = cl;
+        } else {
+          // ensure completedLevels exists as object with empty arrays to pass validation
+          p.completedLevels = { quiz: [], setTime: [], daily: [] };
+        }
       }
 
       if (isValid(parsed)) return parsed;

@@ -72,6 +72,21 @@ describe('SaveManager', () => {
     expect(data.trophies).toEqual(['ok']);
   });
 
+  it('should sanitize completedLevels elements when loading (string numbers -> numbers)', () => {
+    const corrupted = {
+      trophies: [],
+      completedLevels: { quiz: ['1', '2'], setTime: [], daily: [] },
+      totalCorrect: 0,
+      totalPlays: 0,
+      bestScores: {},
+    };
+    localStorage.setItem('kids-clock-master-save', JSON.stringify(corrupted));
+
+    const sm = new SaveManager();
+    const data = sm.load();
+    expect(data.completedLevels.quiz).toEqual([1, 2]);
+  });
+
   it('should update best score only if higher', () => {
     const sm = new SaveManager();
     sm.updateBestScore('quiz-1', 3);

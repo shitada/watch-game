@@ -39,6 +39,10 @@ renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
 renderer.setSize(window.innerWidth, window.innerHeight);
 renderer.outputColorSpace = THREE.SRGBColorSpace;
 
+// Prewarm heavy Clock3D shared resources to avoid first-frame jank
+import { Clock3D } from '@/game/entities/Clock3D';
+Clock3D.prewarmSharedResources();
+
 // ── Performance Manager ──
 // PerformanceManager will measure frame times and adjust renderer pixelRatio dynamically.
 // Note: changing pixelRatio can incur a temporary performance cost when it resizes the drawing buffer.

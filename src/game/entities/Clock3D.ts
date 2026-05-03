@@ -31,6 +31,70 @@ export class Clock3D {
   } = { majorGeo: undefined, minorGeo: undefined, majorMat: undefined, minorMat: undefined, refCount: 0 };
   private _usesSharedTicks = false;
 
+  /**
+   * Prewarm shared resources used by Clock3D (numbers texture/material and tick geometries/materials)
+   * Creates shared objects but leaves refCount at 0 so they are ready for first use without affecting disposal semantics.
+   */
+  static prewarmSharedResources(): void {
+    try {
+      // Prewarm shared tick geometries/materials
+      if (!Clock3D._sharedTicks.majorGeo || !Clock3D._sharedTicks.minorGeo || !Clock3D._sharedTicks.majorMat || !Clock3D._sharedTicks.minorMat) {
+        Clock3D._sharedTicks.majorGeo = new THREE.PlaneGeometry(0.06, 0.25);
+        Clock3D._sharedTicks.majorMat = new THREE.MeshStandardMaterial({ color: S.COLORS.tickMajor, side: THREE.DoubleSide });
+        Clock3D._sharedTicks.minorGeo = new THREE.PlaneGeometry(0.02, 0.12);
+        Clock3D._sharedTicks.minorMat = new THREE.MeshStandardMaterial({ color: S.COLORS.tickMinor, side: THREE.DoubleSide });
+        // Keep refCount at 0 to indicate no live owners yet
+        Clock3D._sharedTicks.refCount = 0;
+      }
+
+      // Prewarm shared numbers texture/material
+      if (!Clock3D._sharedNumbers.texture) {
+        const canvas = document.createElement('canvas');
+        const base = (S as any).NUMBERS_TEXTURE_BASE ?? 256;
+        const maxSize = (S as any).MAX_NUMBERS_TEXTURE_SIZE ?? 512;
+        const dpr = (typeof window !== 'undefined' && (window as any).devicePixelRatio) ? (window as any).devicePixelRatio : 1;
+        const size = Math.min(maxSize, Math.max(128, Math.round(base * dpr)));
+        canvas.width = size;
+        canvas.height = size;
+        const ctx = canvas.getContext('2d')!;
+        ctx.clearRect(0, 0, size, size);
+
+        const fontPx = Math.round(size * 0.082);
+        ctx.font = `bold ${fontPx}px "Zen Maru Gothic", sans-serif`;
+        ctx.fillStyle = '#2C3E50';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+
+        const centerX = size / 2;
+        const centerY = size / 2;
+        const numRadius = Math.round(size * 0.361);
+
+        for (let i = 1; i <= 12; i++) {
+          const angle = (i / 12) * Math.PI * 2 - Math.PI / 2;
+          const x = centerX + Math.cos(angle) * numRadius;
+          const y = centerY + Math.sin(angle) * numRadius;
+          ctx.fillText(String(i), x, y);
+        }
+
+        const texture = new THREE.CanvasTexture(canvas);
+        texture.colorSpace = THREE.SRGBColorSpace;
+
+        Clock3D._sharedNumbers.texture = texture;
+        Clock3D._sharedNumbers.material = new THREE.MeshBasicMaterial({
+          map: texture,
+          transparent: true,
+          side: THREE.DoubleSide,
+        });
+        // Keep refCount at 0 to indicate no live owners yet
+        Clock3D._sharedNumbers.refCount = 0;
+      }
+    } catch (e) {
+      // best-effort prewarm
+      // eslint-disable-next-line no-console
+      console.warn('Clock3D.prewarmSharedResources failed', e);
+    }
+  }
+
   // Flag to make dispose idempotent
   private _disposed = false;
 

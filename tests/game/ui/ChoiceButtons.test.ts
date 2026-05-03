@@ -54,7 +54,7 @@ describe('ChoiceButtons', () => {
     expect(btn3.style.pointerEvents).toBe('none');
 
     // ARIA labels and min-height
-    expect(btn1.getAttribute('aria-label')).toBe('2時');
+    expect(btn1.getAttribute('aria-label')).toBe('⏰ 2じ');
     expect(btn1.style.minHeight).toBe('64px');
 
     cb.unmount();

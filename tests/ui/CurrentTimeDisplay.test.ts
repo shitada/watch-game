@@ -31,21 +31,21 @@ describe('CurrentTimeDisplay', () => {
     display.mount(parent);
     display.setTime({ hours: 3, minutes: 0 });
     const timeEl = parent.querySelector('[data-testid="current-time"]') as HTMLElement;
-    expect(timeEl.textContent).toBe('3時');
+    expect(timeEl.textContent).toBe('⏰ 3じ');
   });
 
   it('setTime()で表示テキストがformatTimeと一致すること（30分）', () => {
     display.mount(parent);
     display.setTime({ hours: 7, minutes: 30 });
     const timeEl = parent.querySelector('[data-testid="current-time"]') as HTMLElement;
-    expect(timeEl.textContent).toBe('7時半');
+    expect(timeEl.textContent).toBe('⏰ 7じはん');
   });
 
   it('setTime()で表示テキストがformatTimeと一致すること（任意の分）', () => {
     display.mount(parent);
     display.setTime({ hours: 10, minutes: 15 });
     const timeEl = parent.querySelector('[data-testid="current-time"]') as HTMLElement;
-    expect(timeEl.textContent).toBe('10時15分');
+    expect(timeEl.textContent).toBe('⏰ 10じ15ふん');
   });
 
   it('mount前のsetTimeはエラーにならないこと', () => {

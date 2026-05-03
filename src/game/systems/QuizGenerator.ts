@@ -238,7 +238,7 @@ export class QuizGenerator {
 export function formatTime(time: ClockTime): string {
   const h = time.hours;
   const m = time.minutes;
-  if (m === 0) return `${h}時`;
-  if (m === 30) return `${h}時半`;
-  return `${h}時${m}分`;
+  if (m === 0) return `⏰ ${h}じ`;
+  if (m === 30) return `⏰ ${h}じはん`;
+  return `⏰ ${h}じ${m}ふん`;
 }

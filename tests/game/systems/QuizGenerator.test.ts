@@ -233,15 +233,15 @@ describe('generateUniqueTime', () => {
 
 describe('formatTime', () => {
   it('should format exact hours', () => {
-    expect(formatTime({ hours: 3, minutes: 0 })).toBe('3時');
+    expect(formatTime({ hours: 3, minutes: 0 })).toBe('⏰ 3じ');
   });
 
   it('should format half hours', () => {
-    expect(formatTime({ hours: 7, minutes: 30 })).toBe('7時半');
+    expect(formatTime({ hours: 7, minutes: 30 })).toBe('⏰ 7じはん');
   });
 
   it('should format other minutes', () => {
-    expect(formatTime({ hours: 2, minutes: 15 })).toBe('2時15分');
+    expect(formatTime({ hours: 2, minutes: 15 })).toBe('⏰ 2じ15ふん');
   });
 });
 

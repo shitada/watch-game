@@ -6,6 +6,7 @@ export class QuizGenerator {
   private streak = 0;
   private difficultyLevel = 1; // 1 = easy, 2 = medium, 3 = hard
   private readonly DIFFICULTY_THRESHOLDS = [3, 6];
+  private readonly DEFAULT_CHOICE_COUNT = 4; // stable number of options
 
   constructor(rng?: () => number) {
     this.rng = rng ?? Math.random;
@@ -49,8 +50,11 @@ export class QuizGenerator {
     else levelNum = 3;
 
     const correct = this.generateTime(levelNum);
-    const choices = this.generateChoices(correct, levelNum);
-    return { correct, choices, level: levelNum };
+    const choices = this.generateChoices(correct, levelNum, this.DEFAULT_CHOICE_COUNT);
+
+    // find index of correct after shuffle
+    const correctIndex = choices.findIndex(c => c.hours === correct.hours && c.minutes === correct.minutes);
+    return { correct, choices, level: levelNum, correctIndex };
   }
 
   generateTime(level: number): ClockTime {
@@ -67,7 +71,8 @@ export class QuizGenerator {
   }
 
   generateUniqueTime(level: number, exclude: readonly ClockTime[]): ClockTime {
-    // Try to pick from all possible candidates excluding provided ones first
+    // validate level
+    const def = getLevelDef(level);
     const all = this.listAllCandidates(level);
     const remaining = all.filter(c => !this.equalsTimeList(c, exclude));
 
@@ -77,7 +82,6 @@ export class QuizGenerator {
     }
 
     // Fallback: if all candidates are excluded, fall back to randomized attempts
-    // similar to previous behavior to avoid tight loops.
     const maxAttempts = 100;
     for (let i = 0; i < maxAttempts; i++) {
       const time = this.generateTime(level);
@@ -136,13 +140,25 @@ export class QuizGenerator {
     return true;
   }
 
-  generateChoices(correct: ClockTime, level: number): ClockTime[] {
-    const choices: ClockTime[] = [correct];
+  // Validate a provided clock time against level definition
+  private validateClockTimeOrThrow(time: ClockTime, level: number) {
     const def = getLevelDef(level);
-    const maxAttempts = 100;
+    if (time.hours < 1 || time.hours > 12) throw new RangeError('hours out of range');
+    if (time.minutes < 0 || time.minutes >= 60) throw new RangeError('minutes out of range');
+    if (def.minuteStep < 60 && (time.minutes % def.minuteStep) !== 0) throw new RangeError('minutes not aligned to level step');
+  }
+
+  // Generate choices with stable count and guarantee correct inclusion
+  generateChoices(correct: ClockTime, level: number, optionCount = this.DEFAULT_CHOICE_COUNT): ClockTime[] {
+    // validate correct time
+    this.validateClockTimeOrThrow(correct, level);
+
+    const choices: ClockTime[] = [ { hours: correct.hours, minutes: correct.minutes } ];
+    const def = getLevelDef(level);
+    const maxAttempts = 200;
     let attempts = 0;
 
-    while (choices.length < 4 && attempts < maxAttempts) {
+    while (choices.length < optionCount && attempts < maxAttempts) {
       attempts++;
       const wrong = this.generateTime(level);
 
@@ -154,7 +170,7 @@ export class QuizGenerator {
     }
 
     // If attempts exhausted and still not enough choices, fallback to enumerating candidates
-    if (choices.length < 4) {
+    if (choices.length < optionCount) {
       const all = this.listAllCandidates(level).filter(c => this.isAcceptableCandidate(c, correct, def, choices));
       // Shuffle candidates for randomness
       for (let i = all.length - 1; i > 0; i--) {
@@ -162,31 +178,60 @@ export class QuizGenerator {
         [all[i], all[j]] = [all[j], all[i]];
       }
       let idx = 0;
-      while (choices.length < 4 && idx < all.length) {
+      while (choices.length < optionCount && idx < all.length) {
         choices.push(all[idx]);
         idx++;
       }
 
       // Second pass: ignore similarity if still not enough
-      if (choices.length < 4) {
+      if (choices.length < optionCount) {
         const remaining = this.listAllCandidates(level).filter(
           c => !(c.hours === correct.hours && c.minutes === correct.minutes) &&
                !choices.some(e => e.hours === c.hours && e.minutes === c.minutes),
         );
         for (const cand of remaining) {
-          if (choices.length >= 4) break;
+          if (choices.length >= optionCount) break;
           choices.push(cand);
         }
       }
     }
 
-    // Final shuffle
-    for (let i = choices.length - 1; i > 0; i--) {
-      const j = Math.floor(this.rng() * (i + 1));
-      [choices[i], choices[j]] = [choices[j], choices[i]];
+    // Ensure uniqueness: remove duplicates keeping first occurrence
+    const unique: ClockTime[] = [];
+    for (const c of choices) {
+      if (!unique.some(u => u.hours === c.hours && u.minutes === c.minutes)) unique.push(c);
     }
 
-    return choices;
+    // If still less than required, pad deterministically from all candidates
+    if (unique.length < optionCount) {
+      const remainingAll = this.listAllCandidates(level).filter(
+        c => !unique.some(u => u.hours === c.hours && u.minutes === c.minutes) &&
+             !(c.hours === correct.hours && c.minutes === correct.minutes),
+      );
+      for (const cand of remainingAll) {
+        if (unique.length >= optionCount) break;
+        unique.push(cand);
+      }
+    }
+
+    // Final shuffle
+    for (let i = unique.length - 1; i > 0; i--) {
+      const j = Math.floor(this.rng() * (i + 1));
+      [unique[i], unique[j]] = [unique[j], unique[i]];
+    }
+
+    // Ensure correct is present exactly once; if missing, force insert at 0
+    if (!unique.some(u => u.hours === correct.hours && u.minutes === correct.minutes)) {
+      unique.unshift({ hours: correct.hours, minutes: correct.minutes });
+      // trim to optionCount if over
+      while (unique.length > optionCount) unique.pop();
+    }
+
+    // Trim/pad to exact optionCount
+    if (unique.length > optionCount) unique.length = optionCount;
+    while (unique.length < optionCount) unique.push({ hours: correct.hours, minutes: correct.minutes });
+
+    return unique;
   }
 }
 

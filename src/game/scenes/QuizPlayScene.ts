@@ -151,6 +151,8 @@ export class QuizPlayScene implements Scene {
     const topBar = document.createElement('div');
     topBar.style.cssText = 'pointer-events: none;';
     this.hud.mount(topBar);
+    // initialize hint count display
+    this.hud.updateHints(this.quizGen.remainingHints());
     overlay.appendChild(topBar);
 
     const prompt = document.createElement('div');
@@ -225,6 +227,7 @@ export class QuizPlayScene implements Scene {
     this.clock3D?.setTime(q);
     this.hud.updateQuestion(this.currentQuestion + 1, def.questionCount);
     this.hud.updateScore(this.correctCount);
+    this.hud.updateHints(this.quizGen.remainingHints());
     this.choiceButtons.setChoices(this.choices[this.currentQuestion]);
 
     // Reset per-question hint state in generator
@@ -237,6 +240,7 @@ export class QuizPlayScene implements Scene {
 
     // update hint button remaining
     this.hintButton?.setRemaining(this.quizGen.remainingHints());
+    this.hud.updateHints(this.quizGen.remainingHints());
   }
 
   private triggerHint(): void {
@@ -253,6 +257,7 @@ export class QuizPlayScene implements Scene {
       showNotification(this.overlay!, '💡 ヒント！', '#F39C12'),
     );
     this.hintButton?.setRemaining(this.quizGen.remainingHints());
+    this.hud.updateHints(this.quizGen.remainingHints());
   }
 
   private handleAnswer(selectedIndex: number): void {
@@ -324,5 +329,6 @@ export class QuizPlayScene implements Scene {
       showNotification(this.overlay!, '💡 ヒント！', '#F39C12'),
     );
     this.hintButton?.setRemaining(this.quizGen.remainingHints());
+    this.hud.updateHints(this.quizGen.remainingHints());
   }
 }

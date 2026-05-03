@@ -2,6 +2,7 @@ export class HUD {
   private container: HTMLDivElement | null = null;
   private questionEl: HTMLSpanElement | null = null;
   private scoreEl: HTMLSpanElement | null = null;
+  private hintEl: HTMLSpanElement | null = null;
   private streakEl: HTMLSpanElement | null = null;
 
   mount(parent: HTMLElement): void {
@@ -36,6 +37,12 @@ export class HUD {
     this.container.appendChild(this.questionEl);
     this.container.appendChild(this.scoreEl);
 
+    // Hint display
+    this.hintEl = document.createElement('span');
+    this.hintEl.style.cssText = `background: rgba(255,255,255,0.85); border-radius: 16px; padding: 6px 18px; font-weight: 700; margin-left: 8px;`;
+    this.hintEl.textContent = '💡 0';
+    this.container.appendChild(this.hintEl);
+
     // Streak display
     this.streakEl = document.createElement('span');
     this.streakEl.style.cssText = `background: rgba(255,255,255,0.85); border-radius: 16px; padding: 6px 18px; font-weight: 700; margin-left: 8px;`;
@@ -57,6 +64,12 @@ export class HUD {
     }
   }
 
+  updateHints(count: number): void {
+    if (this.hintEl) {
+      this.hintEl.textContent = `💡 ${count}`;
+    }
+  }
+
   updateStreak(streak: number): void {
     if (this.streakEl) {
       this.streakEl.textContent = `✨ ${streak} もようし`;
@@ -68,5 +81,7 @@ export class HUD {
     this.container = null;
     this.questionEl = null;
     this.scoreEl = null;
+    this.hintEl = null;
+    this.streakEl = null;
   }
 }

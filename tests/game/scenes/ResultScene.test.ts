@@ -13,6 +13,7 @@ vi.mock('@/game/effects/FireworkEffect', () => {
       trigger = vi.fn();
       update = vi.fn();
       dispose = vi.fn();
+      isActive = vi.fn(() => false);
     },
   };
 });
